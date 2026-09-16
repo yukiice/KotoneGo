@@ -1,0 +1,53 @@
+# 单容器部署：FastAPI（API + 前端静态文件）+ SQLite 单文件数据库
+# 用法：
+#   docker compose up -d --build      # 启动（首次会构建镜像）
+#   docker compose logs -f            # 看日志
+#   docker compose down               # 停止（数据保留在 volume 里）
+#
+# 小内存服务器建议：不要再加 nginx（本服务已托管前端+gzip），需要 HTTPS 时用宿主机的
+# Caddy/Nginx 反代到 8000 端口即可。
+
+services:
+  kotone:
+    build: .
+    image: kotonego:0.0.1
+    container_name: kotonego
+    restart: unless-stopped
+
+    ports:
+      # 只监听本机时改成 "127.0.0.1:8000:8000"，再用宿主机的反代对外
+      - "${KOTONE_PORT:-8000}:8000"
+
+    environment:
+      KOTONE_DB_PATH: /data/kotone.db
+      KOTONE_EXAM_SIZE: "10"
+      # 单容器部署前后端同源，不需要 CORS；留空表示不额外放行来源
+      KOTONE_CORS_ORIGINS: ""
+
+    volumes:
+      # 命名卷：数据库持久化，容器重建不丢数据（首次启动自动创建）
+      - kotone-data:/data
+      # 想在服务器上直接改题目（不用重新构建镜像）就放开下面一行：
+      # - ./backend/data/questions:/app/backend/data/questions:ro
+
+    # ---- 小内存保护（按需调整）----
+    mem_limit: 320m          # 实测峰值 < 120MB，留足余量；1GB 小机器可改 256m
+    memswap_limit: 320m      # 禁止用 swap 兜底，避免拖慢整机
+    cpus: 1.0
+
+    # 日志轮转，避免长期运行把磁盘写满
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  kotone-data:

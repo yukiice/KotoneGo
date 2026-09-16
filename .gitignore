@@ -12,6 +12,10 @@ backend/data/*.db
 backend/data/*.db-wal
 backend/data/*.db-shm
 
+# 前端构建产物被拷到后端时的位置（Docker 构建时才生成）
+backend/static/
+data/
+
 # Node / 前端
 node_modules/
 dist/

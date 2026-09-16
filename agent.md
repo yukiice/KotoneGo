@@ -27,17 +27,20 @@
 ```
 KotoneGo/
 ├── agent.md                      # ← 你正在读的文件
-├── README.md                     # 人类快速上手
-├── .gitignore
+├── README.md                     # 人类快速上手（含 Docker 部署）
+├── .gitignore / .dockerignore
+├── Dockerfile                    # 多阶段：Node 打包前端 → Python 运行时单容器
+├── docker-compose.yml            # 单服务 + 命名卷 + 内存/日志限制 + 健康检查
 ├── backend/                      # FastAPI + SQLite（Python 3.11+）
 │   ├── requirements.txt
+│   ├── static/                   # 前端构建产物（由 Docker 拷入，git 忽略；本地开发不存在）
 │   ├── app/
-│   │   ├── config.py             # 路径、题量、分值、CORS 等配置
+│   │   ├── config.py             # 路径、题量、分值、CORS、STATIC_DIR
 │   │   ├── db.py                 # sqlite3 建表 + 连接（表结构定义在这里）
 │   │   ├── question_bank.py      # 题库加载 + 严格校验 + 主题中文名
 │   │   ├── schemas.py            # Pydantic 请求/响应模型
 │   │   ├── service.py            # 业务逻辑：抽题、判分、错题本、统计
-│   │   ├── main.py               # FastAPI 入口 + 元信息接口
+│   │   ├── main.py               # FastAPI 入口 + 元信息接口 + 前端静态托管
 │   │   └── routers/
 │   │       ├── exams.py          # /api/exams/*
 │   │       └── stats.py          # /api/wrong-questions、/api/stats
@@ -61,6 +64,8 @@ KotoneGo/
 设计取舍（有意为之，别轻易改）：
 
 - **后端用标准库 `sqlite3` 而不是 ORM**：依赖少、SQL 直接可读，方便初学者/Agent 直接改。
+- **生产只有一个进程**：`uvicorn --workers 1` 同时提供 API 与前端静态文件（`backend/static`），
+  没有 nginx、没有 Postgres、没有容器编排，1 核 512MB 机器实测空闲占用 36MB。
 - **前端不引入 UI 框架**：一个 `global.css` 搞定，移动端断点在 960px / 640px。
 - **文档放前端仓库、题目放后端**：文档变化不影响 API；题目变化不影响构建产物，改完热加载即可。
 - **答案不在试卷下发**：创建考试时只返回题干与选项；作答后由后端返回答案与解析（防止“翻源码看答案”）。
@@ -90,6 +95,26 @@ cd backend  && python3 scripts/validate_questions.py   # 题库格式（改题�
 cd backend  && .venv/bin/python scripts/smoke_test.py  # 端到端流程（需后端已启动）
 cd frontend && npx tsc -b                              # 类型检查
 cd frontend && npm run build                           # 生产构建
+```
+
+### Docker / 生产模式（单容器，前端由后端托管）
+
+```bash
+docker compose up -d --build      # 构建 + 启动 → http://localhost:8000
+docker compose logs -f kotonego   # 日志
+docker compose exec kotone sh     # 进容器（数据库在 /data/kotone.db）
+docker compose down               # 停止（数据留在命名卷 kotone-data）
+```
+
+- 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
+  静态资源 + SPA catch-all 路由，因此**同一个进程既能跑 API 又能跑网站**。
+- 因此改前端/改后端代码都需要重新构建镜像；只有改题库 JSON 可以挂卷 + `POST /api/questions/reload` 热更新。
+- 想本地模拟生产模式，不必装 Docker：
+
+```bash
+cd frontend && npm run build
+rm -rf ../backend/static && cp -r dist ../backend/static
+cd ../backend && .venv/bin/uvicorn app.main:app --port 8000   # 打开 http://127.0.0.1:8000
 ```
 
 环境变量（后端，全部可选）：
@@ -126,7 +151,7 @@ wrong_questions(question_id PK, topic, wrong_count, last_selected, first_wrong_a
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/health` | 健康检查 + 题库数量 |
+| GET | `/api/health` | 健康检查 + 题库数量（Docker healthcheck 用它） |
 | GET | `/api/meta` | 题库总量、默认题量、主题列表（含每个主题题数） |
 | POST | `/api/questions/reload` | 重新加载题库 JSON（改完题目免重启） |
 | POST | `/api/exams` | 创建考试 `{size, topics[], difficulty, only_wrong}` → 题目**不含答案** |
@@ -282,7 +307,15 @@ cd frontend && npm run build
 7. **前端 `import.meta.glob` 是 eager 的**：18 章文档会进主 bundle（约 220KB gzip）。
    若文档数量大增，改成懒加载：`import.meta.glob('./docs/*.md', { query: '?long' ... })` 并用 `React.lazy`
    或 `useEffect` 动态 `import()`。
-8. **Python 版本要求 3.11+**（用了 `X | None`、`match`、`tomllib` 等）；`tomllib` 是 3.11 才进标准库。
+8. **Python 版本要求 3.11+**（用了 `X | None`、`match`、`tomllib` 等）；容器里固定为 `python:3.12-slim`。
+9. **Swagger 文档在 `/api/docs` 而不是 `/docs`**：`/docs` 已经被站内的「语法文档」页面占用
+   （单容器部署时前端路由和后端路由同一个域名）。新增路由时别再用 `/docs`、`/redoc`。
+10. **静态托管是条件性的**：`backend/static` 不存在时不注册 catch-all 路由（本地开发/测试行为不变）。
+   不要在 `backend/app/` 里引用 `frontend/src` 的任何东西。
+11. **容器内以 non-root（uid 10001）运行**：把宿主目录 bind mount 到 `/data` 时要
+    `sudo chown -R 10001:10001 <目录>`，否则写库报 `unable to open database file`；
+   用命名卷（默认）没有这个问题。
+12. **不要给容器加 `--reload` 或 `--workers >1`**：SQLite 单写者 + 小内存，多 worker 只会增加内存且有写锁竞争。
 
 ---
 
@@ -296,8 +329,8 @@ cd frontend && npm run build
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
 5. **题目质量反馈**：对每道题支持「这题有问题」上报（新表 `question_reports`）。
 6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
-7. **部署**：`npm run build` 后由 FastAPI 直接托管 `frontend/dist`（`StaticFiles`），单进程即可上线；
-   或前端 Vercel + 后端 Fly.io，注意设置 `KOTONE_CORS_ORIGINS`。
+7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
+   每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
 8. **测试**：把 `scripts/smoke_test.py` 升级成 pytest，覆盖抽题边界（题量不足、错题池为空）。
 
 ---

@@ -46,6 +46,87 @@ cd frontend && npm run build      # 产物在 frontend/dist
 
 ---
 
+## Docker 部署（推荐上服务器）
+
+**单容器 = FastAPI 接口 + 前端静态文件 + SQLite**，不需要 nginx、不需要额外数据库、不需要 Node 运行时。
+
+```bash
+docker compose up -d --build     # 构建并启动，访问 http://<服务器IP>:8000
+docker compose logs -f           # 看日志
+docker compose down              # 停止（数据保留在命名卷里）
+```
+
+| 项目 | 实测 |
+| --- | --- |
+| 镜像大小 | 271 MB（多阶段构建，Node 不进最终镜像） |
+| 空闲内存 | **36 MB / 上限 320 MB**（`docker stats` 实测） |
+| 启动时间 | 约 2 秒，健康检查自动通过 |
+| 端口 | 8000（`KOTONE_PORT=8080 docker compose up -d` 可改） |
+
+- 整站：`http://<host>:8000`；接口文档：`http://<host>:8000/api/docs`
+- 数据库：命名卷 `kotone-data` 里的 `/data/kotone.db`；题库打进镜像
+- 前端产物由后端托管，已开 gzip（主包 650KB → 220KB）与长缓存；**不要再另外起 nginx 或 `npm run dev`**
+
+### 数据备份 / 恢复
+
+```bash
+# 备份（导出成一个 .db 文件）
+docker compose exec -T kotone sh -c 'cat /data/kotone.db' > kotone-$(date +%F).db
+
+# 恢复（先停服务再覆盖，避免 WAL 不一致）
+docker compose stop
+docker compose run --rm -T kotone sh -c 'cat > /data/kotone.db' < kotone-2025-01-01.db
+docker compose start
+
+# 导出错题本为 CSV（宿主机装了 sqlite3）
+docker compose exec -T kotone sh -c 'cat /data/kotone.db' | sqlite3 -header -csv /dev/stdin \
+  "SELECT * FROM wrong_questions;" > 错题本.csv
+```
+
+### 改题目 / 改文档后怎么生效
+
+| 改了什么 | 怎么生效 |
+| --- | --- |
+| 题库 JSON（`backend/data/questions/`） | `docker compose up -d --build`；或挂载目录后 `curl -X POST localhost:8000/api/questions/reload` |
+| 前端文档 / 页面（`frontend/`） | `docker compose up -d --build`（静态文件在镜像里） |
+| 后端代码（`backend/app/`） | `docker compose up -d --build` |
+
+不想每次重新构建镜像改题目，就在 `docker-compose.yml` 里放开这行，然后在服务器上直接编辑 JSON：
+
+```yaml
+    volumes:
+      - ./backend/data/questions:/app/backend/data/questions:ro
+```
+
+### 内存不够时怎么调
+
+```yaml
+# docker-compose.yml
+    mem_limit: 256m        # 数据库和题库都不大，256m 足够；再低可试 192m
+    cpus: 0.5              # 单核小机器可限到 0.5
+```
+
+```dockerfile
+# Dockerfile：用「非 uvloop」的精简运行时，可再省约 20MB 镜像
+RUN pip install fastapi 'uvicorn>=0.30' pydantic
+```
+
+> SQLite 单文件 + 单进程（`--workers 1`）就是本项目的部署形态：没有连接池、没有额外内存开销，1 核 512MB 的机器跑起来毫无压力。
+
+### HTTPS / 域名
+
+项目不内置证书。在宿主机上用 Caddy（最简）或 Nginx 反代到 `127.0.0.1:8000` 即可，同时把 compose 的端口改成 `127.0.0.1:8000:8000` 不对外暴露。Caddy 两行配置：
+
+```
+learn.example.com {
+    reverse_proxy 127.0.0.1:8000
+}
+```
+
+单容器内前后端同源，因此不需要配置 CORS。
+
+---
+
 ## 功能一览
 
 | 页面 | 路径 | 说明 |
@@ -82,6 +163,11 @@ curl -X POST http://127.0.0.1:8000/api/questions/reload
 
 # 前端类型检查 / 构建
 cd frontend && npx tsc -b && npm run build
+
+# Docker：构建 + 启动 / 查看状态与内存 / 停止
+docker compose up -d --build
+docker stats --no-stream kotonego
+docker compose down
 ```
 
 ---
@@ -90,7 +176,7 @@ cd frontend && npx tsc -b && npm run build
 
 ```
 backend/                 FastAPI + SQLite
-  app/                   config / db / question_bank / schemas / service / routers
+  app/                   config / db / question_bank / schemas / service / routers / main
   data/questions/*.json  题库，一个主题一个文件
   scripts/               题库校验、冒烟测试
 frontend/                React + TS + Vite
@@ -99,6 +185,9 @@ frontend/                React + TS + Vite
   src/pages/             首页 / 文档 / 考试 / 成绩 / 记录 / 错题本 / 统计
   src/components/        Layout / Markdown / QuestionCard / ui
   src/styles/global.css  全部样式（CSS 变量 + 响应式断点）
+Dockerfile               多阶段构建：Node 打包前端 → Python 运行时单容器
+.dockerignore            构建上下文瘦身
+docker-compose.yml       单服务 + 命名卷 + 内存/日志限制 + 健康检查
 agent.md                 开发指南：怎么加题、加章节、扩展接口（**动手前先读**）
 ```
 
