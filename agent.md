@@ -29,6 +29,7 @@ KotoneGo/
 ├── agent.md                      # ← 你正在读的文件
 ├── README.md                     # 人类快速上手（含 Docker 部署）
 ├── .gitignore / .dockerignore
+├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE（复制成 .env）
 ├── Dockerfile                    # 多阶段：Node 打包前端 → Python 运行时单容器
 ├── docker-compose.yml            # 单服务 + 命名卷 + 内存/日志限制 + 健康检查
 ├── backend/                      # FastAPI + SQLite（Python 3.11+）
@@ -80,7 +81,8 @@ cd backend
 python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
-# 接口文档：http://127.0.0.1:8000/docs
+# 接口文档：http://127.0.0.1:8000/api/docs
+# （Swagger 挂在 /api 下，因为单容器部署时 /docs 被站内语法文档页占用了）
 
 # 前端（终端 2）
 cd frontend
@@ -100,11 +102,16 @@ cd frontend && npm run build                           # 生产构建
 ### Docker / 生产模式（单容器，前端由后端托管）
 
 ```bash
-docker compose up -d --build      # 构建 + 启动 → http://localhost:8000
-docker compose logs -f kotonego   # 日志
+cp .env.example .env              # 可选：在里面改 KOTONE_PORT（默认 8010）等
+docker compose up -d --build      # 构建 + 启动 → http://localhost:8010
+docker compose logs -f kotone     # 日志（service 名是 kotone）
 docker compose exec kotone sh     # 进容器（数据库在 /data/kotone.db）
 docker compose down               # 停止（数据留在命名卷 kotone-data）
 ```
+
+端口约定：**容器内部永远是 8000**（Dockerfile CMD 里写死），对外端口由根目录 `.env` 的
+`KOTONE_PORT`（默认 8010）决定；`KOTONE_BIND` 控制监听地址（默认 `0.0.0.0`，填 `127.0.0.1` 则只允许本机访问）。
+改端口不需要重新构建镜像，`docker compose up -d` 即可。
 
 - 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
   静态资源 + SPA catch-all 路由，因此**同一个进程既能跑 API 又能跑网站**。

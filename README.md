@@ -24,7 +24,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-- 接口文档（Swagger）：<http://127.0.0.1:8000/docs>
+- 接口文档（Swagger）：<http://127.0.0.1:8000/api/docs>（注意不是 `/docs`，`/docs` 留给站内的语法文档页）
 - 数据库文件：`backend/data/kotone.db`（首次启动自动创建）
 - 题库：`backend/data/questions/*.json`
 
@@ -51,9 +51,10 @@ cd frontend && npm run build      # 产物在 frontend/dist
 **单容器 = FastAPI 接口 + 前端静态文件 + SQLite**，不需要 nginx、不需要额外数据库、不需要 Node 运行时。
 
 ```bash
-docker compose up -d --build     # 构建并启动，访问 http://<服务器IP>:8000
-docker compose logs -f           # 看日志
-docker compose down              # 停止（数据保留在命名卷里）
+cp .env.example .env            # 端口等配置写在这里（可跳过，用默认值）
+docker compose up -d --build    # 构建并启动
+docker compose logs -f          # 看日志
+docker compose down             # 停止（数据保留在命名卷里）
 ```
 
 | 项目 | 实测 |
@@ -61,10 +62,34 @@ docker compose down              # 停止（数据保留在命名卷里）
 | 镜像大小 | 271 MB（多阶段构建，Node 不进最终镜像） |
 | 空闲内存 | **36 MB / 上限 320 MB**（`docker stats` 实测） |
 | 启动时间 | 约 2 秒，健康检查自动通过 |
-| 端口 | 8000（`KOTONE_PORT=8080 docker compose up -d` 可改） |
+| 宿主机端口 | **默认 8010**（避开常用的 8000，可改，见下） |
 
-- 整站：`http://<host>:8000`；接口文档：`http://<host>:8000/api/docs`
+- 整站：`http://<host>:8010`；接口文档：`http://<host>:8010/api/docs`
 - 数据库：命名卷 `kotone-data` 里的 `/data/kotone.db`；题库打进镜像
+- 容器内部监听始终是 8000，**只改宿主机映射的端口**，不用动 Dockerfile
+
+### 改端口
+
+```bash
+# 方式一（推荐，改一次永久生效）：项目根目录
+cp .env.example .env
+echo 'KOTONE_PORT=9000' >> .env      # 换成服务器上确认空闲的端口
+docker compose up -d                  # 重建容器，端口立即生效
+
+# 方式二（一次性）：
+KOTONE_PORT=9000 docker compose up -d
+
+# 检查端口是否空闲
+ss -ltnp | grep :9000     # 没有输出就是空闲的
+```
+
+可用的环境变量（都写在根目录 `.env` 里）：
+
+| 变量 | 默认 | 说明 |
+| --- | --- | --- |
+| `KOTONE_PORT` | `8010` | 宿主机映射端口 |
+| `KOTONE_BIND` | `0.0.0.0` | 改成 `127.0.0.1` 则只允许本机访问（前面挂反代时用） |
+| `KOTONE_EXAM_SIZE` | `10` | 每场考试抽题数 |
 - 前端产物由后端托管，已开 gzip（主包 650KB → 220KB）与长缓存；**不要再另外起 nginx 或 `npm run dev`**
 
 ### 数据备份 / 恢复
@@ -87,7 +112,7 @@ docker compose exec -T kotone sh -c 'cat /data/kotone.db' | sqlite3 -header -csv
 
 | 改了什么 | 怎么生效 |
 | --- | --- |
-| 题库 JSON（`backend/data/questions/`） | `docker compose up -d --build`；或挂载目录后 `curl -X POST localhost:8000/api/questions/reload` |
+| 题库 JSON（`backend/data/questions/`） | `docker compose up -d --build`；或挂载目录后 `curl -X POST localhost:8010/api/questions/reload` |
 | 前端文档 / 页面（`frontend/`） | `docker compose up -d --build`（静态文件在镜像里） |
 | 后端代码（`backend/app/`） | `docker compose up -d --build` |
 
@@ -115,11 +140,11 @@ RUN pip install fastapi 'uvicorn>=0.30' pydantic
 
 ### HTTPS / 域名
 
-项目不内置证书。在宿主机上用 Caddy（最简）或 Nginx 反代到 `127.0.0.1:8000` 即可，同时把 compose 的端口改成 `127.0.0.1:8000:8000` 不对外暴露。Caddy 两行配置：
+项目不内置证书。让容器只监听本机（`.env` 里 `KOTONE_BIND=127.0.0.1`），再用宿主机的 Caddy（最简）或 Nginx 反代到 `127.0.0.1:8010`。Caddy 两行配置：
 
 ```
 learn.example.com {
-    reverse_proxy 127.0.0.1:8000
+    reverse_proxy 127.0.0.1:8010
 }
 ```
 
