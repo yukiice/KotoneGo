@@ -1,0 +1,364 @@
+{
+  "topic": "collections",
+  "label": "列表/元组/字典/集合",
+  "questions": [
+    {
+      "id": "coll-01", "topic": "collections", "difficulty": "easy",
+      "question": "列表 a = [1, 2, 3]，len(a) 和 a[-1] 分别是？",
+      "options": { "A": "3 / 3", "B": "2 / 3", "C": "3 / 2", "D": "4 / 3" },
+      "answer": "A",
+      "explanation": "len 返回元素个数 3；负索引 -1 取最后一个元素 3。",
+      "distractors": {
+        "B": "len([1,2,3]) 是 3。",
+        "C": "a[-1] 是最后一个元素 3。",
+        "D": "长度不是 4。"
+      },
+      "knowledge": ["list", "len()", "负索引"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-02", "topic": "collections", "difficulty": "easy",
+      "question": "向列表末尾追加一个元素应使用？",
+      "options": { "A": "a.push(x)", "B": "a.append(x)", "C": "a.add(x)", "D": "a.insert(x)" },
+      "answer": "B",
+      "explanation": "list.append(x) 在末尾追加一个元素；push 是 JS 的写法。",
+      "distractors": {
+        "A": "Python 的 list 没有 push 方法。",
+        "C": "add 是 set 的方法（加一个元素）。",
+        "D": "insert 需要两个参数 insert(i, x)，只传一个会报 TypeError。"
+      },
+      "knowledge": ["append", "insert", "extend", "与 JS push 对比"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-03", "topic": "collections", "difficulty": "medium",
+      "question": "a = [1, 2]; a.append([3, 4]) 之后 a 是？",
+      "options": { "A": "[1, 2, 3, 4]", "B": "[1, 2, [3, 4]]", "C": "[1, 2, (3, 4)]", "D": "报错" },
+      "answer": "B",
+      "explanation": "append 把参数当作“一个元素”整体加入，所以嵌套了一层；要展开合并应用 extend 或 +。",
+      "distractors": {
+        "A": "那是 extend([3, 4]) 或 a += [3, 4] 的结果。",
+        "C": "不会自动转成元组。",
+        "D": "把列表作为元素追加是合法的。"
+      },
+      "knowledge": ["append vs extend", "嵌套列表"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-04", "topic": "collections", "difficulty": "medium",
+      "question": "a = [1, 2, 3]; a.pop() 与 a.pop(0) 分别返回？",
+      "options": {
+        "A": "3 / 1，并同时从列表中删除",
+        "B": "1 / 3，但不删除",
+        "C": "3 / 1，但不删除",
+        "D": "都返回 None"
+      },
+      "answer": "A",
+      "explanation": "pop() 删除并返回元素：不带参数删末尾（效率 O(1)），带索引删指定位置（头部为 O(n)）。",
+      "distractors": {
+        "B": "pop() 默认删末尾，且会真正删除。",
+        "C": "pop 会修改原列表。",
+        "D": "pop 返回被删除的元素，remove 才返回 None。"
+      },
+      "knowledge": ["pop", "remove", "del 语句", "时间复杂度"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-05", "topic": "collections", "difficulty": "medium",
+      "question": "移除列表中“值为 2”的元素，正确写法是？",
+      "options": { "A": "a.remove(2)", "B": "a.delete(2)", "C": "a.pop(2)", "D": "del a[2]" },
+      "answer": "A",
+      "explanation": "remove(x) 按值删除第一个匹配项；pop(i)/del a[i] 都是按索引删除。",
+      "distractors": {
+        "B": "list 没有 delete 方法。",
+        "C": "pop(2) 删的是索引 2 的元素，不是值为 2 的元素。",
+        "D": "del a[2] 同样是按索引删除。"
+      },
+      "knowledge": ["remove 按值", "pop/del 按索引", "ValueError"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-06", "topic": "collections", "difficulty": "medium",
+      "question": "a = [3, 1, 2]; a.sort(); 之后 a 是？",
+      "options": { "A": "[1, 2, 3]", "B": "[3, 2, 1]", "C": "None", "D": "不变，sort 返回新列表" },
+      "answer": "A",
+      "explanation": "list.sort() 原地排序并返回 None；sorted(a) 返回新列表且不改原数据。",
+      "distractors": {
+        "B": "默认升序。",
+        "C": "a 被排序为 [1,2,3]；容易踩的坑是 b = a.sort() 会让 b 变成 None。",
+        "D": "sort 是就地修改，不返回新列表。"
+      },
+      "knowledge": ["sort vs sorted", "返回 None 的坑", "reverse/key 参数"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-07", "topic": "collections", "difficulty": "hard",
+      "question": "a = [[0] * 2] * 3 然后 a[0][0] = 1，a 会变成？",
+      "options": {
+        "A": "[[1, 0], [0, 0], [0, 0]]",
+        "B": "[[1, 0], [1, 0], [1, 0]]",
+        "C": "报错",
+        "D": "[[1, 0], [0, 0], [0, 0]] 且原列表被复制"
+      },
+      "answer": "B",
+      "explanation": "[x] * 3 重复的是同一个子列表的引用，所以改一个全都变；正确做法是 [[0]*2 for _ in range(3)]。",
+      "distractors": {
+        "A": "这只在子列表互相独立时成立，* 复制的是引用。",
+        "C": "语法合法，结果出乎意料但不报错。",
+        "D": "D 与 A 内容相同，但解释错误：并没有发生深拷贝。"
+      },
+      "knowledge": ["可变对象引用", "浅拷贝", "列表推导式构造二维数组"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-08", "topic": "collections", "difficulty": "medium",
+      "question": "d = {\"a\": 1}，取不存在的键 \"b\" 时不会报错的写法是？",
+      "options": { "A": "d[\"b\"]", "B": "d.get(\"b\")", "C": "d.get(\"b\", 0) 和 d[\"b\"] 都不报错", "D": "d.fetch(\"b\")" },
+      "answer": "B",
+      "explanation": "dict.get(key, default) 在键不存在时返回默认值（默认 None），不抛 KeyError。",
+      "distractors": {
+        "A": "d[\"b\"] 会抛 KeyError。",
+        "C": "d[\"b\"] 一定会抛 KeyError。",
+        "D": "dict 没有 fetch 方法。"
+      },
+      "knowledge": ["dict.get", "KeyError", "default 参数"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-09", "topic": "collections", "difficulty": "medium",
+      "question": "统计列表中每个元素出现次数，最惯用的写法是？",
+      "options": {
+        "A": "from collections import Counter; Counter(items)",
+        "B": "items.count(x) 对每个 x 调用一次即可高效完成",
+        "C": "手写 O(n²) 双重循环是唯一方式",
+        "D": "用 set(items).length"
+      },
+      "answer": "A",
+      "explanation": "collections.Counter 是专为计数设计的字典子类，一行即可得到频次表，且支持 most_common()。",
+      "distractors": {
+        "B": "每个元素都扫一遍列表是 O(n²)，只适合一次性查询。",
+        "C": "可以有更优解。",
+        "D": "set 只能去重，长度是“不同元素个数”，不是频次。"
+      },
+      "knowledge": ["collections.Counter", "defaultdict", "复杂度意识"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-10", "topic": "collections", "difficulty": "easy",
+      "question": "遍历字典时同时拿到键和值，推荐写法是？",
+      "options": { "A": "for k in d: v = d[k]", "B": "for k, v in d.items():", "C": "for k, v in d:", "D": "for (k, v) in d.keys():" },
+      "answer": "B",
+      "explanation": "d.items() 返回 (key, value) 二元组的视图，可直接解包，最清晰也最常用。",
+      "distractors": {
+        "A": "可行但多一次查表，不如 items() 直观。",
+        "C": "直接迭代 dict 只会得到键，解包会报错（除非键本身长度是 2）。",
+        "D": "keys() 只给键，无法解包出值。"
+      },
+      "knowledge": ["items()", "keys()/values()", "解包"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-11", "topic": "collections", "difficulty": "easy",
+      "question": "元组 t = (1, 2, 3) 与列表最大的区别是？",
+      "options": {
+        "A": "元组不能索引",
+        "B": "元组不可变，且可哈希（元素都可哈希时可作 dict 键）",
+        "C": "元组只能存数字",
+        "D": "元组没有 len()"
+      },
+      "answer": "B",
+      "explanation": "tuple 创建后不能修改，因此可哈希、可作字典键，也更省内存。",
+      "distractors": {
+        "A": "元组完全支持索引和切片。",
+        "C": "元组可以存任意类型。",
+        "D": "len() 对元组同样适用。"
+      },
+      "knowledge": ["tuple 不可变", "可哈希", "内存与性能"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-12", "topic": "collections", "difficulty": "medium",
+      "question": "只有一个元素的元组，正确写法是？",
+      "options": { "A": "(1)", "B": "(1,)", "C": "[1]", "D": "tuple(1)" },
+      "answer": "B",
+      "explanation": "必须有尾随逗号，(1) 只是带括号的整数 1，类型是 int；(1,) 才是 tuple。",
+      "distractors": {
+        "A": "type((1)) 是 int。",
+        "C": "[1] 是列表。",
+        "D": "tuple(1) 会报 TypeError，因为 1 不可迭代。"
+      },
+      "knowledge": ["单元素元组逗号", "type() 验证"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-13", "topic": "collections", "difficulty": "medium",
+      "question": "a, b = 1, 2 这种写法叫什么？",
+      "options": { "A": "解构赋值 / 可迭代对象解包", "B": "类型断言", "C": "链式赋值", "D": "隐式转换" },
+      "answer": "A",
+      "explanation": "可迭代对象解包（unpacking）按位置赋值，也可写成 a, b = b, a 交换变量，非常常用。",
+      "distractors": {
+        "B": "类型断言是 typing 里 cast/assert 相关的概念。",
+        "C": "链式赋值是 a = b = 0。",
+        "D": "隐式转换指类型自动变化。"
+      },
+      "knowledge": ["解包", "交换变量", "*rest 收集剩余"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-14", "topic": "collections", "difficulty": "medium",
+      "question": "first, *rest = [1, 2, 3, 4] 的结果是？",
+      "options": {
+        "A": "first=1, rest=[2, 3, 4]",
+        "B": "报错，星号不能这样用",
+        "C": "first=[1], rest=[2,3,4]",
+        "D": "first=1, rest=(2,3,4)"
+      },
+      "answer": "A",
+      "explanation": "带星号的名字会收集剩余元素，且总是得到 list。",
+      "distractors": {
+        "B": "这是合法的扩展解包语法（PEP 3132）。",
+        "C": "first 是单个元素 1，不是列表。",
+        "D": "rest 的类型固定是 list。"
+      },
+      "knowledge": ["扩展解包 *rest", "list 类型"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-15", "topic": "collections", "difficulty": "easy",
+      "question": "s = {1, 2, 2, 3} 中 s 的元素个数是？",
+      "options": { "A": "4", "B": "3", "C": "2", "D": "报错，集合不能有重复" },
+      "answer": "B",
+      "explanation": "set 自动去重且无序，{1, 2, 2, 3} 等价于 {1, 2, 3}，长度为 3。",
+      "distractors": {
+        "A": "重复的 2 会被合并。",
+        "C": "去掉重复后是 1、2、3 三个。",
+        "D": "允许写重复字面量，只是会去重。"
+      },
+      "knowledge": ["set 去重", "无序性"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-16", "topic": "collections", "difficulty": "medium",
+      "question": "集合运算 a & b、a | b、a - b 分别表示？",
+      "options": {
+        "A": "交集 / 并集 / 差集",
+        "B": "并集 / 交集 / 对称差",
+        "C": "与 / 或 / 非",
+        "D": "按位运算，与集合无关"
+      },
+      "answer": "A",
+      "explanation": "set 重载了位运算符：& 交集、| 并集、- 差集、^ 对称差；也有对应方法 intersection/union/difference。",
+      "distractors": {
+        "B": "顺序不对：& 是交集。",
+        "C": "集合运算没有“非”的含义。",
+        "D": "对 set 来说这些就是集合运算。"
+      },
+      "knowledge": ["集合运算", "intersection/union/difference", "对称差 ^"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-17", "topic": "collections", "difficulty": "medium",
+      "question": "创建一个空集合的写法是？",
+      "options": { "A": "{}", "B": "set()", "C": "[]", "D": "set([]) 与 {} 等价" },
+      "answer": "B",
+      "explanation": "{} 创建的是空字典，空集合只能用 set()；空列表是 []，空元组是 ()。",
+      "distractors": {
+        "A": "type({}) 是 dict。",
+        "C": "[] 是空列表。",
+        "D": "set([]) 也是空集合，但 {} 是空字典，二者不等价。"
+      },
+      "knowledge": ["空集合 set()", "{} 是 dict"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-18", "topic": "collections", "difficulty": "hard",
+      "question": "b = a 与 b = a.copy()（a 是列表）的区别是？",
+      "options": {
+        "A": "两者完全一样",
+        "B": "b = a 只是别名（同一个对象）；a.copy() 是浅拷贝，新列表但内部可变元素仍共享",
+        "C": "a.copy() 是深拷贝，内部元素也完全独立",
+        "D": "b = a 会复制列表内容"
+      },
+      "answer": "B",
+      "explanation": "赋值只绑定同一个对象（可用 id() 验证），copy()/切片 [:] 生成新列表，但嵌套的可变对象仍共用引用；完全独立要用 copy.deepcopy()。",
+      "distractors": {
+        "A": "修改 a 的元素会影响 b，用 copy 则不会（对第一层而言）。",
+        "C": "深拷贝需要 copy.deepcopy。",
+        "D": "Python 赋值从不需要复制对象，只增加引用。"
+      },
+      "knowledge": ["引用语义", "浅拷贝 vs 深拷贝", "copy.deepcopy"],
+      "doc": "06-collections", "tags": ["pitfall"]
+    },
+    {
+      "id": "coll-19", "topic": "collections", "difficulty": "medium",
+      "question": "想把 [\"a\", \"b\"] 和 (1, 2) 合并成一个列表，最简单的写法是？",
+      "options": { "A": "[\"a\",\"b\"] + list((1,2))", "B": "[\"a\",\"b\"] + (1,2)", "C": "[\"a\",\"b\"].extend((1,2)) 并赋值给新变量", "D": "两者都无法合并" },
+      "answer": "A",
+      "explanation": "list + tuple 会抛 TypeError（类型必须一致），需要先 list(...) 转换；或者用 list(...) + list(...)、[*a, *b]。",
+      "distractors": {
+        "B": "list 与 tuple 不能直接用 + 相加。",
+        "C": "extend 是原地修改且返回 None，不能“赋值给新变量”得到合并结果。",
+        "D": "完全可以合并，只是要保证类型一致或使用解包。"
+      },
+      "knowledge": ["序列相加的类型限制", "* 解包合并", "extend 返回 None"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-20", "topic": "collections", "difficulty": "medium",
+      "question": "dict 的 keys() 返回值在 Python 3 中是？",
+      "options": {
+        "A": "一个列表，可以直接索引",
+        "B": "一个视图对象（view），可迭代、支持 in 判断，但不是列表",
+        "C": "一个元组",
+        "D": "一个集合"
+      },
+      "answer": "B",
+      "explanation": "keys()/values()/items() 返回动态视图：字典变化会反映到视图上，且不支持下标访问，需要列表时用 list(d.keys())。",
+      "distractors": {
+        "A": "视图不支持 d.keys()[0]，会报 TypeError。",
+        "C": "不是元组。",
+        "D": "keys 视图类似集合但类型是 dict_keys。"
+      },
+      "knowledge": ["视图对象", "list(d.keys())", "Python 2 返回列表"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-21", "topic": "collections", "difficulty": "medium",
+      "question": "d.setdefault(\"count\", 0) 的作用是？",
+      "options": {
+        "A": "如果键不存在就设成 0，并返回该键当前的值",
+        "B": "删除键 count",
+        "C": "只返回值，不修改字典",
+        "D": "把 count 设为 0，无论是否存在"
+      },
+      "answer": "A",
+      "explanation": "setdefault 在键缺失时写入默认值并返回它，存在时直接返回现有值，常用于分组累加。",
+      "distractors": {
+        "B": "删除用 pop 或 del。",
+        "C": "键不存在时确实会修改字典。",
+        "D": "键已存在时不会覆盖原值。"
+      },
+      "knowledge": ["setdefault", "与 defaultdict 对比", "分组累加"],
+      "doc": "06-collections"
+    },
+    {
+      "id": "coll-22", "topic": "collections", "difficulty": "hard",
+      "question": "要对字典按值排序并取出前 3 名，最合适的写法是？",
+      "options": {
+        "A": "sorted(d.items(), key=lambda kv: kv[1], reverse=True)[:3]",
+        "B": "d.sort()[:3]",
+        "C": "sorted(d)[:3]",
+        "D": "d.items().sort()[:3]"
+      },
+      "answer": "A",
+      "explanation": "sorted 接受 key 函数：kv[1] 表示按值排序；reverse=True 降序；切片取前 3。d.items() 是视图，没有 sort 方法。",
+      "distractors": {
+        "B": "dict 没有 sort 方法，sorted(d) 默认按键排序。",
+        "C": "默认按键（字符串）排序，不是按值。",
+        "D": "视图对象没有 sort 方法。"
+      },
+      "knowledge": ["sorted(key=...)", "lambda", "dict 排序技巧"],
+      "doc": "06-collections"
+    }
+  ]
+}

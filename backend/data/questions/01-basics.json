@@ -1,0 +1,292 @@
+{
+  "topic": "basics",
+  "label": "基础语法与变量",
+  "questions": [
+    {
+      "id": "basics-01", "topic": "basics", "difficulty": "easy",
+      "question": "在 Python 3 中，把文本输出到屏幕的正确写法是？",
+      "options": { "A": "print(\"hello\")", "B": "console.log(\"hello\")", "C": "echo \"hello\"", "D": "printf(\"hello\")" },
+      "answer": "A",
+      "explanation": "Python 内置 print() 函数负责输出，参数会自动转成字符串并用空格分隔。",
+      "distractors": {
+        "B": "console.log 是 JavaScript 的写法（Node.js / 浏览器）。",
+        "C": "echo 是 Shell 命令，不是 Python 函数。",
+        "D": "printf 是 C 语言函数，Python 里没有这个名字的内置函数。"
+      },
+      "knowledge": ["内置函数 print()", "Python 与 JS 的输出差异"],
+      "doc": "02-syntax-basics", "tags": ["hello-world"]
+    },
+    {
+      "id": "basics-02", "topic": "basics", "difficulty": "easy",
+      "question": "下面这段代码会怎样执行？\n\nif True:\nprint(\"hi\")",
+      "options": {
+        "A": "正常打印 hi",
+        "B": "报 IndentationError（缩进错误）",
+        "C": "打印空行",
+        "D": "SyntaxError，因为 if 后面不能直接写 True"
+      },
+      "answer": "B",
+      "explanation": "Python 用缩进表示代码块，属于 if 的语句必须比 if 多缩进一级，否则抛出 IndentationError。",
+      "distractors": {
+        "A": "没有缩进时这一行不属于 if 的代码块，解释器会直接报错。",
+        "C": "报的是缩进错误，不会执行成功。",
+        "D": "if True: 本身完全合法，问题出在缩进。"
+      },
+      "knowledge": ["缩进即代码块", "IndentationError"],
+      "doc": "02-syntax-basics", "tags": ["indent"]
+    },
+    {
+      "id": "basics-03", "topic": "basics", "difficulty": "easy",
+      "question": "Python 中单行注释使用哪个符号？",
+      "options": { "A": "#", "B": "//", "C": "/* */", "D": "--" },
+      "answer": "A",
+      "explanation": "# 后面的内容到行尾都是注释，解释器会忽略。",
+      "distractors": {
+        "B": "// 在 Python 里是整数除法运算符，不是注释。",
+        "C": "/* */ 是 C/Java/JS 的块注释，Python 没有这种语法。",
+        "D": "-- 是 SQL 的注释，Python 里会报语法错误。"
+      },
+      "knowledge": ["注释 #", "三引号文档字符串"], "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-04", "topic": "basics", "difficulty": "easy",
+      "question": "关于 Python 变量，下列说法正确的是？",
+      "options": {
+        "A": "必须先声明类型，例如 int x = 1",
+        "B": "直接赋值即可使用，例如 x = 1，类型由值决定",
+        "C": "必须使用 let 或 const 声明",
+        "D": "变量一旦赋值，类型就不能改变"
+      },
+      "answer": "B",
+      "explanation": "Python 是动态类型语言，赋值语句同时完成“创建变量 + 绑定值”，类型跟着值走。",
+      "distractors": {
+        "A": "Python 不需要（也不支持）声明类型，只写 x = 1。",
+        "C": "let/const 是 JavaScript 的关键字。",
+        "D": "变量可以重新绑定成别的类型，如 x = 1 之后 x = \"a\" 是合法的。"
+      },
+      "knowledge": ["动态类型", "变量是名字不是盒子"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-05", "topic": "basics", "difficulty": "easy",
+      "question": "下面哪个变量名在 Python 中是非法的？",
+      "options": { "A": "_count", "B": "user2", "C": "2user", "D": "user_name" },
+      "answer": "C",
+      "explanation": "标识符不能以数字开头，所以 2user 非法。",
+      "distractors": {
+        "A": "下划线开头合法（且常用于“内部使用”的约定）。",
+        "B": "数字可以出现在名字中间或末尾。",
+        "D": "下划线是推荐的单词分隔方式（snake_case）。"
+      },
+      "knowledge": ["标识符规则", "snake_case 命名"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-06", "topic": "basics", "difficulty": "easy",
+      "question": "input(\"请输入年龄：\") 得到的数据类型是什么？",
+      "options": { "A": "int", "B": "str", "C": "float", "D": "取决于用户输入的内容" },
+      "answer": "B",
+      "explanation": "input() 永远返回字符串，需要数字时要自己用 int() 转换。",
+      "distractors": {
+        "A": "即使输入 18，得到的也是 \"18\" 字符串，不是 int。",
+        "C": "同样不会自动识别为 float。",
+        "D": "input() 不做类型推断，返回值固定是 str。"
+      },
+      "knowledge": ["input()", "类型转换 int()/float()"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-07", "topic": "basics", "difficulty": "easy",
+      "question": "Python 语句末尾通常需要写什么？",
+      "options": { "A": "分号 ;", "B": "什么都不用写，换行即语句结束", "C": "冒号 :", "D": "反斜杠 \\" },
+      "answer": "B",
+      "explanation": "Python 以换行作为语句结束符；分号只在想在一行写多条语句时使用，且不推荐。",
+      "distractors": {
+        "A": "分号可写但非必需，属于风格问题（PEP 8 不推荐）。",
+        "C": "冒号只用在 if/for/def 等复合语句的头部。",
+        "D": "反斜杠用于把一条长语句拆成多行。"
+      },
+      "knowledge": ["语句结束符", "PEP 8 风格"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-08", "topic": "basics", "difficulty": "easy",
+      "question": "想把一条很长的表达式拆成多行，最“Pythonic”的写法是？",
+      "options": {
+        "A": "每行末尾加分号",
+        "B": "用圆括号/方括号包起来，直接换行",
+        "C": "每行末尾加 &&",
+        "D": "必须使用反斜杠，没有其他办法"
+      },
+      "answer": "B",
+      "explanation": "括号（() [] {}）内允许自然换行，这是推荐做法；反斜杠也能续行，但不美观且易出错。",
+      "distractors": {
+        "A": "分号不能续行。",
+        "C": "&& 在 Python 中是语法错误，逻辑与写 and。",
+        "D": "反斜杠只是备选方案，括号内换行更常见。"
+      },
+      "knowledge": ["隐式续行", "显式续行 \\\\"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-09", "topic": "basics", "difficulty": "medium",
+      "question": "按 PEP 8 约定，常量名（如最大重试次数）推荐写成？",
+      "options": { "A": "MAX_RETRY", "B": "maxRetry", "C": "MaxRetry", "D": "max_retry" },
+      "answer": "A",
+      "explanation": "PEP 8 规定常量使用全大写 + 下划线，例如 MAX_RETRY。",
+      "distractors": {
+        "B": "camelCase 是 JS/Java 习惯，Python 中函数与变量推荐 snake_case。",
+        "C": "PascalCase 在 Python 中留给类名。",
+        "D": "小写下划线是普通变量/函数名，不是常量。"
+      },
+      "knowledge": ["PEP 8 命名约定", "常量约定"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-10", "topic": "basics", "difficulty": "medium",
+      "question": "下面哪个是 Python 的保留字（关键字），不能用作变量名？",
+      "options": { "A": "lambda", "B": "value", "C": "data", "D": "type" },
+      "answer": "A",
+      "explanation": "lambda 是创建匿名函数的关键字；关键字列表可用 keyword.kwlist 查看。",
+      "distractors": {
+        "B": "value 不是关键字，可以当变量名。",
+        "C": "data 不是关键字，只是常用名字。",
+        "D": "type 是内置函数名，不是关键字；虽然不建议覆盖，但语法上允许赋值。"
+      },
+      "knowledge": ["关键字 keyword.kwlist", "内置函数可被覆盖"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-11", "topic": "basics", "difficulty": "easy",
+      "question": "Python 复合语句（if / for / def 等）头部末尾必须有什么？",
+      "options": { "A": "花括号 {", "B": "冒号 :", "C": "then", "D": "do" },
+      "answer": "B",
+      "explanation": "头部以冒号结尾，表示“下面开始是代码块”，块内靠缩进界定。",
+      "distractors": {
+        "A": "花括号在 Python 里表示字典或集合，不用来划分代码块。",
+        "C": "then 是某些伪代码/Shell 的写法。",
+        "D": "do 不是 Python 语法。"
+      },
+      "knowledge": ["冒号 + 缩进", "复合语句"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-12", "topic": "basics", "difficulty": "medium",
+      "question": "作为前端开发者，你熟悉的 const x = 1 在 Python 中对应的是？",
+      "options": {
+        "A": "const x = 1",
+        "B": "x = 1，Python 没有真正的常量（靠命名约定）",
+        "C": "final x = 1",
+        "D": "readonly x = 1"
+      },
+      "answer": "B",
+      "explanation": "Python 没有 const 关键字，常量只是“全大写命名 + 不去改它”的约定；真正不可变要靠语言外的工具约束。",
+      "distractors": {
+        "A": "const 在 Python 中不是关键字，会变成普通变量名 const 后接语法错误。",
+        "C": "final 是 Java/Kotlin/Dart 的写法。",
+        "D": "readonly 是 TypeScript 修饰符。"
+      },
+      "knowledge": ["无 const", "命名约定代替常量"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-13", "topic": "basics", "difficulty": "medium",
+      "question": "关于 Python 语言的类型系统，说法正确的是？",
+      "options": {
+        "A": "动态类型 + 弱类型，\"1\" + 1 会自动变成 2",
+        "B": "动态类型 + 强类型，\"1\" + 1 会抛 TypeError",
+        "C": "静态类型 + 强类型，编译期报错",
+        "D": "动态类型，且允许隐式字符串数字相加"
+      },
+      "answer": "B",
+      "explanation": "Python 变量类型在运行时决定（动态），但不做隐式类型转换（强类型），所以字符串和数字相加会报 TypeError。",
+      "distractors": {
+        "A": "把动态类型误当成弱类型；\"1\" + 1 在 Python 里直接报错。",
+        "C": "Python 默认不在编译期检查类型（类型注解只是可选的静态检查提示）。",
+        "D": "不存在这种隐式转换，JS 的 \"1\" + 1 === \"11\" 才是隐式转换。"
+      },
+      "knowledge": ["动态强类型", "TypeError", "与 JS 的差异"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-14", "topic": "basics", "difficulty": "medium",
+      "question": "print(\"a\", \"b\", \"c\", sep=\"-\") 的输出是？",
+      "options": { "A": "a b c", "B": "a-b-c", "C": "a,b,c", "D": "abc" },
+      "answer": "B",
+      "explanation": "sep 参数指定多个参数之间的分隔符，默认是空格，这里改成 -。",
+      "distractors": {
+        "A": "默认 sep 是空格，但这里显式改成了 -。",
+        "C": "逗号不是默认分隔符。",
+        "D": "没有指定空字符串，不会直接拼接。"
+      },
+      "knowledge": ["print(sep=)", "print(end=)"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-15", "topic": "basics", "difficulty": "medium",
+      "question": "print(\"hi\", end=\"\") 的作用是？",
+      "options": {
+        "A": "不换行输出",
+        "B": "输出空字符串",
+        "C": "报错，end 参数不存在",
+        "D": "在 hi 前面插入换行"
+      },
+      "answer": "A",
+      "explanation": "end 指定输出结尾要打印的字符，默认是换行符 \\n，改成空字符串就不会换行。",
+      "distractors": {
+        "B": "它并不改变要输出的内容 hi，只改变结尾符。",
+        "C": "end 是 print 的合法关键字参数。",
+        "D": "end 影响结尾，不是开头。"
+      },
+      "knowledge": ["print(end=)", "换行符 \\\\n"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-16", "topic": "basics", "difficulty": "easy",
+      "question": "Python 用缩进代替了其他语言里的什么？",
+      "options": { "A": "分号", "B": "花括号 {} 组成的代码块", "C": "括号 ()", "D": "类型声明" },
+      "answer": "B",
+      "explanation": "其他语言用 {} 圈出代码块，Python 用缩进层级表达同样的结构，因此缩进是语法的一部分。",
+      "distractors": {
+        "A": "分号对应的是“语句结束”，Python 用换行代替。",
+        "C": "圆括号用于函数调用和分组。",
+        "D": "类型声明与变量系统有关，与缩进无关。"
+      },
+      "knowledge": ["缩进即语法", "代码块"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-17", "topic": "basics", "difficulty": "medium",
+      "question": "在交互式解释器里想查看某个函数或对象的帮助文档，最直接的方式是？",
+      "options": { "A": "help(函数名)", "B": "doc(函数名)", "C": "info(函数名)", "D": "函数名.help()" },
+      "answer": "A",
+      "explanation": "内置 help() 会打印对象的文档字符串（docstring）与用法说明，dir() 则可列出属性。",
+      "distractors": {
+        "B": "doc() 不是内置函数。",
+        "C": "info() 也不存在（部分库自己实现过）。",
+        "D": "没有 .help() 这个通用属性（IPython 里有 ? 语法糖）。"
+      },
+      "knowledge": ["help()", "dir()", "docstring"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-18", "topic": "basics", "difficulty": "medium",
+      "question": "一个 .py 文件里常见的 if __name__ == \"__main__\": 语句的作用是？",
+      "options": {
+        "A": "定义主函数 main",
+        "B": "让代码只在“直接运行该文件”时执行，被 import 时不执行",
+        "C": "声明这是入口文件，Python 会强制校验",
+        "D": "把文件注册为模块"
+      },
+      "answer": "B",
+      "explanation": "__name__ 在直接运行时等于 \"__main__\"，被当作模块导入时等于模块名，因此该判断可区分两种场景。",
+      "distractors": {
+        "A": "它不定义任何函数，只是条件判断。",
+        "C": "Python 不会强制要求这个语句，它只是社区惯例。",
+        "D": "模块注册与它无关，import 机制本身就会处理。"
+      },
+      "knowledge": ["__name__", "脚本入口惯例", "import 语义"],
+      "doc": "02-syntax-basics"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "topic": "decorators",
+  "label": "闭包与装饰器",
+  "questions": [
+    {
+      "id": "dec-01", "topic": "decorators", "difficulty": "medium",
+      "question": "装饰器（decorator）的本质是？",
+      "options": {
+        "A": "一个接收函数并返回新函数（或包装后函数）的高阶函数",
+        "B": "一种注释",
+        "C": "编译器指令",
+        "D": "只能用于类"
+      },
+      "answer": "A",
+      "explanation": "@deco 只是语法糖：def f(): ... 加上 @deco 等价于 f = deco(f)。",
+      "distractors": {
+        "B": "装饰器会真实执行代码，不是注释。",
+        "C": "它发生在运行时（导入/定义时）。",
+        "D": "也可以装饰类，且最常装饰函数。"
+      },
+      "knowledge": ["高阶函数", "@ 语法糖", "f = deco(f)"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-02", "topic": "decorators", "difficulty": "hard",
+      "question": "@timer 装饰 def f(): 时，实际发生的是？",
+      "options": {
+        "A": "f 变成 timer 的返回值",
+        "B": "f 被重命名为 timer.f",
+        "C": "只是打上标记，运行时忽略",
+        "D": "timer 被立即调用且不带参数"
+      },
+      "answer": "A",
+      "explanation": "解释器把原函数对象传给 timer，并用返回值重新绑定到名字 f；所以装饰器必须返回可调用对象。",
+      "distractors": {
+        "B": "不存在这种命名方式。",
+        "C": "装饰器会真实替换函数。",
+        "D": "timer 收到的是被装饰的函数作为参数。"
+      },
+      "knowledge": ["名字重新绑定", "装饰器返回值要求"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-03", "topic": "decorators", "difficulty": "hard",
+      "question": "为什么写装饰器时通常要给内层函数加 @functools.wraps(func)？",
+      "options": {
+        "A": "为了提升执行速度",
+        "B": "为了保留原函数的 __name__、__doc__ 等元数据，避免调试信息错乱",
+        "C": "为了支持协程",
+        "D": "为了加锁"
+      },
+      "answer": "B",
+      "explanation": "不加 wraps 时被装饰函数的 __name__ 会变成 wrapper，日志/文档/调试体验都会变差；wraps 会复制元数据并设置 __wrapped__。",
+      "distractors": {
+        "A": "与性能无关。",
+        "C": "协程需要的是 async 装饰器/await 处理。",
+        "D": "与并发锁无关。"
+      },
+      "knowledge": ["functools.wraps", "__name__ 保留", "__wrapped__"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-04", "topic": "decorators", "difficulty": "hard",
+      "question": "带参数的装饰器（如 @retry(times=3)）需要几层函数嵌套？",
+      "options": {
+        "A": "一层",
+        "B": "两层：外层接收装饰器参数并返回真正的装饰器",
+        "C": "三层以上才是唯一正确做法",
+        "D": "不能带参数"
+      },
+      "answer": "B",
+      "explanation": "def retry(times): 里定义 def deco(func): 里定义 def wrapper(*a, **kw): ...；返回 deco 与 wrapper 两层嵌套即可。",
+      "distractors": {
+        "A": "一层无法同时接收装饰器参数和被装饰函数。",
+        "C": "两层就够（可选加 wraps 不改变层数）。",
+        "D": "带参数装饰器非常常见（如 @app.route(\"/\")）。"
+      },
+      "knowledge": ["带参装饰器", "嵌套层级", "Flask 路由示例"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-05", "topic": "decorators", "difficulty": "medium",
+      "question": "闭包（closure）指的是？",
+      "options": {
+        "A": "内层函数引用了外层函数的变量，外层返回后这些变量仍被保留",
+        "B": "把函数写在类里",
+        "C": "用 lambda 替换 def",
+        "D": "把变量声明为 global"
+      },
+      "answer": "A",
+      "explanation": "闭包 = 函数 + 捕获的自由变量环境，可用 __closure__ 查看；这是装饰器与工厂函数的基础。",
+      "distractors": {
+        "B": "那是方法。",
+        "C": "lambda 只是匿名函数语法。",
+        "D": "global 是模块级作用域。"
+      },
+      "knowledge": ["闭包", "自由变量", "__closure__"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-06", "topic": "decorators", "difficulty": "medium",
+      "question": "下面哪种是 functools 提供的内置好帮手？",
+      "options": {
+        "A": "lru_cache（缓存函数结果）/ partial（预填参数）",
+        "B": "useMemo / useCallback",
+        "C": "memoize / bind 只存在于第三方库",
+        "D": "cache 是 JS 的关键字"
+      },
+      "answer": "A",
+      "explanation": "functools.lru_cache/cache 提供记忆化（要求参数可哈希），partial 用于固定部分参数生成新函数。",
+      "distractors": {
+        "B": "useMemo/useCallback 是 React Hook。",
+        "C": "它们都在标准库 functools 里。",
+        "D": "与 JS 关键字无关。"
+      },
+      "knowledge": ["functools.lru_cache", "functools.partial", "记忆化"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-07", "topic": "decorators", "difficulty": "hard",
+      "question": "多个装饰器叠加时 @a 在上、@b 在下，执行顺序等价于？",
+      "options": {
+        "A": "a(b(func))：先应用 b 再应用 a",
+        "B": "b(a(func))：先应用 a",
+        "C": "同时生效，没有顺序",
+        "D": "随机顺序"
+      },
+      "answer": "A",
+      "explanation": "装饰器自下而上应用（定义时），而包装后的调用顺序是自上而下的洋葱模型。",
+      "distractors": {
+        "B": "顺序反了。",
+        "C": "顺序明确且重要（如先认证再缓存完全不同）。",
+        "D": "是确定性的。"
+      },
+      "knowledge": ["装饰器顺序", "洋葱模型", "自下而上应用"],
+      "doc": "16-decorators-closures", "tags": ["pitfall"]
+    },
+    {
+      "id": "dec-08", "topic": "decorators", "difficulty": "hard",
+      "question": "装饰器里想保留被装饰函数的签名与类型信息，除 wraps 外还可用？",
+      "options": {
+        "A": "用 ParamSpec/TypeVar 做类型注解（现代做法）",
+        "B": "什么都不用做，Python 自动保留",
+        "C": "把 wrapper 写成 lambda",
+        "D": "只能用 functools.wraps，没有其他手段"
+      },
+      "answer": "A",
+      "explanation": "typing.ParamSpec（3.10+）可以正确传递参数类型给类型检查器，wraps 只解决运行时元数据，不解决静态类型推断。",
+      "distractors": {
+        "B": "元数据与类型信息都需要显式处理。",
+        "C": "lambda 无法表达多参数与元数据。",
+        "D": "ParamSpec/Concatenate 是官方补充方案。"
+      },
+      "knowledge": ["ParamSpec", "类型友好的装饰器", "wraps 的局限"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-09", "topic": "decorators", "difficulty": "medium",
+      "question": "下面这段代码的输出是？\n\ndef outer():\n    x = 1\n    def inner():\n        return x\n    return inner\n\nprint(outer()())",
+      "options": { "A": "1", "B": "报 NameError", "C": "None", "D": "报 UnboundLocalError" },
+      "answer": "A",
+      "explanation": "inner 捕获了 outer 的局部变量 x，即使 outer 已返回，闭包仍持有该变量，因此输出 1。",
+      "distractors": {
+        "B": "x 被闭包保留，不会丢失。",
+        "C": "inner 返回的是 x 的值。",
+        "D": "inner 只读取 x，不需要 nonlocal。"
+      },
+      "knowledge": ["闭包保留变量", "变量捕获"],
+      "doc": "16-decorators-closures"
+    },
+    {
+      "id": "dec-10", "topic": "decorators", "difficulty": "hard",
+      "question": "类装饰器（装饰一个类）返回什么比较合理？",
+      "options": {
+        "A": "必须返回原来的类",
+        "B": "可以返回原类、修改后的类，或任意替代对象（如代理/包装类）",
+        "C": "必须返回函数",
+        "D": "必须返回 None"
+      },
+      "answer": "B",
+      "explanation": "装饰器对类同样只是“名字重新绑定”，所以可以注册类、注入方法（dataclass 就是这么做的）或返回包装对象。",
+      "distractors": {
+        "A": "返回原类是一种选择，但不是必须。",
+        "C": "返回值没有类型限制。",
+        "D": "返回 None 会让类名变成 None，通常是错误。"
+      },
+      "knowledge": ["类装饰器", "dataclass 的实现方式", "注册表模式"],
+      "doc": "16-decorators-closures"
+    }
+  ]
+}

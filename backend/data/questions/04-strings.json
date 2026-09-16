@@ -1,0 +1,250 @@
+{
+  "topic": "strings",
+  "label": "字符串处理",
+  "questions": [
+    {
+      "id": "strings-01", "topic": "strings", "difficulty": "easy",
+      "question": "\"python\"[0] 和 \"python\"[-1] 的结果分别是？",
+      "options": { "A": "\"p\" / \"n\"", "B": "\"p\" / \"o\"", "C": "\"y\" / \"n\"", "D": "报错，不支持负索引" },
+      "answer": "A",
+      "explanation": "索引从 0 开始；负索引从末尾数，-1 表示最后一个字符 \"n\"。",
+      "distractors": {
+        "B": "-1 是最后一个字符 n，不是 o（o 是 -2）。",
+        "C": "[0] 是 p，不是 y。",
+        "D": "Python 完整支持负索引，这也是它比 JS 方便的地方之一。"
+      },
+      "knowledge": ["索引从 0 开始", "负索引"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-02", "topic": "strings", "difficulty": "medium",
+      "question": "\"python\"[1:4] 的结果是？",
+      "options": { "A": "\"yth\"", "B": "\"ytho\"", "C": "\"pyt\"", "D": "\"tho\"" },
+      "answer": "A",
+      "explanation": "切片 [start:stop] 含头不含尾，取索引 1、2、3 即 y、t、h。",
+      "distractors": {
+        "B": "包含 stop 的写法在 Python 里不存在，切片永远不含 stop。",
+        "C": "起点是 1（y）。",
+        "D": "起点不是 2。"
+      },
+      "knowledge": ["切片 [start:stop]", "含头不含尾"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-03", "topic": "strings", "difficulty": "medium",
+      "question": "\"python\"[::-1] 的结果是？",
+      "options": { "A": "\"python\"", "B": "\"nohtyp\"", "C": "\"p\"", "D": "报错" },
+      "answer": "B",
+      "explanation": "切片第三个参数是步长，-1 表示从后往前取，于是得到反转字符串。",
+      "distractors": {
+        "A": "冒号两侧留空表示全范围，不影响步长 -1 的反转效果。",
+        "C": "步长 -1 会遍历整个字符串，不只是一字符。",
+        "D": "是合法写法，也是经典的反转字符串惯用法。"
+      },
+      "knowledge": ["切片步长", "反转字符串"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-04", "topic": "strings", "difficulty": "medium",
+      "question": "执行 s = \"abc\" 后 s[0] = \"x\" 会怎样？",
+      "options": { "A": "s 变成 \"xbc\"", "B": "抛出 TypeError，字符串不可变", "C": "抛出 IndexError", "D": "静默失败" },
+      "answer": "B",
+      "explanation": "str 是不可变类型，不支持下标赋值；要“修改”必须创建新字符串，例如 s = \"x\" + s[1:]。",
+      "distractors": {
+        "A": "Python 不支持这种原地修改。",
+        "C": "索引 0 是存在的，报的是“类型不支持赋值”。",
+        "D": "Python 不会静默忽略非法赋值。"
+      },
+      "knowledge": ["字符串不可变", "替代写法 join/切片拼接"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-05", "topic": "strings", "difficulty": "easy",
+      "question": "\"  hi  \".strip() 的结果是？",
+      "options": { "A": "\"  hi  \"", "B": "\"hi\"", "C": "\"hi  \"", "D": "\"  hi\"" },
+      "answer": "B",
+      "explanation": "strip() 去掉首尾空白字符（空格、制表符、换行），不处理中间的内容。",
+      "distractors": {
+        "A": "strip 会去掉首尾空白。",
+        "C": "只去一侧要用 lstrip() 或 rstrip()。",
+        "D": "同上，另一侧也会去掉。"
+      },
+      "knowledge": ["strip/lstrip/rstrip", "处理用户输入"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-06", "topic": "strings", "difficulty": "easy",
+      "question": "\"a,b,c\".split(\",\") 的结果是？",
+      "options": { "A": "[\"a\", \"b\", \"c\"]", "B": "(\"a\", \"b\", \"c\")", "C": "\"abc\"", "D": "[\"a,b,c\"]" },
+      "answer": "A",
+      "explanation": "split() 按分隔符切分并返回列表；不传参数时按任意空白切分且忽略连续空白。",
+      "distractors": {
+        "B": "返回的是 list 而不是 tuple。",
+        "C": "不会去掉分隔符后拼接。",
+        "D": "只有分隔符不存在时才会得到只含原串的列表。"
+      },
+      "knowledge": ["split()", "join()", "list 结果"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-07", "topic": "strings", "difficulty": "medium",
+      "question": "\"-\".join([\"a\", \"b\", \"c\"]) 的结果是？",
+      "options": { "A": "\"a-b-c\"", "B": "[\"a\", \"-\", \"b\", \"-\", \"c\"]", "C": "\"abc\"", "D": "报错，join 是列表方法" },
+      "answer": "A",
+      "explanation": "join 是字符串的方法：分隔符.join(可迭代对象)，把序列元素用分隔符连接成字符串。",
+      "distractors": {
+        "B": "join 返回字符串，不返回列表。",
+        "C": "分隔符 - 会出现在结果中。",
+        "D": "join 属于 str 而不是 list，所以写法是 \"-\".join(...)。"
+      },
+      "knowledge": ["str.join()", "与 JS 的 Array.join 顺序相反"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-08", "topic": "strings", "difficulty": "easy",
+      "question": "f-string（f\"{name} 今年 {age} 岁\"）的特点是？",
+      "options": {
+        "A": "只能插入变量名，不能写表达式",
+        "B": "花括号内可以写任意表达式，如 f\"{a + b:.2f}\"",
+        "C": "必须配合 .format() 使用",
+        "D": "是 Python 2 的写法"
+      },
+      "answer": "B",
+      "explanation": "f-string 在运行时求值花括号内的表达式，并支持格式说明符（:.2f 保留两位小数、:>10 右对齐等），是推荐的字符串格式化方式。",
+      "distractors": {
+        "A": "可以写表达式、函数调用，甚至嵌套引号。",
+        "C": "f-string 是独立的语法，不需要 format()。",
+        "D": "f-string 从 Python 3.6 开始支持。"
+      },
+      "knowledge": ["f-string", "格式说明符", "% 与 format 的区别"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-09", "topic": "strings", "difficulty": "medium",
+      "question": "f\"{3.14159:.2f}\" 的结果是？",
+      "options": { "A": "\"3.14159\"", "B": "\"3.14\"", "C": "\"3.1\"", "D": "\"3\"" },
+      "answer": "B",
+      "explanation": ".2f 表示以定点格式保留两位小数输出，会做四舍五入。",
+      "distractors": {
+        "A": "没有格式说明符时才会原样输出。",
+        "C": ".1f 才是一位小数。",
+        "D": "f 表示定点小数，不会取整。"
+      },
+      "knowledge": ["格式说明符 :.2f", "f-string"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-10", "topic": "strings", "difficulty": "medium",
+      "question": "r\"C:\\new\\test\" 中前导 r 的作用是？",
+      "options": {
+        "A": "把字符串转成 bytes",
+        "B": "原始字符串，反斜杠不再被当作转义字符",
+        "C": "表示这是正则表达式",
+        "D": "让字符串只读"
+      },
+      "answer": "B",
+      "explanation": "r 前缀表示 raw string，\\n 会保持为两个字符而不是换行符，常用于正则和 Windows 路径。",
+      "distractors": {
+        "A": "bytes 要用 b 前缀，如 b\"abc\"。",
+        "C": "正则用的是 re 模块，r 只是恰好常与正则搭配。",
+        "D": "Python 字符串本身就不可变，与 r 无关。"
+      },
+      "knowledge": ["raw string r\"\"", "转义字符", "bytes b\"\""],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-11", "topic": "strings", "difficulty": "easy",
+      "question": "len(\"你好\") 的结果是？",
+      "options": { "A": "2", "B": "4", "C": "6", "D": "取决于编码" },
+      "answer": "A",
+      "explanation": "len() 返回的是字符（code point）个数，不是字节数，所以两个汉字长度为 2；字节数要用 len(s.encode(\"utf-8\"))。",
+      "distractors": {
+        "B": "4 是 UTF-8 编码后的字节数。",
+        "C": "6 是 UTF-16 之类的字节数概念。",
+        "D": "str 已经解码，len 与具体编码无关。"
+      },
+      "knowledge": ["len()", "str vs bytes", "encode/decode"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-12", "topic": "strings", "difficulty": "medium",
+      "question": "\"Hello\".upper() 与 \"hello\".capitalize() 分别得到？",
+      "options": { "A": "\"HELLO\" / \"Hello\"", "B": "\"hello\" / \"HELLO\"", "C": "\"Hello\" / \"Hello\"", "D": "都会原地修改原字符串" },
+      "answer": "A",
+      "explanation": "upper() 全大写，capitalize() 首字母大写其余小写；两者都返回新字符串，原字符串不变。",
+      "distractors": {
+        "B": "upper 是大写，不会得到小写。",
+        "C": "upper 会让所有字母都大写。",
+        "D": "str 不可变，所有方法都返回新对象。"
+      },
+      "knowledge": ["upper/lower/capitalize/title", "不可变性"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-13", "topic": "strings", "difficulty": "medium",
+      "question": "\"banana\".find(\"na\") 与 \"banana\".count(\"na\") 的结果是？",
+      "options": { "A": "2 / 2", "B": "2 / 1", "C": "1 / 2", "D": "找不到时 find 抛异常" },
+      "answer": "A",
+      "explanation": "find 返回第一次出现的起始索引（b0 a1 n2 → 2），count 统计出现次数（2 次），且 count 对不重叠子串计数。",
+      "distractors": {
+        "B": "count 会数出两次 na。",
+        "C": "索引 2 才是 n，不是 1。",
+        "D": "find 找不到时返回 -1（index() 才抛 ValueError）。"
+      },
+      "knowledge": ["find vs index", "count()", "返回值 -1 约定"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-14", "topic": "strings", "difficulty": "medium",
+      "question": "用 % 格式化时，\"%d 个 %s\" % (3, \"苹果\") 的结果是？",
+      "options": { "A": "\"3 个 苹果\"", "B": "\"3 个 %s\"", "C": "报错", "D": "\"%d 个 苹果\"" },
+      "answer": "A",
+      "explanation": "% 格式化是 Python 早期方式：%d 对应整数、%s 对应任意对象的字符串形式。",
+      "distractors": {
+        "B": "%s 会被替换掉。",
+        "C": "这是合法（虽然过时）的写法。",
+        "D": "两个占位符都会被替换。"
+      },
+      "knowledge": ["% 格式化", "f-string 更推荐"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-15", "topic": "strings", "difficulty": "medium",
+      "question": "判断字符串是否以 \"py\" 开头，正确写法是？",
+      "options": {
+        "A": "s.startsWith(\"py\")",
+        "B": "s.startswith(\"py\")",
+        "C": "s.beginsWith(\"py\")",
+        "D": "s[0:2] == \"py\" 是唯一方式"
+      },
+      "answer": "B",
+      "explanation": "Python 用 startswith()/endswith()，且支持元组参数如 s.startswith((\"py\", \"ja\"))。",
+      "distractors": {
+        "A": "startsWith 是 Java/JS 的命名风格。",
+        "C": "不存在 beginsWith 方法。",
+        "D": "切片比较可行但不是唯一，且对多个前缀很笨拙。"
+      },
+      "knowledge": ["startswith/endswith", "元组参数"],
+      "doc": "05-strings"
+    },
+    {
+      "id": "strings-16", "topic": "strings", "difficulty": "hard",
+      "question": "字符串拼接时，为什么推荐 \"\".join(list) 而不是循环里用 s += item？",
+      "options": {
+        "A": "join 写法更短，性能没差别",
+        "B": "str 不可变，s += item 每次都创建新字符串，循环中会退化为 O(n²) 级别的开销",
+        "C": "+= 对字符串是非法操作",
+        "D": "join 会自动去重"
+      },
+      "answer": "B",
+      "explanation": "不可变字符串的 += 需要不断复制已有内容，数据量大时明显变慢；join 一次性计算总长度再拼接，效率更高。",
+      "distractors": {
+        "A": "性能差异在循环里非常明显。",
+        "C": "+= 合法，只是效率问题。",
+        "D": "join 不去重，只按顺序连接。"
+      },
+      "knowledge": ["str 不可变", "join 性能", "字符串缓冲区"],
+      "doc": "05-strings", "tags": ["performance"]
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "topic": "async",
+  "label": "异步编程",
+  "questions": [
+    {
+      "id": "async-01", "topic": "async", "difficulty": "medium",
+      "question": "async def f(): 定义的是什么？",
+      "options": {
+        "A": "普通函数，调用后立即执行",
+        "B": "协程函数，调用后返回协程对象，需要 await 或事件循环驱动才执行",
+        "C": "后台线程",
+        "D": "多进程任务"
+      },
+      "answer": "B",
+      "explanation": "协程函数调用不执行函数体，只创建 coroutine 对象；由 await / asyncio.run 驱动，这一点与生成器很像。",
+      "distractors": {
+        "A": "不会立即执行，还会打印 RuntimeWarning: coroutine was never awaited。",
+        "C": "协程不是线程，运行在单线程事件循环里。",
+        "D": "与多进程无关。"
+      },
+      "knowledge": ["async def", "协程对象", "事件循环"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-02", "topic": "async", "difficulty": "medium",
+      "question": "asyncio.run(main()) 的作用是？",
+      "options": {
+        "A": "创建事件循环、运行协程 main 直到完成，然后关闭循环",
+        "B": "在新线程里运行 main",
+        "C": "把 main 变成同步函数",
+        "D": "启动一个 HTTP 服务器"
+      },
+      "answer": "A",
+      "explanation": "asyncio.run 是启动异步程序的推荐入口，负责管理事件循环生命周期。",
+      "distractors": {
+        "B": "事件循环默认运行在当前线程。",
+        "C": "不改变函数性质。",
+        "D": "起服务器是 uvicorn.run 或 asyncio 里手动 serve。"
+      },
+      "knowledge": ["asyncio.run", "事件循环生命周期"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-03", "topic": "async", "difficulty": "hard",
+      "question": "await asyncio.sleep(1) 与 time.sleep(1) 的关键区别是？",
+      "options": {
+        "A": "没有区别",
+        "B": "asyncio.sleep 会让出控制权给事件循环（可并发其它协程）；time.sleep 会阻塞整个线程",
+        "C": "time.sleep 更省 CPU",
+        "D": "asyncio.sleep 只能在多进程中用"
+      },
+      "answer": "B",
+      "explanation": "异步的关键是“阻塞时让出”，一旦在协程里调用同步阻塞函数，整个事件循环都会被卡住，应改用异步库或 run_in_executor。",
+      "distractors": {
+        "A": "行为完全不同。",
+        "C": "两者都不占 CPU（都是等待），区别在于是否阻塞事件循环。",
+        "D": "它在单线程事件循环里使用。"
+      },
+      "knowledge": ["非阻塞 IO", "阻塞事件循环反模式", "run_in_executor"],
+      "doc": "17-async", "tags": ["pitfall"]
+    },
+    {
+      "id": "async-04", "topic": "async", "difficulty": "hard",
+      "question": "并发执行多个协程并一起等结果，常用？",
+      "options": {
+        "A": "asyncio.gather(*tasks)",
+        "B": "依次 await 每个协程（这是唯一方式）",
+        "C": "threading.Thread",
+        "D": "用 for 循环 + time.sleep"
+      },
+      "answer": "A",
+      "explanation": "gather 并发调度并收集结果（顺序与传入顺序一致）；TaskGroup（3.11+）是更现代的写法，异常处理更清晰。",
+      "distractors": {
+        "B": "依次 await 是串行，失去并发收益。",
+        "C": "线程是另一套并发模型。",
+        "D": "会阻塞且无并发。"
+      },
+      "knowledge": ["asyncio.gather", "TaskGroup", "并发 vs 并行"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-05", "topic": "async", "difficulty": "medium",
+      "question": "Python 的 asyncio 适合解决什么问题？",
+      "options": {
+        "A": "CPU 密集计算（如矩阵乘、图像处理）",
+        "B": "IO 密集且高并发（大量网络请求、数据库访问）",
+        "C": "替代多进程",
+        "D": "自动并行化任意代码"
+      },
+      "answer": "B",
+      "explanation": "由于有 GIL 且事件循环单线程，asyncio 的优势在 IO 等待期间切换任务；CPU 密集应使用多进程或原生扩展。",
+      "distractors": {
+        "A": "CPU 密集用多进程/向量化库（numpy）更合适。",
+        "C": "两者解决不同问题，可共存。",
+        "D": "只有异步 IO 操作才会让出控制权。"
+      },
+      "knowledge": ["IO 密集 vs CPU 密集", "GIL", "并发模型选择"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-06", "topic": "async", "difficulty": "hard",
+      "question": "在协程里直接调用 requests.get(url) 会怎样？",
+      "options": {
+        "A": "自动变成异步请求",
+        "B": "阻塞事件循环，让整个应用的并发能力失效；应改用 httpx/aiohttp 等异步客户端",
+        "C": "抛出 TypeError",
+        "D": "只能在 Windows 上出问题"
+      },
+      "answer": "B",
+      "explanation": "requests 是同步阻塞库；在 async 函数里调用它会阻塞事件循环，其它协程都无法推进。",
+      "distractors": {
+        "A": "不会有魔法转换。",
+        "C": "语法上完全合法，问题在运行时行为。",
+        "D": "所有平台都一样。"
+      },
+      "knowledge": ["同步库混用风险", "httpx/aiohttp", "事件循环阻塞"],
+      "doc": "17-async", "tags": ["pitfall"]
+    },
+    {
+      "id": "async-07", "topic": "async", "difficulty": "hard",
+      "question": "异步上下文管理器（async with）用于什么场景？",
+      "options": {
+        "A": "管理需要在进入/退出时 await 的资源，如异步连接池、异步文件操作",
+        "B": "替代普通 with",
+        "C": "用于多线程锁",
+        "D": "只是语法风格，没有实际用途"
+      },
+      "answer": "A",
+      "explanation": "async with 会 await __aenter__/__aexit__，适合连接、会话、事务等异步资源管理。",
+      "distractors": {
+        "B": "普通 with 仍然用于同步资源。",
+        "C": "asyncio.Lock 应在 async with 中使用，但用途不止于此。",
+        "D": "有实际语义差异。"
+      },
+      "knowledge": ["async with", "__aenter__/__aexit__", "资源管理"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-08", "topic": "async", "difficulty": "medium",
+      "question": "协程函数 f 调用后直接丢弃返回值（没有 await），会发生什么？",
+      "options": {
+        "A": "正常执行完逻辑",
+        "B": "函数体不会执行，可能产生 RuntimeWarning: coroutine ... was never awaited",
+        "C": "立即当成同步函数执行",
+        "D": "自动创建后台任务"
+      },
+      "answer": "B",
+      "explanation": "协程必须被 await 或包成 Task 才会被调度；忘记 await 是新手最常见的异步 bug（静默不执行）。",
+      "distractors": {
+        "A": "函数体一行都不会跑。",
+        "C": "不会自动转同步。",
+        "D": "不会自动调度，需要 create_task。"
+      },
+      "knowledge": ["忘记 await", "RuntimeWarning", "create_task"],
+      "doc": "17-async", "tags": ["pitfall"]
+    }
+  ]
+}

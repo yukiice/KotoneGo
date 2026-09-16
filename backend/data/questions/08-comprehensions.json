@@ -1,0 +1,252 @@
+{
+  "topic": "comprehensions",
+  "label": "推导式",
+  "questions": [
+    {
+      "id": "comp-01", "topic": "comprehensions", "difficulty": "easy",
+      "question": "[x * 2 for x in range(3)] 的结果是？",
+      "options": { "A": "[0, 2, 4]", "B": "[2, 4, 6]", "C": "[0, 1, 2]", "D": "(0, 2, 4)" },
+      "answer": "A",
+      "explanation": "列表推导式对 range(3) 的 0、1、2 分别乘以 2，得到 [0, 2, 4]（类型仍是 list）。",
+      "distractors": {
+        "B": "range(3) 从 0 开始，不是 1。",
+        "C": "忘记了 x * 2 的变换。",
+        "D": "方括号生成的是列表，不是元组。"
+      },
+      "knowledge": ["列表推导式", "与 map 对比"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-02", "topic": "comprehensions", "difficulty": "medium",
+      "question": "[x for x in range(10) if x % 2 == 0] 的结果是？",
+      "options": {
+        "A": "[0, 2, 4, 6, 8]",
+        "B": "[2, 4, 6, 8, 10]",
+        "C": "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]",
+        "D": "[1, 3, 5, 7, 9]"
+      },
+      "answer": "A",
+      "explanation": "if 子句起过滤作用，只保留偶数；range(10) 最大是 9，所以没有 10。",
+      "distractors": {
+        "B": "range(10) 不含 10。",
+        "C": "if 子句过滤掉了一半元素。",
+        "D": "那是不等于 0 的奇数判断（x % 2 == 1）。"
+      },
+      "knowledge": ["推导式过滤 if", "取模 %"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-03", "topic": "comprehensions", "difficulty": "medium",
+      "question": "{x: x ** 2 for x in range(3)} 的结果是？",
+      "options": {
+        "A": "{0: 0, 1: 1, 2: 4}",
+        "B": "[0, 1, 4]",
+        "C": "{0, 1, 4}",
+        "D": "报错，字典不能推导"
+      },
+      "answer": "A",
+      "explanation": "字典推导式用 键表达式: 值表达式 的形式，花括号里带冒号。",
+      "distractors": {
+        "B": "列表推导式用方括号。",
+        "C": "集合推导式没有冒号，会得到 {0, 1, 4}。",
+        "D": "字典推导是合法语法（Python 2.7+）。"
+      },
+      "knowledge": ["字典推导式", "集合推导式", "语法区别"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-04", "topic": "comprehensions", "difficulty": "medium",
+      "question": "{x for x in [1, 1, 2]} 的结果是？",
+      "options": { "A": "{1, 2}", "B": "{1, 1, 2}", "C": "[1, 2]", "D": "(1, 2)" },
+      "answer": "A",
+      "explanation": "集合推导式自动去重，得到集合 {1, 2}。",
+      "distractors": {
+        "B": "集合不允许重复元素。",
+        "C": "方括号才是列表。",
+        "D": "圆括号加生成器语法得到的是生成器，不是元组（且这里用的是花括号）。"
+      },
+      "knowledge": ["集合推导式", "去重"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-05", "topic": "comprehensions", "difficulty": "hard",
+      "question": "(x * 2 for x in range(3)) 得到的是什么？",
+      "options": {
+        "A": "元组 (0, 2, 4)",
+        "B": "生成器对象，惰性求值且只能遍历一次",
+        "C": "列表 [0, 2, 4]",
+        "D": "报错"
+      },
+      "answer": "B",
+      "explanation": "圆括号形式是生成器表达式（generator expression），不会立刻计算，占用内存小但只能消费一次。",
+      "distractors": {
+        "A": "它不是元组；要元组得写 tuple(...)。",
+        "C": "列表要用方括号。",
+        "D": "完全合法。"
+      },
+      "knowledge": ["生成器表达式", "惰性求值", "只能迭代一次"],
+      "doc": "09-comprehensions", "tags": ["pitfall"]
+    },
+    {
+      "id": "comp-06", "topic": "comprehensions", "difficulty": "medium",
+      "question": "把生成器表达式变成列表，应该？",
+      "options": { "A": "list(gen)", "B": "gen.list()", "C": "[gen]", "D": "tuple(gen) 会得到列表" },
+      "answer": "A",
+      "explanation": "list() 会消费生成器并构建列表；也可以把括号换成方括号直接写列表推导式。",
+      "distractors": {
+        "B": "生成器没有 list 方法。",
+        "C": "[gen] 得到只含一个生成器的列表。",
+        "D": "tuple() 得到的是元组。"
+      },
+      "knowledge": ["list()", "消费生成器"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-07", "topic": "comprehensions", "difficulty": "hard",
+      "question": "sum(x ** 2 for x in range(1, 4)) 的结果是？",
+      "options": { "A": "14", "B": "36", "C": "6", "D": "9" },
+      "answer": "A",
+      "explanation": "1²+2²+3² = 1+4+9 = 14；把生成器直接传给 sum 可以省内存，不必先建列表。",
+      "distractors": {
+        "B": "36 是 (1+2+3)² 的结果。",
+        "C": "6 是 1+2+3。",
+        "D": "9 只是 3²。"
+      },
+      "knowledge": ["sum()", "生成器省内存", "数值聚合"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-08", "topic": "comprehensions", "difficulty": "medium",
+      "question": "推导式里能嵌套推导式吗？",
+      "options": {
+        "A": "不能",
+        "B": "能，例如 [[1 for _ in range(2)] for _ in range(2)] 生成二维列表",
+        "C": "只有字典推导支持嵌套",
+        "D": "必须用 map 代替"
+      },
+      "answer": "B",
+      "explanation": "嵌套推导式可用来构建矩阵，且每个内层列表都是独立对象，能避免 [[0]*n]*m 的引用陷阱。",
+      "distractors": {
+        "A": "语法上完全允许。",
+        "C": "列表/集合/字典推导都支持嵌套。",
+        "D": "map 也能做但不是必须。"
+      },
+      "knowledge": ["嵌套推导式", "构建矩阵", "与引用陷阱对比"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-09", "topic": "comprehensions", "difficulty": "hard",
+      "question": "推导式中的变量 x 在推导式外面还能访问吗？",
+      "options": {
+        "A": "能，会保留最后一次的值",
+        "B": "不能，Python 3 的推导式有自己的作用域，泄漏的变量不可见",
+        "C": "能，值是 None",
+        "D": "取决于是否用 if 子句"
+      },
+      "answer": "B",
+      "explanation": "Python 3 中推导式在独立作用域内运行，不会像 for 循环那样把变量泄漏出去（Python 2 的列表推导会泄漏）。",
+      "distractors": {
+        "A": "那是 Python 2 的行为。",
+        "C": "变量根本不存在，访问会 NameError。",
+        "D": "与 if 子句无关。"
+      },
+      "knowledge": ["推导式作用域", "Python 2 与 3 差异", "NameError"],
+      "doc": "09-comprehensions", "tags": ["pitfall"]
+    },
+    {
+      "id": "comp-10", "topic": "comprehensions", "difficulty": "medium",
+      "question": "推导式里想同时用 if 和 else 做“条件取值”，正确写法是？",
+      "options": {
+        "A": "[x if x > 0 else 0 for x in nums]",
+        "B": "[x for x in nums if x > 0 else 0]",
+        "C": "[x for x in nums if x > 0] else [0]",
+        "D": "[if x > 0 then x else 0 for x in nums]"
+      },
+      "answer": "A",
+      "explanation": "条件表达式（三元）放在最前面的表达式位置；放在末尾的 if 只能做过滤，不能配 else。",
+      "distractors": {
+        "B": "末尾的 if 后面不能跟 else，会语法错误。",
+        "C": "不是合法语法。",
+        "D": "Python 没有 then 关键字。"
+      },
+      "knowledge": ["条件表达式在推导式中", "过滤 vs 映射"],
+      "doc": "09-comprehensions", "tags": ["pitfall"]
+    },
+    {
+      "id": "comp-11", "topic": "comprehensions", "difficulty": "medium",
+      "question": "把字典 d 的键全变成大写得到新字典，写法是？",
+      "options": {
+        "A": "{k.upper(): v for k, v in d.items()}",
+        "B": "[k.upper() for k in d]",
+        "C": "{k.upper() for k, v in d.items()}",
+        "D": "d.keys().upper()"
+      },
+      "answer": "A",
+      "explanation": "字典推导式配合 items() 解包，可以同时对键和值做变换。",
+      "distractors": {
+        "B": "得到的是字典的键列表，不是字典。",
+        "C": "没有冒号，是集合推导式。",
+        "D": "keys() 视图没有 upper 方法。"
+      },
+      "knowledge": ["字典推导式", "items() 解包"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-12", "topic": "comprehensions", "difficulty": "hard",
+      "question": "什么时候应该用普通 for 循环而不是推导式？",
+      "options": {
+        "A": "永远都用推导式最好",
+        "B": "当循环体有复杂逻辑、副作用（打印、写文件）或嵌套层次过深时",
+        "C": "当元素少于 10 个时",
+        "D": "推导式不能处理字典"
+      },
+      "answer": "B",
+      "explanation": "推导式适合“生成新序列”的纯表达式场景；有副作用或逻辑复杂时用普通循环更可读，这是 PEP 8/社区共识。",
+      "distractors": {
+        "A": "可读性优先，复杂逻辑硬塞推导式是反模式。",
+        "C": "与数据量无关。",
+        "D": "字典推导式是支持的。"
+      },
+      "knowledge": ["可读性优先", "副作用与推导式", "PEP 8"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-13", "topic": "comprehensions", "difficulty": "hard",
+      "question": "下面哪个推导式的写法有 bug？\n\nA: [x for x in rows for y in x]\nB: [x for x in rows for x in rows]",
+      "options": {
+        "A": "A 有 bug",
+        "B": "B 有 bug：内外层用了同名变量 x，会互相覆盖语义",
+        "C": "两个都有语法错误",
+        "D": "两个都完全正确"
+      },
+      "answer": "B",
+      "explanation": "多重 for 的变量名应避免重复；重名会让代码含义混乱（也容易在嵌套循环里造成逻辑错误）。",
+      "distractors": {
+        "A": "A 的写法是合法的二维遍历写法。",
+        "C": "A 语法正确，B 语法也合法但有逻辑问题。",
+        "D": "B 存在命名冲突问题。"
+      },
+      "knowledge": ["多重 for 推导式", "变量命名", "代码可读性"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-14", "topic": "comprehensions", "difficulty": "medium",
+      "question": "用推导式把字符串列表里的空白去掉并过滤空串，写法是？",
+      "options": {
+        "A": "[s.strip() for s in lines if s.strip()]",
+        "B": "[s for s in lines if s.strip()]",
+        "C": "[s.strip() if s for s in lines]",
+        "D": "[s.strip() for s in lines if not s]"
+      },
+      "answer": "A",
+      "explanation": "表达式位置做 strip，if 子句过滤 strip 后为空的结果；这是处理文本文件的常用模式。",
+      "distractors": {
+        "B": "忘记对结果本身做 strip。",
+        "C": "if s 中 s 是原始字符串（含空白的行也是真值），过滤不正确。",
+        "D": "if not s 会只保留空行，刚好相反。"
+      },
+      "knowledge": ["strip 与过滤组合", "文本清洗"],
+      "doc": "09-comprehensions"
+    }
+  ]
+}
