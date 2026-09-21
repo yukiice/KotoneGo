@@ -110,8 +110,9 @@ docker compose down               # 停止（数据留在命名卷 kotone-data�
 ```
 
 端口约定：**容器内部永远是 8000**（Dockerfile CMD 里写死），对外端口由根目录 `.env` 的
-`KOTONE_PORT`（默认 8010）决定；`KOTONE_BIND` 控制监听地址（默认 `0.0.0.0`，填 `127.0.0.1` 则只允许本机访问）。
-改端口不需要重新构建镜像，`docker compose up -d` 即可。
+`KOTONE_PORT`（默认 8010）决定；`KOTONE_BIND` 控制监听地址（默认 `0.0.0.0`，填 `127.0.0.1` 则只允许本机访问）；
+`KOTONE_NAME` 控制容器名（默认 `kotonego`，同机跑多份时必改）。
+改这些都不需要重新构建镜像，`docker compose up -d` 即可。
 
 - 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
   静态资源 + SPA catch-all 路由，因此**同一个进程既能跑 API 又能跑网站**。
@@ -323,6 +324,9 @@ cd frontend && npm run build
     `sudo chown -R 10001:10001 <目录>`，否则写库报 `unable to open database file`；
    用命名卷（默认）没有这个问题。
 12. **不要给容器加 `--reload` 或 `--workers >1`**：SQLite 单写者 + 小内存，多 worker 只会增加内存且有写锁竞争。
+13. **`container_name` 是可覆盖的（`KOTONE_NAME`）**：compose 里写死容器名时，
+    同一台机器上第二份 checkout 执行 `up` 会报 `Conflict. The container name "/kotonego" is already in use`。
+    同机多实例就加 `KOTONE_NAME` + `KOTONE_PORT`，两套独立命名卷互不影响。
 
 ---
 

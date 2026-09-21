@@ -90,6 +90,18 @@ ss -ltnp | grep :9000     # 没有输出就是空闲的
 | `KOTONE_PORT` | `8010` | 宿主机映射端口 |
 | `KOTONE_BIND` | `0.0.0.0` | 改成 `127.0.0.1` 则只允许本机访问（前面挂反代时用） |
 | `KOTONE_EXAM_SIZE` | `10` | 每场考试抽题数 |
+| `KOTONE_NAME` | `kotonego` | 容器名；同一台机器跑第二份实例（预发布/测试）时才需改 |
+
+> 容器名可自定义意味着**同一台机器能同时跑多份**：比如生产 `.env` 用 `KOTONE_PORT=8010`，测试环境另一个目录用 `KOTONE_PORT=18010` + `KOTONE_NAME=kotone-staging`，两者互不干扰（已实测）。
+
+### 更新版本
+
+```bash
+git pull
+docker compose up -d --build     # 重建镜像并重启；数据库在命名卷里，不会丢
+```
+
+数据库表用 `CREATE TABLE IF NOT EXISTS`，改代码后直接重建即可，**不需要迁移脚本**。
 - 前端产物由后端托管，已开 gzip（主包 650KB → 220KB）与长缓存；**不要再另外起 nginx 或 `npm run dev`**
 
 ### 数据备份 / 恢复

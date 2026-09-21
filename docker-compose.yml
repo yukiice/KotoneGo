@@ -11,7 +11,8 @@ services:
   kotone:
     build: .
     image: kotonego:0.0.1
-    container_name: kotonego
+    # 容器名，可改（同一台机器跑多份时才需要改，比如 KOTONE_NAME=kotone-staging）
+    container_name: "${KOTONE_NAME:-kotonego}"
     restart: unless-stopped
 
     ports:
