@@ -168,3 +168,7 @@ class QuestionReportItem(BaseModel):
     message: str
     status: str
     created_at: str
+
+
+class UpdateReportStatusRequest(BaseModel):
+    status: Literal["open", "resolved"]

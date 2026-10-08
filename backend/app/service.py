@@ -642,3 +642,14 @@ def list_reports(status: str | None = None) -> list[dict[str, Any]]:
     with get_conn() as conn:
         rows = conn.execute(sql, params).fetchall()
     return [_report_row_to_dict(row, bank.get(row["question_id"])) for row in rows]
+
+
+def update_report_status(report_id: int, status: str) -> dict[str, Any]:
+    """标记上报为已修复（resolved）或重新打开（open）。"""
+    with get_conn() as conn:
+        cursor = conn.execute("UPDATE question_reports SET status = ? WHERE id = ?", (status, report_id))
+        if cursor.rowcount == 0:
+            raise NotFoundError(f"上报记录不存在: {report_id}")
+        row = conn.execute("SELECT * FROM question_reports WHERE id = ?", (report_id,)).fetchone()
+    question = load_questions().get(row["question_id"])
+    return _report_row_to_dict(row, question)

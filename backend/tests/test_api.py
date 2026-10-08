@@ -377,3 +377,26 @@ def test_list_reports_newest_first_and_filter_by_status(client):
     assert client.get("/api/question-reports", params={"status": "open"}).json() == all_items
     assert client.get("/api/question-reports", params={"status": "resolved"}).json() == []
     assert client.get("/api/question-reports", params={"status": "bogus"}).status_code == 422
+
+
+def test_report_status_can_be_resolved_and_reopened(client):
+    created = client.post("/api/questions/basics-1/reports", json={"category": "other"}).json()
+    rid = created["id"]
+
+    resolved = client.patch(f"/api/question-reports/{rid}", json={"status": "resolved"})
+    assert resolved.status_code == 200
+    assert resolved.json()["status"] == "resolved"
+    assert client.get("/api/question-reports", params={"status": "open"}).json() == []
+    assert [i["id"] for i in client.get("/api/question-reports", params={"status": "resolved"}).json()] == [rid]
+
+    reopened = client.patch(f"/api/question-reports/{rid}", json={"status": "open"})
+    assert reopened.json()["status"] == "open"
+
+
+def test_report_status_missing_returns_404(client):
+    assert client.patch("/api/question-reports/9999", json={"status": "resolved"}).status_code == 404
+
+
+def test_report_status_rejects_unknown_value(client):
+    rid = client.post("/api/questions/basics-1/reports", json={"category": "other"}).json()["id"]
+    assert client.patch(f"/api/question-reports/{rid}", json={"status": "closed"}).status_code == 422

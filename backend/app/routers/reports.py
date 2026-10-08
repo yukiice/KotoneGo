@@ -11,7 +11,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, Query
 
 from .. import service
-from ..schemas import QuestionReportItem, ReportQuestionRequest
+from ..schemas import QuestionReportItem, ReportQuestionRequest, UpdateReportStatusRequest
 
 router = APIRouter(prefix="/api", tags=["question-reports"])
 
@@ -36,3 +36,15 @@ def list_question_reports(
     status: Literal["open", "resolved"] | None = Query(default=None, description="不传=全部"),
 ) -> list[dict]:
     return service.list_reports(status=status)
+
+
+@router.patch(
+    "/question-reports/{report_id}",
+    response_model=QuestionReportItem,
+    summary="标记上报已修复 / 重新打开",
+)
+def update_question_report(report_id: int, payload: UpdateReportStatusRequest) -> dict:
+    try:
+        return service.update_report_status(report_id, payload.status)
+    except service.NotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc

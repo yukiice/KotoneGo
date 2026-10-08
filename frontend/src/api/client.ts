@@ -95,6 +95,14 @@ export const api = {
   deleteWrongQuestion: (questionId: string) =>
     request<void>(`/api/wrong-questions/${questionId}`, { method: "DELETE" }),
 
+  listQuestionReports: (status?: "open" | "resolved") =>
+    request<QuestionReport[]>(`/api/question-reports${status ? `?status=${status}` : ""}`),
+  updateQuestionReport: (reportId: number, status: "open" | "resolved") =>
+    request<QuestionReport>(`/api/question-reports/${reportId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+
   reportQuestion: (questionId: string, payload: { category: ReportCategory; message?: string }) =>
     request<QuestionReport>(`/api/questions/${questionId}/reports`, {
       method: "POST",

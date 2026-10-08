@@ -177,6 +177,7 @@ wrong_questions(question_id PK, topic, wrong_count, last_selected, first_wrong_a
 | GET | `/api/wrong-questions/export?format=markdown\|anki&topic&mastered` | 导出错题本（附件下载；Markdown 复习笔记 / Anki 可导入 CSV） |
 | POST | `/api/questions/{qid}/reports` | 题目纠错上报 `{category, message}`，category ∈ answer_wrong/explanation_wrong/unclear/other，返回 201 |
 | GET | `/api/question-reports?status=open\|resolved` | 查看上报列表（新到旧） |
+| PATCH | `/api/question-reports/{id}` | `{status: open\|resolved}` 标记已修复 / 重新打开（不改题库） |
 | GET | `/api/stats` | 总体统计 + 各主题正确率 + 最近考试 |
 
 ---
@@ -345,7 +346,7 @@ cd frontend && npm run build
 2. **按选项生成题目变体**：同一知识点换问法，减少“记住了答案位置”的假成绩。
 3. **导入**（导出已完成）：`GET /api/wrong-questions/export` 已支持 Markdown / Anki CSV；反向导入尚未实现。
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
-5. **题目质量反馈**（后端与前端入口已完成）：「这题有问题」上报写入 `question_reports`；尚未做处理（标记已修复）的界面与题库修订流程。
+5. **题目质量反馈**（上报、处理界面已完成）：`/reports` 页面可按待处理 / 已修复筛选并标记状态；题库修订仍需手动编辑 JSON 并校验，尚无自动修正流程。
 6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
 7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
    每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
