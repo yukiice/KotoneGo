@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -129,9 +128,36 @@ def _validate(raw: dict[str, Any], source: Path) -> Question:
     )
 
 
-@lru_cache(maxsize=1)
+def _bank_signature() -> tuple[tuple[str, int, int], ...]:
+    """题库文件的指纹：(文件名, mtime_ns, 大小)。任一文件变化都会得到不同的签名。"""
+    if not QUESTIONS_DIR.exists():
+        return ()
+    return tuple(
+        (path.name, stat.st_mtime_ns, stat.st_size)
+        for path in sorted(QUESTIONS_DIR.glob("*.json"))
+        for stat in (path.stat(),)
+    )
+
+
+_cache: dict[str, Any] = {"signature": None, "bank": None}
+
+
 def load_questions() -> dict[str, Question]:
-    """读取并校验全部题目，返回 {question_id: Question}。"""
+    """返回 {question_id: Question}。
+
+    题库文件有增删改时（mtime / 大小 / 文件名变化）自动重新加载，
+    不再需要手动调用 /api/questions/reload。解析失败时抛 QuestionBankError，
+    不会用坏数据覆盖已经加载好的旧题库。
+    """
+    signature = _bank_signature()
+    if _cache["bank"] is None or _cache["signature"] != signature:
+        _cache["bank"] = _read_bank()
+        _cache["signature"] = signature
+    return _cache["bank"]
+
+
+def _read_bank() -> dict[str, Question]:
+    """读取并校验全部题目。"""
     if not QUESTIONS_DIR.exists():
         raise QuestionBankError(f"题库目录不存在: {QUESTIONS_DIR}")
 
@@ -160,8 +186,8 @@ def load_questions() -> dict[str, Question]:
 
 
 def reload_questions() -> dict[str, Question]:
-    """清缓存后重新加载，方便开发时改完 JSON 立即生效。"""
-    load_questions.cache_clear()
+    """强制重新加载（保留给 /api/questions/reload，兼容原有用法）。"""
+    _cache["bank"] = None
     return load_questions()
 
 
