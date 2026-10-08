@@ -347,7 +347,7 @@ cd frontend && npm run build
 3. **导入**（导出已完成）：`GET /api/wrong-questions/export` 已支持 Markdown / Anki CSV；反向导入尚未实现。
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
 5. **题目质量反馈**（上报、处理界面已完成）：`/reports` 页面可按待处理 / 已修复筛选并标记状态；题库修订仍需手动编辑 JSON 并校验，尚无自动修正流程。
-6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
+6. **前端代码分割（已完成）**：`react-markdown` 与 `highlight.js` 已在懒加载的 `Markdown` 分块中，主包 `index` 210 kB（gzip 68 kB）不含它们。进一步缩小 Markdown 分块需绕过 `rehype-highlight`（它会强制打包 lowlight 的 common 全集），改用 lowlight 自定义插件；实测只注册所需语言并不能缩小分块（反而变大到 357 kB），收益有限，暂不做。
 7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
    每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
 8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚，以及 `test_api.py` 中的 HTTP 接口契约（状态码、请求校验、错题本、统计）；`smoke_test.py` 仍需后端运行。
