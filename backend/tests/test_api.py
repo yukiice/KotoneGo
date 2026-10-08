@@ -279,3 +279,54 @@ def test_api_paths_do_not_fall_through_to_spa(client):
     # 未知 /api 路径必须是 404 JSON，而不是被前端 SPA 回落吞掉
     resp = client.get("/api/does-not-exist")
     assert resp.status_code == 404
+
+
+# --------------------------------------------------------------------------- #
+# 错题本导出
+# --------------------------------------------------------------------------- #
+def test_export_markdown_is_attachment(client, wrong_one):
+    resp = client.get("/api/wrong-questions/export")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/markdown")
+    disposition = resp.headers["content-disposition"]
+    assert disposition.startswith("attachment; filename=\"kotone-wrong-book-")
+    assert disposition.endswith(".md\"")
+    assert "# KotoneGo 错题本" in resp.text
+    assert "题目数量：1" in resp.text
+
+
+def test_export_anki_is_csv_attachment(client, wrong_one):
+    resp = client.get("/api/wrong-questions/export", params={"format": "anki"})
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/csv")
+    assert resp.headers["content-disposition"].endswith(".csv\"")
+    assert resp.text.startswith("#separator:comma\n")
+    # 一道错题 = 一行数据
+    data_lines = [line for line in resp.text.splitlines() if line and not line.startswith("#")]
+    assert len(data_lines) == 1
+
+
+def test_export_respects_mastered_filter(client, wrong_one):
+    client.patch(f"/api/wrong-questions/{wrong_one}", json={"mastered": True})
+
+    open_only = client.get("/api/wrong-questions/export", params={"mastered": False}).text
+    assert "题目数量：0" in open_only
+    mastered_only = client.get("/api/wrong-questions/export", params={"mastered": True}).text
+    assert "题目数量：1" in mastered_only
+
+
+def test_export_empty_book_still_downloads(client):
+    resp = client.get("/api/wrong-questions/export")
+    assert resp.status_code == 200
+    assert "没有错题" in resp.text
+
+
+def test_export_rejects_unknown_format(client):
+    assert client.get("/api/wrong-questions/export", params={"format": "pdf"}).status_code == 422
+
+
+def test_export_respects_topic_filter(client, wrong_one):
+    topic = load_questions()[wrong_one].topic
+    other = "types" if topic == "basics" else "basics"
+    assert "题目数量：1" in client.get("/api/wrong-questions/export", params={"topic": topic}).text
+    assert "题目数量：0" in client.get("/api/wrong-questions/export", params={"topic": other}).text

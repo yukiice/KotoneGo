@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import Response
 
 from .. import service
+from ..export import to_anki_csv, to_markdown
 from ..schemas import StatsResponse, UpdateWrongQuestionRequest, WrongQuestionItem
 
 router = APIRouter(prefix="/api", tags=["wrong-book", "stats"])
@@ -22,6 +27,31 @@ def list_wrong_questions(
     mastered: bool | None = Query(default=None, description="true=已掌握，false=待攻克，不传=全部"),
 ) -> list[dict]:
     return service.list_wrong_questions(topic=topic, mastered=mastered)
+
+
+@router.get(
+    "/wrong-questions/export",
+    summary="导出错题本（Markdown 或 Anki CSV）",
+    response_class=Response,
+)
+def export_wrong_questions(
+    topic: str | None = Query(default=None, description="只导出该主题，不传=全部"),
+    format: Literal["markdown", "anki"] = Query(default="markdown", description="markdown=复习笔记，anki=可导入 Anki 的 CSV"),
+    mastered: bool | None = Query(default=None, description="与列表接口一致：true/false/不传"),
+) -> Response:
+    items = service.list_wrong_questions(topic=topic, mastered=mastered)
+    stamp = datetime.now().strftime("%Y%m%d")
+    if format == "anki":
+        body = to_anki_csv(items)
+        media_type, filename = "text/csv; charset=utf-8", f"kotone-wrong-book-{stamp}.csv"
+    else:
+        body = to_markdown(items, datetime.now())
+        media_type, filename = "text/markdown; charset=utf-8", f"kotone-wrong-book-{stamp}.md"
+    return Response(
+        content=body,
+        media_type=media_type,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.patch("/wrong-questions/{question_id}", response_model=WrongQuestionItem, summary="标记掌握 / 写笔记")

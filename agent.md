@@ -38,6 +38,7 @@ KotoneGo/
 │   ├── app/
 │   │   ├── config.py             # 路径、题量、分值、CORS、STATIC_DIR
 │   │   ├── db.py                 # sqlite3 建表 + 连接（表结构定义在这里）
+│   │   ├── export.py             # 错题本导出：Markdown / Anki CSV 纯格式化
 │   │   ├── question_bank.py      # 题库加载 + 严格校验 + 主题中文名
 │   │   ├── schemas.py            # Pydantic 请求/响应模型
 │   │   ├── service.py            # 业务逻辑：抽题、判分、错题本、统计
@@ -173,6 +174,7 @@ wrong_questions(question_id PK, topic, wrong_count, last_selected, first_wrong_a
 | GET | `/api/wrong-questions?topic&mastered` | 错题列表（含完整题目与解析） |
 | PATCH | `/api/wrong-questions/{qid}` | `{mastered, note}` |
 | DELETE | `/api/wrong-questions/{qid}` | 移出错题本 |
+| GET | `/api/wrong-questions/export?format=markdown\|anki&topic&mastered` | 导出错题本（附件下载；Markdown 复习笔记 / Anki 可导入 CSV） |
 | GET | `/api/stats` | 总体统计 + 各主题正确率 + 最近考试 |
 
 ---
@@ -339,7 +341,7 @@ cd frontend && npm run build
 
 1. **间隔重复（SRS）**：给 `wrong_questions` 加 `due_at` / `ease`，错题按 SM-2 排期复现 → 复习效率最高。
 2. **按选项生成题目变体**：同一知识点换问法，减少“记住了答案位置”的假成绩。
-3. **导出/导入**：`GET /api/wrong-questions/export` 输出 Markdown/Anki CSV，方便离线背。
+3. **导入**（导出已完成）：`GET /api/wrong-questions/export` 已支持 Markdown / Anki CSV；反向导入尚未实现。
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
 5. **题目质量反馈**：对每道题支持「这题有问题」上报（新表 `question_reports`）。
 6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
