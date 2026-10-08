@@ -12,6 +12,10 @@ class CreateExamRequest(BaseModel):
     topics: list[str] = Field(default_factory=list, description="留空表示全部主题")
     difficulty: Literal["easy", "medium", "hard", "any"] = "any"
     only_wrong: bool = Field(default=False, description="只从错题本里抽题")
+    weighted: bool = Field(
+        default=False,
+        description="按历史正确率加权抽题：错得多的题更容易被抽中，从未作答的题保持中性权重",
+    )
 
 
 class SubmitAnswerRequest(BaseModel):

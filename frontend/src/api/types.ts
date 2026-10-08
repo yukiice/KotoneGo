@@ -145,4 +145,6 @@ export interface CreateExamPayload {
   topics?: string[];
   difficulty?: "easy" | "medium" | "hard" | "any";
   only_wrong?: boolean;
+  /** 按历史正确率加权抽题（错得多的题更容易被抽中） */
+  weighted?: boolean;
 }

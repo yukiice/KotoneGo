@@ -37,13 +37,15 @@ def pick_questions(
     topics: list[str] | None = None,
     difficulty: str = "any",
     only_wrong: bool = False,
+    weighted: bool = False,
 ) -> list[Question]:
     """随机抽题。
 
     规则：
       1. 先按主题 / 难度 / 错题本筛选候选池；
       2. 候选不足时，从剩余题目里补足（保证一定能凑满 size）；
-      3. 题库总量不足 size 时，返回题库全部。
+      3. 题库总量不足 size 时，返回题库全部；
+      4. weighted=True 时按历史表现加权，且同一场考试内不重复抽题。
     """
     bank = load_questions()
     pool = list(bank.values())
@@ -67,7 +69,63 @@ def pick_questions(
         raise ConflictError("没有符合条件（主题 / 难度 / 错题）的题目，请放宽筛选条件")
 
     size = max(1, min(size, len(pool)))
-    return random.sample(pool, size)
+    if not weighted:
+        return random.sample(pool, size)
+
+    weights = _question_weights(pool)
+    return _weighted_sample(pool, weights, size)
+
+
+def _question_weights(pool: list[Question]) -> list[float]:
+    """计算每道题的抽题权重。
+
+    权重 = 1 + (1 - 历史正确率) + 未结束的错题加成(0.5)。
+    - 从未作答：正确率按 0.5 处理，权重为中性值 1.5 附近，新题依然有机会出现；
+    - 错题本里未掌握的题额外加权，保证“错过的题会回来”。
+    """
+    ids = [q.id for q in pool]
+    placeholders = ",".join("?" for _ in ids)
+    with get_conn() as conn:
+        stat_rows = conn.execute(
+            f"SELECT question_id, attempts, correct_count FROM question_stats WHERE question_id IN ({placeholders})",
+            ids,
+        ).fetchall()
+        wrong_rows = conn.execute(
+            f"SELECT question_id FROM wrong_questions WHERE mastered = 0 AND question_id IN ({placeholders})",
+            ids,
+        ).fetchall()
+
+    stats = {row["question_id"]: (row["attempts"], row["correct_count"]) for row in stat_rows}
+    open_wrong = {row["question_id"] for row in wrong_rows}
+
+    weights: list[float] = []
+    for question in pool:
+        attempts, correct = stats.get(question.id, (0, 0))
+        accuracy = correct / attempts if attempts else 0.5
+        weight = 1.0 + (1.0 - accuracy)
+        if question.id in open_wrong:
+            weight += 0.5
+        weights.append(weight)
+    return weights
+
+
+def _weighted_sample(pool: list[Question], weights: list[float], size: int) -> list[Question]:
+    """不放回的加权抽样：每次按权重抽一题，抽中后从候选中移除。"""
+    items = list(zip(pool, weights))
+    chosen: list[Question] = []
+    for _ in range(size):
+        total = sum(w for _, w in items)
+        pick = random.uniform(0, total)
+        acc = 0.0
+        for index, (question, weight) in enumerate(items):
+            acc += weight
+            if pick <= acc:
+                chosen.append(question)
+                items.pop(index)
+                break
+        else:  # 浮点误差兜底：取最后一个
+            chosen.append(items.pop()[0])
+    return chosen
 
 
 # --------------------------------------------------------------------------- #
@@ -78,8 +136,11 @@ def create_exam(
     topics: list[str] | None = None,
     difficulty: str = "any",
     only_wrong: bool = False,
+    weighted: bool = False,
 ) -> dict[str, Any]:
-    questions = pick_questions(size=size, topics=topics, difficulty=difficulty, only_wrong=only_wrong)
+    questions = pick_questions(
+        size=size, topics=topics, difficulty=difficulty, only_wrong=only_wrong, weighted=weighted
+    )
     exam_id = uuid.uuid4().hex[:12]
     created_at = now_iso()
 

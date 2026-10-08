@@ -15,6 +15,7 @@ export function ExamSetupPage() {
   const [size, setSize] = useState(10);
   const [topics, setTopics] = useState<string[]>(presetTopic ? [presetTopic] : []);
   const [difficulty, setDifficulty] = useState<"any" | "easy" | "medium" | "hard">("any");
+  const [weighted, setWeighted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
@@ -26,7 +27,7 @@ export function ExamSetupPage() {
     setStarting(true);
     setError(null);
     try {
-      const exam = await api.createExam({ size, topics, difficulty, only_wrong: onlyWrong });
+      const exam = await api.createExam({ size, topics, difficulty, only_wrong: onlyWrong, weighted });
       localStorage.setItem("kotone.lastExamId", exam.id);
       navigate(`/exam/${exam.id}`);
     } catch (err) {
@@ -65,6 +66,19 @@ export function ExamSetupPage() {
             </button>
           ))}
         </div>
+
+        <div className="section-title tiny muted">抽题方式</div>
+        <div className="row" style={{ margin: "6px 0 14px" }}>
+          <button className={`topic-pill ${!weighted ? "active" : ""}`} onClick={() => setWeighted(false)}>
+            随机
+          </button>
+          <button className={`topic-pill ${weighted ? "active" : ""}`} onClick={() => setWeighted(true)}>
+            按表现加权
+          </button>
+        </div>
+        <p className="tiny muted" style={{ marginTop: -8 }}>
+          加权：错得多、未掌握的题更容易出现；从未做过的题保持正常机会。
+        </p>
 
         <div className="section-title tiny muted">主题（不选 = 全部）</div>
         <div className="row" style={{ marginTop: 8 }}>
