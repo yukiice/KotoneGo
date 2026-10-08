@@ -48,7 +48,8 @@ KotoneGo/
 │   ├── data/questions/*.json     # 题库（一个主题一个文件）
 │   └── scripts/
 │       ├── validate_questions.py # 校验题库格式（改完题库必跑）
-│       └── smoke_test.py         # 端到端冒烟测试（无需 pytest）
+│       └── smoke_test.py         # 端到端冒烟测试（需后端已启动）
+├── backend/tests/                # pytest 单元测试（题库校验、热加载、抽题、回滚）
 └── frontend/                     # React 18 + TS + Vite
     ├── vite.config.ts            # /api 代理到 127.0.0.1:8000
     └── src/
@@ -94,6 +95,7 @@ npm run dev            # http://localhost:5173（/api 会自动代理到 8000）
 
 ```bash
 cd backend  && python3 scripts/validate_questions.py   # 题库格式（改题库后必跑）
+cd backend  && .venv/bin/python -m pytest -q          # 单元测试（需先 pip install -r requirements-dev.txt）
 cd backend  && .venv/bin/python scripts/smoke_test.py  # 端到端流程（需后端已启动）
 cd frontend && npx tsc -b                              # 类型检查
 cd frontend && npm run build                           # 生产构建
@@ -116,7 +118,7 @@ docker compose down               # 停止（数据留在命名卷 kotone-data�
 
 - 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
   静态资源 + SPA catch-all 路由，因此**同一个进程既能跑 API 又能跑网站**。
-- 因此改前端/改后端代码都需要重新构建镜像；只有改题库 JSON 可以挂卷 + `POST /api/questions/reload` 热更新。
+- 因此改前端/改后端代码都需要重新构建镜像；改题库 JSON 可以挂卷，题库会按文件 mtime 自动热加载，无需重启或调用 reload。
 - 想本地模拟生产模式，不必装 Docker：
 
 ```bash
@@ -161,7 +163,7 @@ wrong_questions(question_id PK, topic, wrong_count, last_selected, first_wrong_a
 | --- | --- | --- |
 | GET | `/api/health` | 健康检查 + 题库数量（Docker healthcheck 用它） |
 | GET | `/api/meta` | 题库总量、默认题量、主题列表（含每个主题题数） |
-| POST | `/api/questions/reload` | 重新加载题库 JSON（改完题目免重启） |
+| POST | `/api/questions/reload` | 强制重新加载题库（一般不需要，题库已按文件 mtime 自动热加载；保留兼容） |
 | POST | `/api/exams` | 创建考试 `{size, topics[], difficulty, only_wrong}` → 题目**不含答案** |
 | GET | `/api/exams/{id}` | 考试详情：成绩 + 每题作答 + 答案 + 解析 |
 | POST | `/api/exams/{id}/answers` | 提交单题 `{question_id, selected}` → 对错 + 理由 + 知识点 |
@@ -243,7 +245,8 @@ $EDITOR backend/data/questions/03-types.json
 cd backend && python3 scripts/validate_questions.py
 
 # 3. 让运行中的后端重新加载（免重启）
-curl -X POST localhost:8000/api/questions/reload
+# 题库会自动热加载，无需 reload；如需强制刷新：
+# curl -X POST localhost:8000/api/questions/reload
 
 # 4. 冒烟测试（可选，但改了 service 一定要跑）
 .venv/bin/python scripts/smoke_test.py
@@ -309,12 +312,12 @@ cd frontend && npm run build
 2. **`doc` slug 必须与 `DOC_META` 完全一致**，否则错题里的文档链接 404。
 3. **`TOPIC_LABELS` 缺主题**时，前端只显示英文 topic 键，不影响运行但体验差。
 4. **不要在下发试卷的响应里带上 `answer`**（`Question.public()` 与 `revealed()` 已分开）。
-5. **不要用 `list()` 装饰器缓存题库后又期待热更新**：`load_questions` 有 `lru_cache`，
-   改题后调用 `reload_questions()`（或 `POST /api/questions/reload`）。
+5. **题库热加载基于文件指纹**：`load_questions` 以 (文件名, mtime_ns, 大小) 作为缓存签名，文件变化会自动重载。
+   解析失败时抛 `QuestionBankError` 且保留旧题库。注意：若用工具改写文件但保持 mtime 与大小完全不变，不会触发重载（测试中用 `os.utime` 推进 mtime）。
 6. `TopicStat.accuracy` 与 `Stats.avg_score` 都是“四舍五入到 1 位/整数”，前端不要再叠加取整。
-7. **前端 `import.meta.glob` 是 eager 的**：18 章文档会进主 bundle（约 220KB gzip）。
-   若文档数量大增，改成懒加载：`import.meta.glob('./docs/*.md', { query: '?long' ... })` 并用 `React.lazy`
-   或 `useEffect` 动态 `import()`。
+7. **文档正文按需加载**：`content/index.ts` 使用 lazy `import.meta.glob`，每章 `.md` 独立 chunk，经 `loadDocMarkdown(slug)` 异步获取。
+   `DOC_META`（标题、摘要、主题）仍同步可用，首页和错题本无需等待。`Markdown` 渲染器通过 `React.lazy` 只在文档页加载。
+   新增章节只需放入 `docs/` 并在 `DOC_META` 注册。
 8. **Python 版本要求 3.11+**（用了 `X | None`、`match`、`tomllib` 等）；容器里固定为 `python:3.12-slim`。
 9. **Swagger 文档在 `/api/docs` 而不是 `/docs`**：`/docs` 已经被站内的「语法文档」页面占用
    （单容器部署时前端路由和后端路由同一个域名）。新增路由时别再用 `/docs`、`/redoc`。
@@ -342,7 +345,7 @@ cd frontend && npm run build
 6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
 7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
    每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
-8. **测试**：把 `scripts/smoke_test.py` 升级成 pytest，覆盖抽题边界（题量不足、错题池为空）。
+8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚；可继续补充 API 层的端到端用例（目前 `smoke_test.py` 仍需后端运行）。
 
 ---
 
@@ -352,4 +355,5 @@ cd frontend && npm run build
 - 前端：函数组件 + hooks，不用 class 组件；类型放 `api/types.ts`，不要在页面里随手 `any`。
 - 提交信息：`feat(quiz): 新增正则主题 30 题`、`fix(api): 修正重复作答的统计回滚`。
 - 分支：功能分支 `python/0.0.1`（当前），大改动请开新分支。
-- 改完必做：`validate_questions.py` → `npx tsc -b` → `npm run build` → `smoke_test.py`。
+- 改完必做：`validate_questions.py` → `pytest` → `npx tsc -b` → `npm run build` → `smoke_test.py`（后端运行时）。
+- CI（`.github/workflows/ci.yml`）会自动执行题库校验、pytest 与前端构建。

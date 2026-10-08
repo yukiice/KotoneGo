@@ -124,7 +124,7 @@ docker compose exec -T kotone sh -c 'cat /data/kotone.db' | sqlite3 -header -csv
 
 | 改了什么 | 怎么生效 |
 | --- | --- |
-| 题库 JSON（`backend/data/questions/`） | `docker compose up -d --build`；或挂载目录后 `curl -X POST localhost:8010/api/questions/reload` |
+| 题库 JSON（`backend/data/questions/`） | 本地运行时自动热加载（按文件 mtime）；Docker 下 `docker compose up -d --build`，或挂载目录后直接改文件即可 |
 | 前端文档 / 页面（`frontend/`） | `docker compose up -d --build`（静态文件在镜像里） |
 | 后端代码（`backend/app/`） | `docker compose up -d --build` |
 
@@ -195,8 +195,11 @@ cd backend && python3 scripts/validate_questions.py
 # 端到端冒烟测试（需要后端已启动）
 cd backend && .venv/bin/python scripts/smoke_test.py
 
-# 改完题目后让运行中的后端热加载题库
-curl -X POST http://127.0.0.1:8000/api/questions/reload
+# 题库会按文件 mtime 自动热加载，改完 JSON 无需重启或 reload
+# 如需强制刷新：curl -X POST http://127.0.0.1:8000/api/questions/reload
+
+# 单元测试（先安装开发依赖）
+cd backend && pip install -r requirements-dev.txt && python -m pytest -q
 
 # 前端类型检查 / 构建
 cd frontend && npx tsc -b && npm run build
