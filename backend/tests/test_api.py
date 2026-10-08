@@ -330,3 +330,50 @@ def test_export_respects_topic_filter(client, wrong_one):
     other = "types" if topic == "basics" else "basics"
     assert "题目数量：1" in client.get("/api/wrong-questions/export", params={"topic": topic}).text
     assert "题目数量：0" in client.get("/api/wrong-questions/export", params={"topic": other}).text
+
+
+# --------------------------------------------------------------------------- #
+# 题目纠错上报
+# --------------------------------------------------------------------------- #
+def test_report_question_creates_open_record(client):
+    resp = client.post("/api/questions/basics-1/reports", json={"category": "answer_wrong", "message": "  答案应为 C  "})
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["question_id"] == "basics-1"
+    assert body["category"] == "answer_wrong"
+    assert body["category_label"] == "答案有误"
+    assert body["message"] == "答案应为 C"  # 首尾空白被去掉
+    assert body["status"] == "open"
+    assert body["question"] == "题干 basics-1"
+
+
+def test_report_message_is_optional(client):
+    resp = client.post("/api/questions/basics-1/reports", json={"category": "other"})
+    assert resp.status_code == 201
+    assert resp.json()["message"] == ""
+
+
+def test_report_unknown_question_returns_404(client):
+    resp = client.post("/api/questions/nope/reports", json={"category": "other"})
+    assert resp.status_code == 404
+
+
+def test_report_unknown_category_returns_422(client):
+    resp = client.post("/api/questions/basics-1/reports", json={"category": "hate"})
+    assert resp.status_code == 422
+
+
+def test_report_message_too_long_returns_422(client):
+    resp = client.post("/api/questions/basics-1/reports", json={"category": "other", "message": "x" * 501})
+    assert resp.status_code == 422
+
+
+def test_list_reports_newest_first_and_filter_by_status(client):
+    client.post("/api/questions/basics-1/reports", json={"category": "unclear"})
+    client.post("/api/questions/types-1/reports", json={"category": "other", "message": "第二条"})
+
+    all_items = client.get("/api/question-reports").json()
+    assert [item["question_id"] for item in all_items] == ["types-1", "basics-1"]
+    assert client.get("/api/question-reports", params={"status": "open"}).json() == all_items
+    assert client.get("/api/question-reports", params={"status": "resolved"}).json() == []
+    assert client.get("/api/question-reports", params={"status": "bogus"}).status_code == 422

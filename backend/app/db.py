@@ -60,6 +60,17 @@ CREATE TABLE IF NOT EXISTS wrong_questions (
     mastered      INTEGER NOT NULL DEFAULT 0,
     note          TEXT NOT NULL DEFAULT ''
 );
+
+CREATE TABLE IF NOT EXISTS question_reports (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    question_id TEXT NOT NULL,
+    category    TEXT NOT NULL,
+    message     TEXT NOT NULL DEFAULT '',
+    status      TEXT NOT NULL DEFAULT 'open',
+    created_at  TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_question_reports_question ON question_reports(question_id);
 """
 
 

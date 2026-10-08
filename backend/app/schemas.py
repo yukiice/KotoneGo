@@ -152,3 +152,19 @@ class StatsResponse(BaseModel):
     wrong_mastered_count: int
     by_topic: list[TopicStat]
     recent_exams: list[ExamHistoryItem]
+
+
+class ReportQuestionRequest(BaseModel):
+    category: Literal["answer_wrong", "explanation_wrong", "unclear", "other"]
+    message: str = Field(default="", max_length=500, description="补充说明，可留空")
+
+
+class QuestionReportItem(BaseModel):
+    id: int
+    question_id: str
+    question: str
+    category: str
+    category_label: str
+    message: str
+    status: str
+    created_at: str

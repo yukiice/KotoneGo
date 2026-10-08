@@ -30,7 +30,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import CORS_ORIGINS, DEFAULT_EXAM_SIZE, POINTS_PER_QUESTION, STATIC_DIR
 from .db import init_db
 from .question_bank import QuestionBankError, load_questions, reload_questions, topic_summary
-from .routers import exams, stats
+from .routers import exams, reports, stats
 
 
 @asynccontextmanager
@@ -66,6 +66,7 @@ app.add_middleware(
 
 app.include_router(exams.router)
 app.include_router(stats.router)
+app.include_router(reports.router)
 
 
 @app.middleware("http")

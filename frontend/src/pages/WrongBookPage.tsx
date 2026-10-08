@@ -5,6 +5,7 @@ import type { WrongQuestion } from "../api/types";
 import { Empty, ErrorBox, Loading, formatTime } from "../components/ui";
 import { docTitle } from "../content";
 import { useAsync } from "../hooks/useAsync";
+import { ReportQuestion } from "../components/ReportQuestion";
 
 type Filter = "open" | "mastered" | "all";
 
@@ -313,6 +314,10 @@ function WrongItem({
                 保存笔记
               </button>
             </div>
+          </div>
+
+          <div className="section">
+            <ReportQuestion questionId={item.question_id} />
           </div>
         </div>
       ) : null}

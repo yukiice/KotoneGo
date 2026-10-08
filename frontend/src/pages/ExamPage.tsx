@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { api } from "../api/client";
 import type { AnswerFeedback, ExamDetail, ExamQuestion } from "../api/types";
 import { QuestionCard, type FeedbackLike } from "../components/QuestionCard";
+import { ReportQuestion } from "../components/ReportQuestion";
 import { ErrorBox, Loading, ScoreRing, formatDuration } from "../components/ui";
 import { useAsync } from "../hooks/useAsync";
 
@@ -303,6 +304,12 @@ export function ExamRunnerPage() {
         feedback={currentFeedback}
         onSelect={(key) => void select(key)}
       />
+
+      {current && currentFeedback ? (
+        <div style={{ marginTop: -6, marginBottom: 12 }}>
+          <ReportQuestion questionId={current.id} />
+        </div>
+      ) : null}
 
       {error ? <div className="alert bad">{error}</div> : null}
 

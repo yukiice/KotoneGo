@@ -11,6 +11,8 @@ import type {
   ExamHistoryItem,
   ExamResult,
   Meta,
+  QuestionReport,
+  ReportCategory,
   Stats,
   WrongQuestion,
 } from "./types";
@@ -92,4 +94,10 @@ export const api = {
     }),
   deleteWrongQuestion: (questionId: string) =>
     request<void>(`/api/wrong-questions/${questionId}`, { method: "DELETE" }),
+
+  reportQuestion: (questionId: string, payload: { category: ReportCategory; message?: string }) =>
+    request<QuestionReport>(`/api/questions/${questionId}/reports`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };

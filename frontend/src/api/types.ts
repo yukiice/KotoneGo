@@ -148,3 +148,17 @@ export interface CreateExamPayload {
   /** 按历史正确率加权抽题（错得多的题更容易被抽中） */
   weighted?: boolean;
 }
+
+/** 纠错上报的反馈类型（与后端 REPORT_CATEGORIES 保持一致） */
+export type ReportCategory = "answer_wrong" | "explanation_wrong" | "unclear" | "other";
+
+export interface QuestionReport {
+  id: number;
+  question_id: string;
+  question: string;
+  category: ReportCategory;
+  category_label: string;
+  message: string;
+  status: "open" | "resolved";
+  created_at: string;
+}

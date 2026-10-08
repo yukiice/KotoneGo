@@ -587,3 +587,58 @@ def get_stats() -> dict[str, Any]:
         "by_topic": by_topic,
         "recent_exams": list_exams(limit=10),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 题目纠错上报
+# --------------------------------------------------------------------------- #
+REPORT_CATEGORIES: dict[str, str] = {
+    "answer_wrong": "答案有误",
+    "explanation_wrong": "解析不准确",
+    "unclear": "题干或选项表述不清",
+    "other": "其他",
+}
+
+
+def _report_row_to_dict(row: sqlite3.Row, question: Question | None) -> dict[str, Any]:
+    return {
+        "id": row["id"],
+        "question_id": row["question_id"],
+        "question": question.question if question else "（题目已从题库移除）",
+        "category": row["category"],
+        "category_label": REPORT_CATEGORIES.get(row["category"], row["category"]),
+        "message": row["message"],
+        "status": row["status"],
+        "created_at": row["created_at"],
+    }
+
+
+def create_report(question_id: str, category: str, message: str) -> dict[str, Any]:
+    bank = load_questions()
+    question = bank.get(question_id)
+    if question is None:
+        raise NotFoundError(f"题目不存在: {question_id}")
+    if category not in REPORT_CATEGORIES:
+        raise ConflictError(f"未知的反馈类型: {category!r}")
+
+    with get_conn() as conn:
+        cursor = conn.execute(
+            "INSERT INTO question_reports (question_id, category, message, status, created_at) "
+            "VALUES (?, ?, ?, 'open', ?)",
+            (question_id, category, message.strip(), now_iso()),
+        )
+        row = conn.execute("SELECT * FROM question_reports WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    return _report_row_to_dict(row, question)
+
+
+def list_reports(status: str | None = None) -> list[dict[str, Any]]:
+    bank = load_questions()
+    sql = "SELECT * FROM question_reports WHERE 1 = 1"
+    params: list[Any] = []
+    if status is not None:
+        sql += " AND status = ?"
+        params.append(status)
+    sql += " ORDER BY id DESC"
+    with get_conn() as conn:
+        rows = conn.execute(sql, params).fetchall()
+    return [_report_row_to_dict(row, bank.get(row["question_id"])) for row in rows]
