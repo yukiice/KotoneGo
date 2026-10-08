@@ -1,0 +1,148 @@
+{
+  "topic": "typing",
+  "label": "类型注解与 mypy",
+  "questions": [
+    {
+      "id": "typing-01", "topic": "typing", "difficulty": "easy",
+      "question": "def add(a: int, b: int) -> int: 中的类型注解在运行时？",
+      "options": {
+        "A": "强制检查，传错类型会报错",
+        "B": "不做检查，只是元数据（可被 mypy/pyright 和 IDE 使用）",
+        "C": "会自动做类型转换",
+        "D": "会导致 SyntaxError"
+      },
+      "answer": "B",
+      "explanation": "注解存在 __annotations__ 中，运行时不校验；要静态检查需要 mypy/pyright，运行时要校验得用 Pydantic 等库。",
+      "distractors": {
+        "A": "Python 不做运行时强制（除非用 Pydantic/typeguard 等）。",
+        "C": "不会转换，add(\"1\", \"2\") 只是拼接字符串。",
+        "D": "是合法语法。"
+      },
+      "knowledge": ["注解不参与运行时", "__annotations__", "mypy"],
+      "doc": "15-typing", "tags": ["pitfall"]
+    },
+    {
+      "id": "typing-02", "topic": "typing", "difficulty": "medium",
+      "question": "注解“列表里装字符串”的现代写法是？",
+      "options": { "A": "list[str]", "B": "List[str] 是唯一的合法写法", "C": "string[]", "D": "[str]" },
+      "answer": "A",
+      "explanation": "Python 3.9+ 支持内置泛型 list[str]、dict[str, int]；老代码常见 typing.List[str]，二者等价。",
+      "distractors": {
+        "B": "typing.List 仍然可用，但不再是唯一写法。",
+        "C": "string[] 是 Java/TS 语法。",
+        "D": "不是合法注解。"
+      },
+      "knowledge": ["内置泛型 list[str]", "typing.List 兼容写法", "PEP 585"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-03", "topic": "typing", "difficulty": "medium",
+      "question": "函数参数可以不传（默认 None）时，推荐注解是？",
+      "options": { "A": "def f(x: str = None)", "B": "def f(x: str | None = None)", "C": "def f(x: str?)", "D": "def f(x: optional str)" },
+      "answer": "B",
+      "explanation": "str | None（或 Optional[str]）明确表达“可能是 None”，mypy 在严格模式下会指出 A 的类型不一致。",
+      "distractors": {
+        "A": "注解与默认值类型不符，严格检查会报错。",
+        "C": "? 是 TS/Kotlin 的语法。",
+        "D": "不是 Python 语法。"
+      },
+      "knowledge": ["Optional / | None", "默认值类型一致性", "严格模式"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-04", "topic": "typing", "difficulty": "hard",
+      "question": "Any 类型注解的含义是？",
+      "options": {
+        "A": "任意类型，静态检查器放弃检查该值",
+        "B": "等同于 object",
+        "C": "表示联合类型",
+        "D": "表示必须是数字"
+      },
+      "answer": "A",
+      "explanation": "Any 会关闭类型检查（并可传播）；能用 object 或具体联合类型时应避免 Any，否则会失去类型系统的价值。",
+      "distractors": {
+        "B": "object 是“所有类型的基类”，用它访问属性仍会报错，与 Any 不同。",
+        "C": "联合类型写作 int | str。",
+        "D": "与数字无关。"
+      },
+      "knowledge": ["Any", "object 的区别", "类型检查逃逸"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-05", "topic": "typing", "difficulty": "hard",
+      "question": "TypeVar 的作用是？",
+      "options": {
+        "A": "定义泛型函数/类中可复用的类型变量，保持输入输出类型关联",
+        "B": "给变量赋初值",
+        "C": "声明全局变量",
+        "D": "把变量变成常量"
+      },
+      "answer": "A",
+      "explanation": "def first(items: list[T]) -> T 用 TypeVar 表达“返回元素类型与列表元素类型一致”，这是泛型的基础。",
+      "distractors": {
+        "B": "与赋值无关。",
+        "C": "与作用域无关。",
+        "D": "与常量无关。"
+      },
+      "knowledge": ["TypeVar", "泛型", "类型关联"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-06", "topic": "typing", "difficulty": "medium",
+      "question": "TypedDict 适合用来描述？",
+      "options": {
+        "A": "字典的键与对应值类型（如 JSON 配置对象）",
+        "B": "类的继承关系",
+        "C": "生成器返回值",
+        "D": "文件路径"
+      },
+      "answer": "A",
+      "explanation": "TypedDict 让静态检查器理解 dict 的“形状”，非常适合描述 JSON 数据结构，且运行时仍是普通 dict。",
+      "distractors": {
+        "B": "继承用类实现。",
+        "C": "生成器注解用 Generator/Iterator。",
+        "D": "路径类型是 pathlib.Path 或 str。"
+      },
+      "knowledge": ["TypedDict", "JSON 结构建模", "与 dataclass 对比"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-07", "topic": "typing", "difficulty": "medium",
+      "question": "运行 mypy 检查类型，需要额外做什么？",
+      "options": {
+        "A": "什么都不用，Python 自带类型检查",
+        "B": "pip install mypy 并在 CI/编辑器里配置运行（相当于 TS 的 tsc）",
+        "C": "必须把代码编译成 .pyc",
+        "D": "必须写配置文件 setup.py"
+      },
+      "answer": "B",
+      "explanation": "mypy/pyright 是独立的静态检查工具，类似 TS 的 tsc；可以把它们接入 pre-commit、CI 或编辑器插件。",
+      "distractors": {
+        "A": "解释器不做静态类型检查。",
+        "C": ".pyc 是字节码缓存，与类型检查无关。",
+        "D": "不是必须的。"
+      },
+      "knowledge": ["mypy", "pyright", "与 tsc 对比", "CI 集成"],
+      "doc": "15-typing"
+    },
+    {
+      "id": "typing-08", "topic": "typing", "difficulty": "hard",
+      "question": "注解中引用尚未定义的类，需要怎么做？",
+      "options": {
+        "A": "把字符串写进注解（前向引用），或加 from __future__ import annotations",
+        "B": "必须先定义该类，没有别的办法",
+        "C": "用 Any 替代",
+        "D": "在函数里 import"
+      },
+      "answer": "A",
+      "explanation": "前向引用可写成 def clone(self) -> \"Node\":；加上 from __future__ import annotations（3.11+ 方案）可让所有注解延迟求值，避免循环引用问题。",
+      "distractors": {
+        "B": "字符串注解就是为此设计的。",
+        "C": "Any 会丢失类型信息。",
+        "D": "在函数内 import 不能解决注解求值时机问题。"
+      },
+      "knowledge": ["前向引用", "from __future__ import annotations", "循环引用"],
+      "doc": "15-typing"
+    }
+  ]
+}

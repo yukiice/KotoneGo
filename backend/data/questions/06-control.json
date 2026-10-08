@@ -1,0 +1,275 @@
+{
+  "topic": "control",
+  "label": "条件与循环",
+  "questions": [
+    {
+      "id": "control-01", "topic": "control", "difficulty": "easy",
+      "question": "Python 中 else if 的正确写法是？",
+      "options": { "A": "else if", "B": "elif", "C": "elseif", "D": "else: if" },
+      "answer": "B",
+      "explanation": "Python 用 elif 表示多分支，可以连续写多个 elif。",
+      "distractors": {
+        "A": "else if 在 Python 中是语法错误。",
+        "C": "elseif 是 PHP/Shell 之类的写法。",
+        "D": "写成嵌套 if 也能工作，但语义冗长且不是等价的标准写法。"
+      },
+      "knowledge": ["if/elif/else", "与 JS 对比"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-02", "topic": "control", "difficulty": "medium",
+      "question": "下面哪些值在 if 判断中被视为 False？",
+      "options": {
+        "A": "0、\"\"、[]、{}、None、False",
+        "B": "只有 False 和 None",
+        "C": "只有 0 和 False",
+        "D": "任何对象都视为 True"
+      },
+      "answer": "A",
+      "explanation": "Python 有一整套 falsy 规则：数值 0（含 0.0、0j）、空序列/容器、None、False 都为假。",
+      "distractors": {
+        "B": "空容器和 0 也是假值，这是与 JS 相似但更系统的规则。",
+        "C": "空字符串、空列表等也会被判为假。",
+        "D": "自定义类可通过 __bool__ / __len__ 定义真值。"
+      },
+      "knowledge": ["真值测试", "falsy 列表", "__bool__"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-03", "topic": "control", "difficulty": "easy",
+      "question": "range(3) 产生的序列是？",
+      "options": { "A": "1, 2, 3", "B": "0, 1, 2", "C": "0, 1, 2, 3", "D": "3" },
+      "answer": "B",
+      "explanation": "range(stop) 从 0 开始、含头不含尾，所以是 0,1,2；它返回惰性 range 对象而不是列表。",
+      "distractors": {
+        "A": "range 从 0 开始。",
+        "C": "不包含 3。",
+        "D": "range(3) 不是单个数字。"
+      },
+      "knowledge": ["range()", "含头不含尾", "惰性对象"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-04", "topic": "control", "difficulty": "medium",
+      "question": "想同时拿到索引和元素，推荐写法是？",
+      "options": {
+        "A": "for i in range(len(items)): item = items[i]",
+        "B": "for i, item in enumerate(items):",
+        "C": "for item, i in items:",
+        "D": "for i in items.index():"
+      },
+      "answer": "B",
+      "explanation": "enumerate(items, start=0) 同时给出索引与元素，比手动用 range(len()) 更清晰也更 Pythonic。",
+      "distractors": {
+        "A": "可行但笨重，容易越界。",
+        "C": "元素本身不是二元组时无法解包。",
+        "D": "items.index() 不是这样用的（且 index 需要参数）。"
+      },
+      "knowledge": ["enumerate", "zip", "range(len()) 反模式"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-05", "topic": "control", "difficulty": "easy",
+      "question": "for i in range(5): if i == 3: break 之后，循环里 i 最后的取值是？",
+      "options": { "A": "2", "B": "3", "C": "4", "D": "5" },
+      "answer": "B",
+      "explanation": "break 立刻结束循环，本次迭代的 i 已经是 3，循环不再继续所以不会到 4。",
+      "distractors": {
+        "A": "i==3 时条件成立，会执行 break。",
+        "C": "break 后不会执行 i=4 的迭代。",
+        "D": "range(5) 最大是 4。"
+      },
+      "knowledge": ["break", "continue", "循环变量作用域"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-06", "topic": "control", "difficulty": "medium",
+      "question": "continue 的作用是？",
+      "options": {
+        "A": "结束整个循环",
+        "B": "跳过本次迭代剩余部分，直接进入下一次迭代",
+        "C": "跳出当前函数",
+        "D": "重新从头开始循环"
+      },
+      "answer": "B",
+      "explanation": "continue 只影响当前这一轮：跳过循环体剩余语句，直接进入下一轮判断。",
+      "distractors": {
+        "A": "结束整个循环用 break。",
+        "C": "跳出函数用 return。",
+        "D": "不会重置循环状态。"
+      },
+      "knowledge": ["continue vs break", "return"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-07", "topic": "control", "difficulty": "hard",
+      "question": "for...else 中的 else 什么时候执行？",
+      "options": {
+        "A": "循环至少执行过一次时",
+        "B": "循环正常结束（没有被 break 打断）时",
+        "C": "每次迭代后都执行",
+        "D": "循环体为空时"
+      },
+      "answer": "B",
+      "explanation": "for/while 的 else 是“没有 break 才执行”，常用于“找了一圈都没找到”的逻辑。",
+      "distractors": {
+        "A": "只要有 break 就不会执行。",
+        "C": "它只执行一次。",
+        "D": "与循环体是否为空无关。"
+      },
+      "knowledge": ["for-else", "break 与 else 的关系"],
+      "doc": "07-control-flow", "tags": ["pitfall"]
+    },
+    {
+      "id": "control-08", "topic": "control", "difficulty": "medium",
+      "question": "while 循环中忘记修改条件变量会导致？",
+      "options": { "A": "自动退出", "B": "死循环", "C": "SyntaxError", "D": "循环体只执行一次" },
+      "answer": "B",
+      "explanation": "条件永远为真时循环不会结束，程序卡死；可以用 Ctrl+C 中断或用 break 兜底。",
+      "distractors": {
+        "A": "Python 不会自动检测循环是否“无进展”。",
+        "C": "语法完全合法。",
+        "D": "每次判断都为真会一直执行。"
+      },
+      "knowledge": ["while", "死循环", "Ctrl+C 中断"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-09", "topic": "control", "difficulty": "medium",
+      "question": "while True: ... 循环中必须有退出机制，常用的是？",
+      "options": { "A": "break", "B": "pass", "C": "continue", "D": "return 在循环外的函数里" },
+      "answer": "A",
+      "explanation": "break 是跳出无限循环的标准方式（也可以在循环体内 return 结束函数）。",
+      "distractors": {
+        "B": "pass 是空语句，什么都不做。",
+        "C": "continue 会让循环继续，仍然死循环。",
+        "D": "表述混乱，循环外的 return 不可能执行到。"
+      },
+      "knowledge": ["while True 惯用法", "break", "pass 占位"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-10", "topic": "control", "difficulty": "medium",
+      "question": "Python 3.10+ 的 match 语句中，默认分支用哪个关键字？",
+      "options": { "A": "default:", "B": "case _:", "C": "else:", "D": "otherwise:" },
+      "answer": "B",
+      "explanation": "match-case 用 case _: 作为通配默认分支，_ 匹配任何内容且不绑定。",
+      "distractors": {
+        "A": "default 是 JS switch 的写法。",
+        "C": "match 语句里没有 else 分支。",
+        "D": "otherwise 不是 Python 关键字。"
+      },
+      "knowledge": ["match-case", "通配符 _", "Python 3.10+"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-11", "topic": "control", "difficulty": "hard",
+      "question": "match 语句与 C 系语言的 switch 相比，重要区别是？",
+      "options": {
+        "A": "match 不会自动“穿透”（fall-through），每个 case 互斥",
+        "B": "match 必须有 break",
+        "C": "match 只能匹配字符串",
+        "D": "match 比 if 慢，官方不推荐"
+      },
+      "answer": "A",
+      "explanation": "match-case 每次只执行第一个匹配的分支，不存在 fall-through，还支持结构化模式匹配。",
+      "distractors": {
+        "B": "break 在 match 里没有意义。",
+        "C": "可以匹配字面量、类型、序列、字典、类模式等。",
+        "D": "它是官方推荐的语法，可读性通常更好。"
+      },
+      "knowledge": ["模式匹配", "结构化匹配", "与 switch 对比"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-12", "topic": "control", "difficulty": "easy",
+      "question": "for i in \"abc\": 会迭代出什么？",
+      "options": { "A": "报错，字符串不可迭代", "B": "\"a\"、\"b\"、\"c\"", "C": "整数值 0、1、2", "D": "整个字符串 \"abc\" 一次" },
+      "answer": "B",
+      "explanation": "字符串是可迭代对象，逐个产出字符。",
+      "distractors": {
+        "A": "字符串完全可迭代。",
+        "C": "那是 range(len(\"abc\")) 的效果。",
+        "D": "会逐个字符迭代，不是整体一次。"
+      },
+      "knowledge": ["可迭代协议", "for 迭代字符串/列表/字典"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-13", "topic": "control", "difficulty": "hard",
+      "question": "for 循环结束后，循环变量的值是？",
+      "options": {
+        "A": "报 NameError，因为变量已销毁",
+        "B": "保留最后一次迭代的值，仍可在循环外访问",
+        "C": "自动重置为 None",
+        "D": "变成列表"
+      },
+      "answer": "B",
+      "explanation": "Python 的 for 不会创建新的作用域，循环变量在循环外仍然存在（这是与 JS 的 let 块级作用域不同的地方）。",
+      "distractors": {
+        "A": "变量依然存在。",
+        "C": "不会重置。",
+        "D": "类型不会改变。"
+      },
+      "knowledge": ["无块级作用域", "LEGB 作用域", "与 JS let 对比"],
+      "doc": "07-control-flow", "tags": ["pitfall"]
+    },
+    {
+      "id": "control-14", "topic": "control", "difficulty": "medium",
+      "question": "想判断变量 x 是否为“假值”（如 0、空列表、None），最简洁清晰的写法是？",
+      "options": {
+        "A": "if x == False",
+        "B": "if not x",
+        "C": "if x is not True",
+        "D": "if x == 0 才是唯一方式"
+      },
+      "answer": "B",
+      "explanation": "if not x 利用真值测试，同时覆盖 0、空容器、None 等所有假值，是最简洁的写法。",
+      "distractors": {
+        "A": "x == False 只对 0 和 False 成立，可读性也差（PEP 8 不推荐与布尔字面量比较）。",
+        "C": "x is not True 会把 0、\"\"、[] 也判为 True，语义混乱。",
+        "D": "x == 0 只能判断数字，无法覆盖空列表等情况。"
+      },
+      "knowledge": ["真值测试惯用法", "PEP 8 建议"],
+      "doc": "07-control-flow"
+    },
+    {
+      "id": "control-15", "topic": "control", "difficulty": "medium",
+      "question": "遍历列表同时修改它的长度（如删除元素）会出现什么风险？",
+      "options": {
+        "A": "完全没风险",
+        "B": "可能漏掉元素或索引越界，因为迭代器基于索引推进",
+        "C": "Python 会自动加锁保护",
+        "D": "会抛 SyntaxError"
+      },
+      "answer": "B",
+      "explanation": "迭代过程中删除元素会让后续元素前移，导致跳过元素；安全做法是遍历副本 for x in a[:] 或构建新列表。",
+      "distractors": {
+        "A": "这是经典陷阱。",
+        "C": "没有这种保护机制。",
+        "D": "是逻辑错误而非语法错误。"
+      },
+      "knowledge": ["迭代时修改集合", "副本迭代", "列表推导式过滤"],
+      "doc": "07-control-flow", "tags": ["pitfall"]
+    },
+    {
+      "id": "control-16", "topic": "control", "difficulty": "medium",
+      "question": "同时遍历两个等长列表，推荐写法是？",
+      "options": {
+        "A": "for i in range(len(a)): x, y = a[i], b[i]",
+        "B": "for x, y in zip(a, b):",
+        "C": "for x, y in a + b:",
+        "D": "for x in a: for y in b: 是唯一方式"
+      },
+      "answer": "B",
+      "explanation": "zip 把多个可迭代对象配对成元组流，长度不等时按最短的截断（可用 itertools.zip_longest 补齐）。",
+      "distractors": {
+        "A": "可行但冗长，且要自己防越界。",
+        "C": "a + b 若都是列表则得到拼接后的列表，无法成对解包。",
+        "D": "双重循环会得到笛卡尔积，不是配对。"
+      },
+      "knowledge": ["zip", "zip_longest", "配对遍历"],
+      "doc": "07-control-flow"
+    }
+  ]
+}

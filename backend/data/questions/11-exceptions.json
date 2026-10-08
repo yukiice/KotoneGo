@@ -1,0 +1,214 @@
+{
+  "topic": "exceptions",
+  "label": "异常处理",
+  "questions": [
+    {
+      "id": "exc-01", "topic": "exceptions", "difficulty": "easy",
+      "question": "捕获异常的关键字组合是？",
+      "options": { "A": "try / catch", "B": "try / except", "C": "try / rescue", "D": "begin / rescue" },
+      "answer": "B",
+      "explanation": "Python 用 try...except...[else]...[finally]，catch 是 JS/Java 的写法。",
+      "distractors": {
+        "A": "Python 没有 catch 关键字。",
+        "C": "rescue 是 Ruby 的写法。",
+        "D": "begin/rescue 是 Ruby 的结构。"
+      },
+      "knowledge": ["try/except", "与 JS try/catch 对比"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-02", "topic": "exceptions", "difficulty": "medium",
+      "question": "为什么要避免写 except: 或 except Exception: pass？",
+      "options": {
+        "A": "语法错误",
+        "B": "会吞掉所有异常（包括 KeyboardInterrupt 等），让 bug 难以发现，属于反模式",
+        "C": "会降低运行速度",
+        "D": "Python 会拒绝执行"
+      },
+      "answer": "B",
+      "explanation": "应尽量捕获具体异常，至少记录日志或重新抛出；裸 except 会掩盖真正的错误（裸 except 连 SystemExit/KeyboardInterrupt 都会吞掉）。",
+      "distractors": {
+        "A": "语法合法，问题是工程实践。",
+        "C": "try/except 几乎不影响性能，问题在可维护性。",
+        "D": "解释器不会阻止。"
+      },
+      "knowledge": ["裸 except 反模式", "异常粒度", "日志与重抛"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-03", "topic": "exceptions", "difficulty": "medium",
+      "question": "try/except/else/finally 中，else 分支什么时候执行？",
+      "options": {
+        "A": "任何情况下都执行",
+        "B": "try 块没有抛异常时执行（在 finally 之前）",
+        "C": "抛异常时执行",
+        "D": "只在 finally 之后执行"
+      },
+      "answer": "B",
+      "explanation": "else 用于“只有成功时才做的事”，这样就把可能抛异常的代码与后续处理分开，except 也能收窄范围。",
+      "distractors": {
+        "A": "有异常时 else 不执行。",
+        "C": "抛异常时走 except。",
+        "D": "else 在 try 成功之后、finally 之前执行。"
+      },
+      "knowledge": ["try/except/else/finally", "执行顺序"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-04", "topic": "exceptions", "difficulty": "medium",
+      "question": "finally 块的特点是？",
+      "options": {
+        "A": "只有成功时才执行",
+        "B": "无论是否发生异常（甚至 return/break 时）都会执行，适合释放资源",
+        "C": "可以替代 except",
+        "D": "只捕获特定异常"
+      },
+      "answer": "B",
+      "explanation": "finally 保证清理代码被执行；不过 with 语句（上下文管理器）通常是更安全、更简洁的资源管理方式。",
+      "distractors": {
+        "A": "失败时也会执行。",
+        "C": "finally 不处理异常，只做清理。",
+        "D": "它不捕获任何异常。"
+      },
+      "knowledge": ["finally 清理", "with 语句优先", "资源释放"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-05", "topic": "exceptions", "difficulty": "hard",
+      "question": "except ValueError as e: 中的 e 有什么特点？",
+      "options": {
+        "A": "是字符串，内容是错误信息",
+        "B": "是异常实例，作用域仅限于 except 块（Python 3 中块结束后会被删除）",
+        "C": "是全局变量，可长期使用",
+        "D": "是整数错误码"
+      },
+      "answer": "B",
+      "explanation": "e 是异常对象（可用 str(e)、e.args）；Python 3 在 except 块结束时删除该名字以打断引用循环，块外访问会 NameError。",
+      "distractors": {
+        "A": "它是异常对象，str(e) 才是消息。",
+        "C": "不会长期保留（这是 Python 3 的刻意设计）。",
+        "D": "不是错误码，Python 用异常而不是返回码。"
+      },
+      "knowledge": ["异常对象", "str(e)", "异常作用域清理"],
+      "doc": "12-exceptions", "tags": ["pitfall"]
+    },
+    {
+      "id": "exc-06", "topic": "exceptions", "difficulty": "medium",
+      "question": "主动抛出异常用哪个语句？",
+      "options": { "A": "throw ValueError()", "B": "raise ValueError(\"msg\")", "C": "except ValueError", "D": "panic(\"msg\")" },
+      "answer": "B",
+      "explanation": "raise 抛出异常实例或异常类；在 except 中想重抛可以用裸 raise。",
+      "distractors": {
+        "A": "throw 是 JS/Java 的写法。",
+        "C": "except 是捕获。",
+        "D": "panic 是 Go 的写法。"
+      },
+      "knowledge": ["raise", "裸 raise 重抛"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-07", "topic": "exceptions", "difficulty": "hard",
+      "question": "在 except 块中想保留原始错误链，正确写法是？",
+      "options": {
+        "A": "raise NewError(\"msg\")",
+        "B": "raise NewError(\"msg\") from exc",
+        "C": "raise NewError(\"msg\"), exc",
+        "D": "不需要处理，Python 自动隐藏原异常"
+      },
+      "answer": "B",
+      "explanation": "from exc 设置 __cause__，表示“由该异常引发”，traceback 会同时显示两层；不带 from 也会隐式记录 __context__，但 from 更明确。",
+      "distractors": {
+        "A": "能工作，但语义不如 from 明确（建议显式表达因果）。",
+        "C": "这是 Python 2 的语法，Python 3 已移除。",
+        "D": "Python 默认保留上下文，但不是“隐藏”。"
+      },
+      "knowledge": ["异常链", "__cause__", "__context__", "raise from"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-08", "topic": "exceptions", "difficulty": "medium",
+      "question": "自定义异常时推荐继承哪个基类？",
+      "options": { "A": "BaseException", "B": "Exception", "C": "ValueError 必须继承", "D": "object" },
+      "answer": "B",
+      "explanation": "业务异常继承 Exception（或它的子类如 ValueError）；BaseException 保留给系统级异常（KeyboardInterrupt、SystemExit）。",
+      "distractors": {
+        "A": "继承 BaseException 会被很多 except Exception 遗漏，且可能干扰解释器控制流。",
+        "C": "可以继承 ValueError，但不是必须，按语义选择。",
+        "D": "直接继承 object 不算异常类，无法 raise。"
+      },
+      "knowledge": ["Exception vs BaseException", "自定义异常", "SystemExit"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-09", "topic": "exceptions", "difficulty": "hard",
+      "question": "下面哪个不属于“用异常做控制流”的反模式？\n\nA: 用 try/except 判断字典键是否存在\nB: 用 KeyError 处理可预见的缺失键\nC: EAFP 风格访问属性后捕获 AttributeError",
+      "options": {
+        "A": "A 是反模式",
+        "B": "B 是反模式（可预见时应该用 get 或 in 判断）",
+        "C": "C 是反模式，Python 应该用 LBYL",
+        "D": "三个都是反模式"
+      },
+      "answer": "B",
+      "explanation": "Python 文化是 EAFP（先做、出错再处理），但“可预见且频繁”的缺失用 d.get()/in 更清晰、更快；异常适合“罕见”的异常路径。",
+      "distractors": {
+        "A": "判断键是否存在属可预见情况，用 in/get 更好，但题目问最典型的反模式是 B。",
+        "C": "EAFP 在 Python 中是被鼓励的风格。",
+        "D": "并非全部都是反模式。"
+      },
+      "knowledge": ["EAFP vs LBYL", "异常开销", "可读性权衡"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-10", "topic": "exceptions", "difficulty": "medium",
+      "question": "同时捕获多种异常的正确写法是？",
+      "options": {
+        "A": "except ValueError, TypeError:",
+        "B": "except (ValueError, TypeError):",
+        "C": "except ValueError | TypeError:",
+        "D": "except ValueError or TypeError:"
+      },
+      "answer": "B",
+      "explanation": "用元组列出多个异常类型，注意必须带括号。",
+      "distractors": {
+        "A": "这是 Python 2 的写法（等价于把异常绑定到变量），Python 3 中是语法错误。",
+        "C": "管道符不用于异常类型。",
+        "D": "or 会先求值成某个类，语义错误。"
+      },
+      "knowledge": ["多异常捕获", "元组语法", "Python 2 与 3 差异"],
+      "doc": "12-exceptions", "tags": ["pitfall"]
+    },
+    {
+      "id": "exc-11", "topic": "exceptions", "difficulty": "easy",
+      "question": "访问字典中不存在的键会抛什么异常？",
+      "options": { "A": "IndexError", "B": "KeyError", "C": "ValueError", "D": "AttributeError" },
+      "answer": "B",
+      "explanation": "dict 按下标访问缺失键抛 KeyError；索引越界是 IndexError，属性缺失是 AttributeError。",
+      "distractors": {
+        "A": "IndexError 用于序列下标越界，如 [1,2][5]。",
+        "C": "ValueError 是值不合法，如 int(\"abc\")。",
+        "D": "AttributeError 是属性不存在，如 obj.xxx。"
+      },
+      "knowledge": ["内置异常分类", "KeyError/IndexError/ValueError/AttributeError"],
+      "doc": "12-exceptions"
+    },
+    {
+      "id": "exc-12", "topic": "exceptions", "difficulty": "hard",
+      "question": "1/0 与 1.0/0.0 分别会怎样？",
+      "options": {
+        "A": "都抛 ZeroDivisionError",
+        "B": "整数除零抛 ZeroDivisionError；浮点除零在 Python 中也抛 ZeroDivisionError（不会得到 inf，除非用 numpy）",
+        "C": "都返回 inf",
+        "D": "都返回 nan"
+      },
+      "answer": "B",
+      "explanation": "Python 的 float 除法同样抛 ZeroDivisionError；numpy 中则是 inf 加警告，这种差异是常见困惑点。",
+      "distractors": {
+        "A": "表述太笼统，实际两者都抛，但 B 更准确完整。",
+        "C": "只有 numpy/其他语言（如 JS）会得到 Infinity。",
+        "D": "0/0 在 numpy 中才是 nan。"
+      },
+      "knowledge": ["ZeroDivisionError", "与 JS Infinity 对比", "numpy 行为"],
+      "doc": "12-exceptions"
+    }
+  ]
+}

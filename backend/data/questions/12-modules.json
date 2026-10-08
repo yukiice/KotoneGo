@@ -1,0 +1,219 @@
+{
+  "topic": "modules",
+  "label": "模块、包与标准库",
+  "questions": [
+    {
+      "id": "mod-01", "topic": "modules", "difficulty": "easy",
+      "question": "导入 math 模块并调用 sqrt，正确写法是？",
+      "options": { "A": "include math; math.sqrt(4)", "B": "import math; math.sqrt(4)", "C": "require('math').sqrt(4)", "D": "using math; sqrt(4)" },
+      "answer": "B",
+      "explanation": "import 模块名 之后用 模块名.属性 访问；也可以 from math import sqrt 直接引入名称。",
+      "distractors": {
+        "A": "include 是 PHP 的写法。",
+        "C": "require 是 Node.js 的 CommonJS 语法。",
+        "D": "using 是 C# 的写法。"
+      },
+      "knowledge": ["import", "from ... import ...", "命名空间"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-02", "topic": "modules", "difficulty": "medium",
+      "question": "from math import * 的主要问题是？",
+      "options": {
+        "A": "语法错误",
+        "B": "会污染命名空间，可能覆盖已有名字且看不出符号来源，PEP 8 不推荐",
+        "C": "只能导入函数，不能导入常量",
+        "D": "会导入所有第三方库"
+      },
+      "answer": "B",
+      "explanation": "星号导入让代码可读性和可维护性变差；推荐显式导入或 import 模块名。",
+      "distractors": {
+        "A": "语法合法但不推荐。",
+        "C": "常量也会一起导入。",
+        "D": "只影响该模块的公开名称。"
+      },
+      "knowledge": ["通配符导入反模式", "PEP 8", "__all__"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-03", "topic": "modules", "difficulty": "medium",
+      "question": "一个包含 __init__.py 的目录在 Python 中表示？",
+      "options": { "A": "一个包（package）", "B": "一个虚拟环境", "C": "一个模块文件", "D": "一个编译产物" },
+      "answer": "A",
+      "explanation": "包是用点号分层组织的模块集合；Python 3.3+ 支持隐式命名空间包，__init__.py 不再是硬性要求，但常规项目仍会保留。",
+      "distractors": {
+        "B": "虚拟环境是 venv/.venv 目录。",
+        "C": "模块是单个 .py 文件。",
+        "D": "编译产物是 __pycache__ 里的 .pyc。"
+      },
+      "knowledge": ["包结构", "__init__.py", "命名空间包"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-04", "topic": "modules", "difficulty": "hard",
+      "question": "相对导入 from .utils import helper 中的点号表示？",
+      "options": {
+        "A": "当前包（同一目录下的 utils 模块）",
+        "B": "父目录的上一层文件系统",
+        "C": "隐藏文件",
+        "D": "语法错误"
+      },
+      "answer": "A",
+      "explanation": "一个点表示当前包，两个点表示上一级包；相对导入只能在包内使用（不能用于顶层脚本入口）。",
+      "distractors": {
+        "B": "它表示包层级，不是文件系统目录（不过包通常对应目录）。",
+        "C": "与隐藏文件无关。",
+        "D": "是合法语法。"
+      },
+      "knowledge": ["相对导入", "绝对导入更推荐", "顶层脚本限制"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-05", "topic": "modules", "difficulty": "medium",
+      "question": "pip install requests 会安装到哪里？",
+      "options": {
+        "A": "项目的 node_modules",
+        "B": "当前 Python 环境的 site-packages（虚拟环境中则装进该环境）",
+        "C": "当前脚本所在目录",
+        "D": "系统 /usr/lib 固定位置"
+      },
+      "answer": "B",
+      "explanation": "pip 把包安装到当前解释器的 site-packages；先激活虚拟环境再安装，可以避免污染全局环境。",
+      "distractors": {
+        "A": "node_modules 是 npm 的目录。",
+        "C": "不会装到脚本目录。",
+        "D": "位置取决于环境，虚拟环境下会装在环境内部。"
+      },
+      "knowledge": ["pip", "site-packages", "虚拟环境隔离"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-06", "topic": "modules", "difficulty": "medium",
+      "question": "创建并激活虚拟环境的常用命令是？",
+      "options": {
+        "A": "npm init && npm start",
+        "B": "python3 -m venv .venv && source .venv/bin/activate",
+        "C": "pip venv create .venv",
+        "D": "virtualenv --activate .venv"
+      },
+      "answer": "B",
+      "explanation": "标准库 venv 创建独立环境；Windows 上激活命令是 .venv\\Scripts\\activate。",
+      "distractors": {
+        "A": "那是 Node 生态。",
+        "C": "pip 没有这个子命令。",
+        "D": "virtualenv 是第三方工具，激活方式也不是这样。"
+      },
+      "knowledge": ["venv", "activate", "requirements.txt"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-07", "topic": "modules", "difficulty": "medium",
+      "question": "requirements.txt 的作用是？",
+      "options": {
+        "A": "记录依赖及版本，可用 pip install -r requirements.txt 复现环境",
+        "B": "Python 会自动读取它来安装依赖",
+        "C": "相当于 package.json 的 scripts",
+        "D": "只能记录标准库"
+      },
+      "answer": "A",
+      "explanation": "它是约定俗成的依赖清单（非 Python 自动读取），可用 pip freeze > requirements.txt 生成。",
+      "distractors": {
+        "B": "必须手动执行 pip install -r 才会安装。",
+        "C": "它只列依赖，不含脚本命令。",
+        "D": "主要记录第三方包。"
+      },
+      "knowledge": ["requirements.txt", "pip freeze", "现代替代 pyproject.toml"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-08", "topic": "modules", "difficulty": "medium",
+      "question": "json 模块中把 Python 对象转成 JSON 字符串的方法是？",
+      "options": { "A": "json.stringify(obj)", "B": "json.dumps(obj)", "C": "json.encode(obj)", "D": "json.serialize(obj)" },
+      "answer": "B",
+      "explanation": "dumps = dump string（序列化），loads = load string（反序列化）；dump/load 则直接操作文件对象。",
+      "distractors": {
+        "A": "stringify 是 JS 的 JSON.stringify。",
+        "C": "没有 json.encode。",
+        "D": "serialize 是其他库/语言的命名。"
+      },
+      "knowledge": ["json.dumps/loads", "json.dump/load", "与 JS 对比"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-09", "topic": "modules", "difficulty": "hard",
+      "question": "json.dumps 遇到自定义对象会怎样？",
+      "options": {
+        "A": "自动转成字典",
+        "B": "抛 TypeError，需要提供 default= 函数或用 dataclasses.asdict 预处理",
+        "C": "自动转成字符串表示",
+        "D": "返回 None"
+      },
+      "answer": "B",
+      "explanation": "标准 json 只支持基本类型；用 default=lambda o: o.__dict__ 或自定义编码器可以扩展。",
+      "distractors": {
+        "A": "不会自动转换。",
+        "C": "不会调用 repr/str。",
+        "D": "直接报错而不是返回 None。"
+      },
+      "knowledge": ["json 支持的类型", "default 参数", "dataclasses.asdict"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-10", "topic": "modules", "difficulty": "medium",
+      "question": "datetime.datetime.now() 得到的是？",
+      "options": {
+        "A": "带时区信息的对象",
+        "B": "本地时间的 naive datetime（无时区信息），UTC 用 datetime.now(timezone.utc)",
+        "C": "时间戳浮点数",
+        "D": "字符串"
+      },
+      "answer": "B",
+      "explanation": "要避免时区混乱，推荐存 UTC 或使用 aware datetime；时间戳用 time.time() 或 dt.timestamp()。",
+      "distractors": {
+        "A": "默认是 naive（无 tzinfo）。",
+        "C": "那是 time.time() 的返回值。",
+        "D": "返回 datetime 对象，str() 才是字符串。"
+      },
+      "knowledge": ["datetime", "naive vs aware", "timezone.utc"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-11", "topic": "modules", "difficulty": "hard",
+      "question": "random 模块的 random() 与 randint(1, 6) 的区别是？",
+      "options": {
+        "A": "random() 返回 [0.0, 1.0) 的浮点数；randint 返回含两端的整数",
+        "B": "两者都返回整数",
+        "C": "randint 不含上界 6",
+        "D": "random() 返回字符串"
+      },
+      "answer": "A",
+      "explanation": "randint(a, b) 包含 a 和 b；range 风格的 randrange(1, 7) 才是不含上界；密码学安全要用 secrets 模块。",
+      "distractors": {
+        "B": "random() 是浮点。",
+        "C": "randint 含上界（这与 range 不同，容易记混）。",
+        "D": "random() 返回 float。"
+      },
+      "knowledge": ["random.random/randint/randrange", "secrets 模块"],
+      "doc": "13-modules-stdlib", "tags": ["pitfall"]
+    },
+    {
+      "id": "mod-12", "topic": "modules", "difficulty": "medium",
+      "question": "想给脚本加上启动加速的“缓存编译”，Python 会自动做什么？",
+      "options": {
+        "A": "把 .py 编译成 __pycache__ 下的 .pyc 字节码缓存",
+        "B": "把脚本打包成 exe",
+        "C": "把代码翻译成 C",
+        "D": "什么都不做，每次重新解析"
+      },
+      "answer": "A",
+      "explanation": "导入模块时会生成 __pycache__/*.pyc 缓存以提高后续启动速度；这也是不该提交到 git 的目录之一。",
+      "distractors": {
+        "B": "打包需要 PyInstaller 等工具。",
+        "C": "翻译成 C 是 Cython/Nuitka 之类的方案。",
+        "D": "字节码缓存是默认行为。"
+      },
+      "knowledge": ["字节码缓存", "__pycache__", ".gitignore"],
+      "doc": "13-modules-stdlib"
+    }
+  ]
+}

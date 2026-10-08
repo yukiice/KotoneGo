@@ -1,0 +1,186 @@
+{
+  "topic": "files",
+  "label": "文件与数据格式",
+  "questions": [
+    {
+      "id": "file-01", "topic": "files", "difficulty": "easy",
+      "question": "读取文件并自动关闭，推荐写法是？",
+      "options": {
+        "A": "f = open(\"a.txt\"); print(f.read())",
+        "B": "with open(\"a.txt\", encoding=\"utf-8\") as f: print(f.read())",
+        "C": "open(\"a.txt\").read()",
+        "D": "import file; file.read(\"a.txt\")"
+      },
+      "answer": "B",
+      "explanation": "with 是上下文管理器，离开代码块时自动 close（即使中途抛异常），并建议显式指定编码。",
+      "distractors": {
+        "A": "忘记 close 会泄漏文件描述符。",
+        "C": "匿名对象没有引用，依赖 GC 回收，不够可靠。",
+        "D": "Python 没有内置的 file 模块（Python 2 有 file 类型）。"
+      },
+      "knowledge": ["with 语句", "上下文管理器", "encoding=\"utf-8\""],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-02", "topic": "files", "difficulty": "medium",
+      "question": "open 的哪个模式会清空已有文件内容？",
+      "options": { "A": "\"r\"", "B": "\"w\"", "C": "\"a\"", "D": "\"x\"" },
+      "answer": "B",
+      "explanation": "\"w\" 写模式会截断（清空）文件；追加用 \"a\"，独占新建用 \"x\"（文件已存在会报 FileExistsError）。",
+      "distractors": {
+        "A": "\"r\" 是只读，文件不存在会 FileNotFoundError。",
+        "C": "\"a\" 在末尾追加。",
+        "D": "\"x\" 要求文件不存在，否则报错，不会清空。"
+      },
+      "knowledge": ["文件模式 r/w/a/x/b", "FileExistsError"],
+      "doc": "14-files-json", "tags": ["pitfall"]
+    },
+    {
+      "id": "file-03", "topic": "files", "difficulty": "medium",
+      "question": "读写二进制文件（如图片）需要加什么？",
+      "options": { "A": "模式里加 b，如 \"rb\"", "B": "设置 binary=True", "C": "用 bytes() 包裹路径", "D": "不能读写二进制" },
+      "answer": "A",
+      "explanation": "\"rb\"/\"wb\" 表示二进制模式，读写的是 bytes 而不是 str，此时不能指定 encoding。",
+      "distractors": {
+        "B": "open 没有 binary 参数。",
+        "C": "与路径类型无关。",
+        "D": "二进制读写是常见需求。"
+      },
+      "knowledge": ["二进制模式", "bytes vs str"],
+      "doc": "14-files-json", "tags": ["pitfall"]
+    },
+    {
+      "id": "file-04", "topic": "files", "difficulty": "medium",
+      "question": "pathlib 的好处是？",
+      "options": {
+        "A": "用对象和方法处理路径，跨平台（/ 运算符拼接），比字符串操作更清晰",
+        "B": "比 os.path 快 10 倍",
+        "C": "只能用于 Windows",
+        "D": "可以替代文件读写"
+      },
+      "answer": "A",
+      "explanation": "Path(\"data\") / \"a.json\" 自动处理分隔符；还提供 exists()、read_text()、glob()、mkdir(parents=True) 等便利方法。",
+      "distractors": {
+        "B": "性能不是主要卖点，可读性与跨平台才是。",
+        "C": "它是跨平台的现代写法。",
+        "D": "它也能读写文件，但并不是“替代”关系。"
+      },
+      "knowledge": ["pathlib.Path", "os.path 对比", "read_text/write_text"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-05", "topic": "files", "difficulty": "hard",
+      "question": "写入文本文件时忘记 flush/close 会有什么后果？",
+      "options": {
+        "A": "没有任何后果",
+        "B": "数据可能还留在缓冲区里没写到磁盘，程序异常退出时会丢内容",
+        "C": "文件会被自动删除",
+        "D": "会抛异常"
+      },
+      "answer": "B",
+      "explanation": "写操作有缓冲；with 块结束会 close 并 flush。需要立即落盘时可显式 f.flush() 或 os.fsync()。",
+      "distractors": {
+        "A": "缓冲区未刷新确实会丢数据。",
+        "C": "不会删除文件。",
+        "D": "通常静默丢数据，不报错。"
+      },
+      "knowledge": ["缓冲区", "flush/close", "with 保证落盘"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-06", "topic": "files", "difficulty": "medium",
+      "question": "读取 CSV 文件最推荐的方式是？",
+      "options": {
+        "A": "手动 split(\",\")",
+        "B": "csv 模块（csv.reader / csv.DictReader），能正确处理引号、逗号等边界情况",
+        "C": "json.load",
+        "D": "pickle.load"
+      },
+      "answer": "B",
+      "explanation": "csv 模块处理转义、引号与换行等复杂情况；注意打开文件时应加 newline=\"\" 以避免多余空行。",
+      "distractors": {
+        "A": "字段里含逗号或引号时会解析错误。",
+        "C": "json 不能解析 CSV。",
+        "D": "pickle 是 Python 专有二进制序列化格式。"
+      },
+      "knowledge": ["csv 模块", "DictReader", "newline=\"\""],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-07", "topic": "files", "difficulty": "hard",
+      "question": "为什么不应该用 pickle 加载不可信来源的数据？",
+      "options": {
+        "A": "速度太慢",
+        "B": "反序列化时会执行任意代码，存在安全风险；跨语言也不兼容",
+        "C": "pickle 只能存字符串",
+        "D": "只因为它不是标准库"
+      },
+      "answer": "B",
+      "explanation": "pickle 的 __reduce__ 等机制可执行代码，因此只用于可信数据或内部缓存；对外交换数据用 JSON/CSV/MessagePack。",
+      "distractors": {
+        "A": "安全问题比性能重要得多。",
+        "C": "pickle 能存大多数 Python 对象。",
+        "D": "pickle 是标准库，问题在执行代码的风险。"
+      },
+      "knowledge": ["pickle 安全风险", "数据交换格式选择"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-08", "topic": "files", "difficulty": "medium",
+      "question": "json.load(f) 与 json.loads(s) 的区别是？",
+      "options": {
+        "A": "没有区别",
+        "B": "load 从文件对象读取；loads 从字符串解析",
+        "C": "loads 只能处理列表",
+        "D": "load 会加密数据"
+      },
+      "answer": "B",
+      "explanation": "带 s 的 dumps/loads 处理字符串（string），不带 s 的 dump/load 处理文件对象。",
+      "distractors": {
+        "A": "参数类型不同。",
+        "C": "loads 支持任意合法 JSON 顶层值（新版标准允许标量）。",
+        "D": "与加密无关。"
+      },
+      "knowledge": ["dumps/loads vs dump/load", "命名规律"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-09", "topic": "files", "difficulty": "medium",
+      "question": "读文件时为什么要写 encoding=\"utf-8\"？",
+      "options": {
+        "A": "否则 Python 会拒绝打开文件",
+        "B": "否则使用平台默认编码（Windows 上常是 cp936/gbk），中文等字符可能解码错误",
+        "C": "为了加快读取速度",
+        "D": "只有 Windows 需要"
+      },
+      "answer": "B",
+      "explanation": "显式指定编码能保证跨平台一致，避免 UnicodeDecodeError；这也是“所有文本文件都用 UTF-8”这一现代约定的原因。",
+      "distractors": {
+        "A": "不指定也能打开，只是可能乱码或报错。",
+        "C": "与速度无关，是正确性问题。",
+        "D": "Linux/macOS 也建议写，避免依赖 locale。"
+      },
+      "knowledge": ["文本编码", "UnicodeDecodeError", "locale 差异"],
+      "doc": "14-files-json", "tags": ["pitfall"]
+    },
+    {
+      "id": "file-10", "topic": "files", "difficulty": "hard",
+      "question": "Path(\"out/data.json\").write_text(...) 之前要先做什么？",
+      "options": {
+        "A": "什么都不用做，会自动建目录",
+        "B": "确保父目录存在，例如 Path(\"out\").mkdir(parents=True, exist_ok=True)",
+        "C": "必须先创建空文件",
+        "D": "必须用 os.chdir 切换目录"
+      },
+      "answer": "B",
+      "explanation": "目录不存在会抛 FileNotFoundError；mkdir(parents=True, exist_ok=True) 是幂等建目录的标准写法。",
+      "distractors": {
+        "A": "write_text 不会自动创建父目录。",
+        "C": "不需要预先建文件（但目录要存在）。",
+        "D": "不需要切换工作目录。"
+      },
+      "knowledge": ["mkdir(parents=True, exist_ok=True)", "FileNotFoundError"],
+      "doc": "14-files-json"
+    }
+  ]
+}

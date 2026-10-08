@@ -1,0 +1,371 @@
+{
+  "topic": "oop",
+  "label": "面向对象",
+  "questions": [
+    {
+      "id": "oop-01", "topic": "oop", "difficulty": "easy",
+      "question": "定义类并创建实例的正确写法是？",
+      "options": {
+        "A": "class Dog: ... ; d = Dog()",
+        "B": "class Dog(): d = new Dog()",
+        "C": "function Dog() {} ; d = Dog()",
+        "D": "class Dog { } ; d = Dog.new()"
+      },
+      "answer": "A",
+      "explanation": "class 定义类，类名后加 () 直接调用即可创建实例（不需要 new）。",
+      "distractors": {
+        "B": "Python 没有 new 关键字。",
+        "C": "function 是 JS 的写法。",
+        "D": "花括号和 .new() 都不是 Python 语法。"
+      },
+      "knowledge": ["class", "实例化", "与 JS new 对比"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-02", "topic": "oop", "difficulty": "medium",
+      "question": "__init__ 方法的作用是？",
+      "options": {
+        "A": "创建类对象（类似 JS 的 constructor 之外的静态工厂）",
+        "B": "初始化实例属性，创建实例时自动调用，第一个参数是 self",
+        "C": "销毁实例",
+        "D": "把类转换成字典"
+      },
+      "answer": "B",
+      "explanation": "__init__ 是初始化方法，实例创建后自动调用；真正的“创建”由 __new__ 完成。",
+      "distractors": {
+        "A": "创建实例由 __new__ + 元类机制负责。",
+        "C": "销毁相关的是 __del__（不推荐依赖它）。",
+        "D": "转换为字典可用 __dict__ 或 dataclasses.asdict。"
+      },
+      "knowledge": ["__init__", "__new__", "self"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-03", "topic": "oop", "difficulty": "medium",
+      "question": "实例方法里的 self 是什么？",
+      "options": {
+        "A": "关键字，必须叫 self",
+        "B": "第一个位置参数，指向调用该方法的实例（名字是约定，不强制）",
+        "C": "类本身",
+        "D": "指向父类"
+      },
+      "answer": "B",
+      "explanation": "实例方法定义时把第一个参数命名为 self（约定），调用 obj.m() 时 Python 自动传入 obj；叫别的名字语法也成立但不推荐。",
+      "distractors": {
+        "A": "self 不是关键字，只是强约定。",
+        "C": "指向类的是 cls（类方法）。",
+        "D": "父类通过 super() 访问。"
+      },
+      "knowledge": ["self 约定", "自动传参机制"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-04", "topic": "oop", "difficulty": "medium",
+      "question": "@classmethod 与 @staticmethod 的区别是？",
+      "options": {
+        "A": "没有区别",
+        "B": "classmethod 收到类对象 cls（可做工厂方法），staticmethod 既不收 self 也不收 cls",
+        "C": "staticmethod 必须返回实例",
+        "D": "classmethod 只能用于继承"
+      },
+      "answer": "B",
+      "explanation": "classmethod 常见用途是替代构造函数，如 Date.from_string(...)；staticmethod 只是放在类命名空间里的普通函数。",
+      "distractors": {
+        "A": "参数与语义都不同。",
+        "C": "没有这个要求。",
+        "D": "继承场景下 classmethod 会收到子类，但并非只能用于继承。"
+      },
+      "knowledge": ["classmethod", "staticmethod", "工厂方法"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-05", "topic": "oop", "difficulty": "medium",
+      "question": "@property 装饰器的作用是？",
+      "options": {
+        "A": "声明类变量",
+        "B": "把方法变成“属性访问”，可读时执行代码，配合 @x.setter 做赋值校验",
+        "C": "让属性变成只读常量且无法赋值",
+        "D": "把方法声明为私有"
+      },
+      "answer": "B",
+      "explanation": "property 让 getter/setter 拥有属性语法；这样以后加校验逻辑不会破坏调用方代码 obj.name 的写法。",
+      "distractors": {
+        "A": "类变量直接写在类体里。",
+        "C": "只读只是“不定义 setter”的结果，可配合 setter 赋值。",
+        "D": "私有靠命名约定（_x）或 name mangling（__x）。"
+      },
+      "knowledge": ["property", "getter/setter", "封装演进"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-06", "topic": "oop", "difficulty": "medium",
+      "question": "属性名以双下划线开头（如 __balance）的作用是？",
+      "options": {
+        "A": "真正意义上的私有，外部完全无法访问",
+        "B": "名称改写（name mangling）为 _ClassName__balance，属于“强约定”而非强制私有",
+        "C": "自动变成只读",
+        "D": "语法错误"
+      },
+      "answer": "B",
+      "explanation": "双下划线会触发名字改写，避免子类意外覆盖；但依然可以访问 obj._ClassName__balance，所以只是约定。",
+      "distractors": {
+        "A": "Python 没有强制私有（除了 __slots__/C 扩展等特殊手段）。",
+        "C": "与只读无关。",
+        "D": "完全合法。"
+      },
+      "knowledge": ["name mangling", "私有约定 _x 与 __x", "Python 没有真正私有"],
+      "doc": "11-oop", "tags": ["pitfall"]
+    },
+    {
+      "id": "oop-07", "topic": "oop", "difficulty": "medium",
+      "question": "class Animal: 与 class Dog(Animal): 中，Dog 如何调用父类的 __init__？",
+      "options": {
+        "A": "Animal.__init__(self)",
+        "B": "super().__init__()",
+        "C": "parent().__init__()",
+        "D": "this.__init__()"
+      },
+      "answer": "B",
+      "explanation": "super() 按 MRO 顺序找到下一个类的方法，能正确支持多重继承；硬编码类名会破坏继承链。",
+      "distractors": {
+        "A": "能工作但破坏 MRO 协作，多重继承时会出错。",
+        "C": "parent 不是 Python 的关键字或函数。",
+        "D": "this 是 Java/JS 的写法。"
+      },
+      "knowledge": ["super()", "MRO", "多重继承"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-08", "topic": "oop", "difficulty": "hard",
+      "question": "__str__ 与 __repr__ 的区别是？",
+      "options": {
+        "A": "完全相同",
+        "B": "__str__ 面向用户（print 用），__repr__ 面向开发者调试（交互式回显用），无 __str__ 时回退到 __repr__",
+        "C": "__repr__ 只在交互式终端生效且不能定义",
+        "D": "__str__ 用于比较大小"
+      },
+      "answer": "B",
+      "explanation": "约定：__repr__ 应尽量输出能重建对象的信息（如 Point(1, 2)）；__str__ 用于友好展示。",
+      "distractors": {
+        "A": "用途和回退规则不同。",
+        "C": "可以在类里定义 __repr__，且各处都能用到。",
+        "D": "比较用 __eq__/__lt__ 等。"
+      },
+      "knowledge": ["__str__", "__repr__", "调试友好"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-09", "topic": "oop", "difficulty": "medium",
+      "question": "想让 len(obj) 返回自定义长度，需要实现哪个魔术方法？",
+      "options": { "A": "__length__", "B": "__len__", "C": "__size__", "D": "count()" },
+      "answer": "B",
+      "explanation": "len() 会调用对象的 __len__；实现了 __len__ 的对象在真值判断中也会用长度是否非零来决定真假。",
+      "distractors": {
+        "A": "没有 __length__ 这个协议。",
+        "C": "不存在 __size__。",
+        "D": "count 是 list/str 的普通方法，与 len() 无关。"
+      },
+      "knowledge": ["魔术方法", "__len__ 与真值"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-10", "topic": "oop", "difficulty": "hard",
+      "question": "实现了 __eq__ 之后，通常还应该实现哪个方法？为什么？",
+      "options": {
+        "A": "__cmp__，因为要排序",
+        "B": "__hash__，因为默认哈希会被置为 None，对象无法放进 set 或作 dict 键",
+        "C": "__call__，因为要能调用",
+        "D": "不需要其他方法"
+      },
+      "answer": "B",
+      "explanation": "相等语义变了但哈希没变会导致 dict/set 行为不一致，所以 Python 会把 __hash__ 设为 None；要可哈希就显式实现（常配合 __slots__ 或 frozen dataclass）。",
+      "distractors": {
+        "A": "Python 3 没有 __cmp__（用 __eq__/__lt__ 等 + total_ordering）。",
+        "C": "与相等语义无关。",
+        "D": "不实现会得到 TypeError: unhashable type。"
+      },
+      "knowledge": ["__eq__ 与 __hash__ 联动", "可哈希性", "frozen dataclass"],
+      "doc": "11-oop", "tags": ["pitfall"]
+    },
+    {
+      "id": "oop-11", "topic": "oop", "difficulty": "medium",
+      "question": "@dataclass 装饰器带来的主要好处是？",
+      "options": {
+        "A": "自动生成 __init__、__repr__、__eq__ 等样板代码",
+        "B": "自动实现数据校验和类型强制转换",
+        "C": "让类不可实例化",
+        "D": "自动生成数据库表"
+      },
+      "answer": "A",
+      "explanation": "dataclass 根据字段注解生成样板方法，可与 frozen=True、order=True、field(default_factory=...) 组合使用。",
+      "distractors": {
+        "B": "Python 不做运行时类型校验（Pydantic 等库才做）。",
+        "C": "仍然正常实例化。",
+        "D": "ORM 是 SQLAlchemy/Django 之类的功能。"
+      },
+      "knowledge": ["dataclasses", "样板代码", "frozen/order 参数"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-12", "topic": "oop", "difficulty": "hard",
+      "question": "dataclass 中字段默认值想用列表，正确写法是？",
+      "options": {
+        "A": "items: list = []",
+        "B": "items: list = field(default_factory=list)",
+        "C": "items: list = list()",
+        "D": "items: list = None 是唯一合法写法"
+      },
+      "answer": "B",
+      "explanation": "可变默认值被 dataclass 明确禁止（ValueError），必须用 default_factory 让每个实例得到独立的新列表。",
+      "distractors": {
+        "A": "会抛 ValueError: mutable default ... use default_factory。",
+        "C": "等同于点号求值一次的共享对象，同样被禁止。",
+        "D": "None 也合法，但类型会不符（应为 list | None），且使用前还要判空。"
+      },
+      "knowledge": ["default_factory", "可变默认值", "dataclass 限制"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-13", "topic": "oop", "difficulty": "medium",
+      "question": "关于类变量与实例变量，哪句正确？",
+      "options": {
+        "A": "类变量在所有实例间共享，实例赋值会在实例上新建属性（遮蔽类变量）",
+        "B": "类变量每个实例都有一份副本",
+        "C": "实例属性只能在 __init__ 中创建",
+        "D": "类变量与实例变量不能同名"
+      },
+      "answer": "A",
+      "explanation": "读取时先找实例 __dict__ 再找类；self.x = v 写入实例字典，不会改变类变量（除非类变量本身是可变对象并被原地修改）。",
+      "distractors": {
+        "B": "类变量只有一份，共享。",
+        "C": "Python 允许运行时动态添加属性，如 obj.new_attr = 1。",
+        "D": "同名很常见，实例属性会遮蔽类变量（看查找顺序）。"
+      },
+      "knowledge": ["类变量共享", "属性查找顺序", "可变类变量陷阱"],
+      "doc": "11-oop", "tags": ["pitfall"]
+    },
+    {
+      "id": "oop-14", "topic": "oop", "difficulty": "hard",
+      "question": "想让类不可实例化（抽象基类），应该？",
+      "options": {
+        "A": "用 abstractmethod 配合 ABC，未实现抽象方法的子类实例化会报 TypeError",
+        "B": "把 __init__ 设为 pass",
+        "C": "不定义 __init__ 就不能实例化",
+        "D": "加 final 关键字"
+      },
+      "answer": "A",
+      "explanation": "abc.ABC + @abstractmethod 提供运行期约束；此外还可配合 typing.Protocol 做结构化类型。",
+      "distractors": {
+        "B": "仍然可以实例化。",
+        "C": "不定义 __init__ 时使用默认构造函数，可以实例化。",
+        "D": "Python 没有 final（typing.final 只是给类型检查器看的）。"
+      },
+      "knowledge": ["abc.ABC", "abstractmethod", "Protocol", "TypeError"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-15", "topic": "oop", "difficulty": "medium",
+      "question": "isinstance(dog, Animal) 在 Dog 继承 Animal 时返回？",
+      "options": { "A": "False，因为 dog 是 Dog", "B": "True，子类实例也是父类实例", "C": "报错", "D": "None" },
+      "answer": "B",
+      "explanation": "继承建立 is-a 关系，isinstance 会沿 MRO 检查；要精确判断类型用 type(dog) is Dog。",
+      "distractors": {
+        "A": "isinstance 会考虑继承。",
+        "C": "这是标准用法。",
+        "D": "返回布尔值。"
+      },
+      "knowledge": ["isinstance 与继承", "type() 与 isinstance() 区别"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-16", "topic": "oop", "difficulty": "hard",
+      "question": "调用 obj() （实例当函数用）需要在类里实现？",
+      "options": { "A": "__init__", "B": "__call__", "C": "__invoke__", "D": "不可能实现" },
+      "answer": "B",
+      "explanation": "实现 __call__ 后实例变成 callable，常用于有状态的回调/装饰器类，并可用 callable(obj) 验证。",
+      "distractors": {
+        "A": "__init__ 只在创建时调用。",
+        "C": "没有 __invoke__ 协议。",
+        "D": "可以，这就是可调用对象。"
+      },
+      "knowledge": ["__call__", "callable()", "有状态回调"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-17", "topic": "oop", "difficulty": "medium",
+      "question": "在 JS/TS 中常用 interface 描述对象形状，Python 中对应的做法是？",
+      "options": {
+        "A": "用 Protocol 或 ABC 做结构化/名义类型约束",
+        "B": "Python 没有类似能力",
+        "C": "必须用继承实现",
+        "D": "只能用 dict 表示"
+      },
+      "answer": "A",
+      "explanation": "typing.Protocol 支持结构化子类型（只要求方法/属性形状匹配），运行期还可用 runtime_checkable 做检查；ABC 更偏名义继承。",
+      "distractors": {
+        "B": "有 protocol/ABC/dataclass/TypedDict 等工具。",
+        "C": "Protocol 不要求继承。",
+        "D": "dict 只是其中一种选择（TypedDict 可给 dict 加类型）。"
+      },
+      "knowledge": ["Protocol", "结构化子类型", "TypedDict"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-18", "topic": "oop", "difficulty": "hard",
+      "question": "关于多继承与方法解析顺序（MRO），正确的是？",
+      "options": {
+        "A": "Python 支持多继承，用 C3 线性化算法；class D(B, C) 按 D→B→C→... 顺序查找",
+        "B": "Python 不支持多继承",
+        "C": "MRO 顺序是随机的",
+        "D": "super() 会调用所有父类方法"
+      },
+      "answer": "A",
+      "explanation": "MRO 可用 D.__mro__ 查看；super() 返回按 MRO 的“下一个”类，因此协作式多继承中每层都要调用 super()。",
+      "distractors": {
+        "B": "Python 支持多继承（Java 不支持）。",
+        "C": "C3 线性化是确定性的，冲突时会报 TypeError。",
+        "D": "super() 只取下一个，不会自动广播。"
+      },
+      "knowledge": ["C3 线性化", "__mro__", "协作式多继承"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-19", "topic": "oop", "difficulty": "medium",
+      "question": "类中定义 def m(self): pass 与 def m(): pass 的区别是？",
+      "options": {
+        "A": "完全相同",
+        "B": "前者是实例方法（自动传 self），后者少了 self，用实例调用时会因参数个数不符报 TypeError",
+        "C": "后者是静态方法",
+        "D": "后者是类方法"
+      },
+      "answer": "B",
+      "explanation": "普通方法第一个参数接收实例；要定义不需要 self 的方法应加 @staticmethod 装饰器。",
+      "distractors": {
+        "A": "调用约定完全不同。",
+        "C": "静态方法必须写 @staticmethod。",
+        "D": "类方法必须写 @classmethod 且首参是 cls。"
+      },
+      "knowledge": ["方法绑定", "@staticmethod", "TypeError"],
+      "doc": "11-oop"
+    },
+    {
+      "id": "oop-20", "topic": "oop", "difficulty": "medium",
+      "question": "class Point: 中想要所有实例共享一个可变配置字典，需注意什么？",
+      "options": {
+        "A": "直接把字典写成类变量即可，实例修改不会互相影响",
+        "B": "类变量是共享的，某个实例原地修改（如 config[\"k\"]=1）会影响所有实例，应改用实例属性或在 __init__ 中复制",
+        "C": "Python 会自动为每个实例复制类变量",
+        "D": "类变量不能是字典"
+      },
+      "answer": "B",
+      "explanation": "类变量只有一份；共享可变对象又被原地修改时会造成跨实例污染。用 __init__ 里 self.config = dict(DEFAULT_CONFIG) 可隔离。",
+      "distractors": {
+        "A": "恰好相反，原地修改会互相影响。",
+        "C": "不会自动深拷贝。",
+        "D": "类变量可以是任意对象。"
+      },
+      "knowledge": ["共享可变状态", "实例属性隔离", "浅拷贝"],
+      "doc": "11-oop", "tags": ["pitfall"]
+    }
+  ]
+}

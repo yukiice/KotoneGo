@@ -1,0 +1,189 @@
+{
+  "topic": "operators",
+  "label": "运算符与表达式",
+  "questions": [
+    {
+      "id": "operators-01", "topic": "operators", "difficulty": "easy",
+      "question": "2 ** 3 的值是？",
+      "options": { "A": "6", "B": "8", "C": "9", "D": "语法错误" },
+      "answer": "B",
+      "explanation": "** 是幂运算符，2 ** 3 = 2*2*2 = 8。",
+      "distractors": {
+        "A": "6 是 2 * 3 的结果，乘法用 *。",
+        "C": "9 是 3 ** 2 的结果。",
+        "D": "** 是合法的算术运算符。"
+      },
+      "knowledge": ["幂运算 **", "pow()"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-02", "topic": "operators", "difficulty": "medium",
+      "question": "-7 // 2 的值是？",
+      "options": { "A": "-3", "B": "-3.5", "C": "-4", "D": "4" },
+      "answer": "C",
+      "explanation": "// 是向下取整（floor），-3.5 向下取整为 -4；这是与 C/Java 截断取整不同的地方。",
+      "distractors": {
+        "A": "-3 是向零截断的结果，Python 不这么做。",
+        "B": "// 的结果不会是 float（int//int 得 int）。",
+        "D": "符号不会丢失。"
+      },
+      "knowledge": ["floor 取整", "与 C/Java 的差异"],
+      "doc": "04-operators", "tags": ["pitfall"]
+    },
+    {
+      "id": "operators-03", "topic": "operators", "difficulty": "easy",
+      "question": "True and False 的结果是？",
+      "options": { "A": "True", "B": "False", "C": "None", "D": "报错" },
+      "answer": "B",
+      "explanation": "and 需要两边都为真才返回真值，True and False 短路后取到 False。",
+      "distractors": {
+        "A": "and 不是 or，只有全真才为真。",
+        "C": "and 不会返回 None（除非某个操作数就是 None）。",
+        "D": "布尔运算合法。"
+      },
+      "knowledge": ["and/or/not", "短路求值"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-04", "topic": "operators", "difficulty": "hard",
+      "question": "\"a\" or \"b\" 和 \"a\" and \"b\" 的结果分别是？",
+      "options": { "A": "True / True", "B": "\"a\" / \"b\"", "C": "\"b\" / \"a\"", "D": "报错，只能比较布尔值" },
+      "answer": "B",
+      "explanation": "Python 的 and/or 返回的是操作数本身而不是布尔值：or 返回第一个真值，and 返回第一个假值或最后一个值。",
+      "distractors": {
+        "A": "不会强制转成布尔值，这是与 JS 里 && / || 相反的“无强制转换”特点。",
+        "C": "顺序反了。",
+        "D": "任何对象都能参与真值测试。"
+      },
+      "knowledge": ["and/or 返回操作数", "真值测试", "常见惯用法 x or default"],
+      "doc": "04-operators", "tags": ["pitfall"]
+    },
+    {
+      "id": "operators-05", "topic": "operators", "difficulty": "medium",
+      "question": "表达式 0 and 1/0 会怎样？",
+      "options": {
+        "A": "抛出 ZeroDivisionError",
+        "B": "返回 0，因为 and 短路了",
+        "C": "返回 False",
+        "D": "返回 1/0 的结果 inf"
+      },
+      "answer": "B",
+      "explanation": "and 的第一个操作数 0 为假，直接短路返回 0，右侧根本不会被求值，因此不会除零。",
+      "distractors": {
+        "A": "短路求值保证右侧不执行。",
+        "C": "and 返回操作数本身，这里是 0 而不是 False（虽然它们相等）。",
+        "D": "Python 整数除零会报错，不像 float 得 inf。"
+      },
+      "knowledge": ["短路求值", "副作用与求值顺序"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-06", "topic": "operators", "difficulty": "medium",
+      "question": "5 & 3 的值是？",
+      "options": { "A": "1", "B": "7", "C": "2", "D": "8" },
+      "answer": "A",
+      "explanation": "按位与：5=101, 3=011，逐位与得 001 即 1。",
+      "distractors": {
+        "B": "7 是 5 | 3 的结果。",
+        "C": "2 是 5 ^ 3 的结果（异或）。",
+        "D": "8 与这些运算无关（5<<1 才是 10）。"
+      },
+      "knowledge": ["位运算 & | ^ ~ << >>", "二进制表示 bin()"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-07", "topic": "operators", "difficulty": "hard",
+      "question": "~5 的值是？",
+      "options": { "A": "5", "B": "-6", "C": "-5", "D": "4" },
+      "answer": "B",
+      "explanation": "~x 等价于 -x - 1，所以 ~5 == -6；这是补码表示下的按位取反结果。",
+      "distractors": {
+        "A": "取反后不再是 5。",
+        "C": "公式是 -x-1，不是 -x。",
+        "D": "4 常被误认为“取反”，实际是 -6。"
+      },
+      "knowledge": ["按位取反 ~", "补码", "-x-1 恒等式"],
+      "doc": "04-operators", "tags": ["pitfall"]
+    },
+    {
+      "id": "operators-08", "topic": "operators", "difficulty": "easy",
+      "question": "Python 中三元条件表达式的正确写法是？",
+      "options": {
+        "A": "x > 0 ? \"正\" : \"负\"",
+        "B": "\"正\" if x > 0 else \"负\"",
+        "C": "if (x > 0) then \"正\" else \"负\"",
+        "D": "x > 0 and \"正\" or \"负\" 是唯一写法"
+      },
+      "answer": "B",
+      "explanation": "Python 的条件表达式是 值1 if 条件 else 值2，读作“条件成立取值1，否则取值2”。",
+      "distractors": {
+        "A": "?: 是 C/Java/JS 的写法，Python 无此语法。",
+        "C": "then 不是 Python 关键字。",
+        "D": "and/or 写法只是老式技巧，且在值为假时会出错，官方推荐 if-else 表达式。"
+      },
+      "knowledge": ["条件表达式", "与 JS 三元运算符对比"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-09", "topic": "operators", "difficulty": "medium",
+      "question": "2 + 3 * 4 ** 2 的结果是？",
+      "options": { "A": "80", "B": "50", "C": "196", "D": "26" },
+      "answer": "B",
+      "explanation": "优先级 ** > * > +：4**2=16，3*16=48，2+48=50。",
+      "distractors": {
+        "A": "80 是 ((2+3)*4)**2 的结果，忽略了优先级。",
+        "C": "196 是 (2+3*4)**2 的结果。",
+        "D": "26 相当于 2+3*8 之类的误算。"
+      },
+      "knowledge": ["运算符优先级", "括号改变结合顺序"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-10", "topic": "operators", "difficulty": "easy",
+      "question": "\"py\" + \"thon\" 的结果是？",
+      "options": { "A": "\"python\"", "B": "\"py thon\"", "C": "报错", "D": "\"py+thon\"" },
+      "answer": "A",
+      "explanation": "+ 对字符串做拼接；* 对字符串做重复，如 \"ab\" * 2 == \"abab\"。",
+      "distractors": {
+        "B": "不会自动加空格。",
+        "C": "字符串 + 字符串是合法的。",
+        "D": "+ 不会被当成普通字符。"
+      },
+      "knowledge": ["字符串拼接", "字符串重复 *", "join() 更高效"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-11", "topic": "operators", "difficulty": "easy",
+      "question": "\"a\" in \"cat\" 的结果是？",
+      "options": { "A": "True", "B": "False", "C": "报错", "D": "1" },
+      "answer": "A",
+      "explanation": "in 是成员运算符，对字符串表示“子串是否出现”，“a” 出现在 \"cat\" 中。",
+      "distractors": {
+        "B": "子串确实存在。",
+        "C": "str 支持 in 运算。",
+        "D": "in 返回 bool 而不是数字。"
+      },
+      "knowledge": ["in / not in", "子串判断"],
+      "doc": "04-operators"
+    },
+    {
+      "id": "operators-12", "topic": "operators", "difficulty": "medium",
+      "question": "Python 支持 1 < x < 10 这种链式比较，它等价于？",
+      "options": {
+        "A": "1 < x and x < 10",
+        "B": "1 < x or x < 10",
+        "C": "语法错误",
+        "D": "(1 < x) < 10"
+      },
+      "answer": "A",
+      "explanation": "链式比较是 Python 特色，等价于多个比较用 and 连接，且中间表达式只求值一次（对函数调用尤其有用）。",
+      "distractors": {
+        "B": "or 会让几乎所有数都通过，语义错误。",
+        "C": "链式比较是合法且推荐的语法。",
+        "D": "(1 < x) < 10 会先得到布尔值再与 10 比较，是错误理解。"
+      },
+      "knowledge": ["链式比较", "求值一次的特性", "与 JS 差异"],
+      "doc": "04-operators"
+    }
+  ]
+}
