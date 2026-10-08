@@ -35,20 +35,34 @@ export const DOC_META: DocMeta[] = [
   { slug: "18-pitfalls-vs-js", title: "18 易错点与 JS/TS 迁移指南", summary: "十大坑、空值模型、速查替换表", topic: "pitfalls" },
 ];
 
-const modules = import.meta.glob("./docs/*.md", { query: "?raw", import: "default", eager: true }) as Record<
+/**
+ * 正文按需加载：每章 .md 被拆成独立 chunk，只有打开该章时才下载。
+ * 注意：这里是 lazy glob（不带 eager），返回的是 loader 函数而非内容。
+ */
+const loaders = import.meta.glob("./docs/*.md", { query: "?raw", import: "default" }) as Record<
   string,
-  string
+  () => Promise<string>
 >;
 
-const CONTENT: Record<string, string> = Object.fromEntries(
-  Object.entries(modules).map(([path, text]) => [path.replace("./docs/", "").replace(/\.md$/, ""), text]),
-);
+const cache = new Map<string, Promise<string>>();
 
-export function getDoc(slug: string): { meta: DocMeta; markdown: string } | undefined {
-  const meta = DOC_META.find((item) => item.slug === slug);
-  const markdown = CONTENT[slug];
-  if (!meta || !markdown) return undefined;
-  return { meta, markdown };
+/** 按 slug 异步加载正文，结果会被缓存；章节不存在时返回 undefined。 */
+export function loadDocMarkdown(slug: string): Promise<string | undefined> {
+  const loader = loaders[`./docs/${slug}.md`];
+  if (!loader) return Promise.resolve(undefined);
+  let pending = cache.get(slug);
+  if (!pending) {
+    pending = loader();
+    cache.set(slug, pending);
+    // 加载失败时清掉缓存，允许用户重试
+    pending.catch(() => cache.delete(slug));
+  }
+  return pending;
+}
+
+/** 按 slug 获取元信息（同步）；正文需用 loadDocMarkdown 异步获取。 */
+export function getDocMeta(slug: string): DocMeta | undefined {
+  return DOC_META.find((item) => item.slug === slug);
 }
 
 export function docTitle(slug: string): string {

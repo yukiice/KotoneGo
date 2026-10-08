@@ -1,14 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
-import { Markdown } from "../components/Markdown";
-import { DOC_META, extractHeadings, getDoc } from "../content";
+import { useAsync } from "../hooks/useAsync";
+import { DOC_META, extractHeadings, getDocMeta, loadDocMarkdown } from "../content";
+
+/** Markdown 渲染器（react-markdown + highlight.js）体积较大，只在文档页按需加载。 */
+const Markdown = lazy(() => import("../components/Markdown").then((m) => ({ default: m.Markdown })));
 
 export function DocsPage() {
   const { slug = DOC_META[0]!.slug } = useParams();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
 
-  const doc = getDoc(slug);
+  const meta = getDocMeta(slug);
+  // 正文按章节懒加载，切换章节时重新请求（内部有缓存）
+  const { data: markdown, loading, error } = useAsync(() => loadDocMarkdown(slug).then((text) => text ?? null), [slug]);
 
   useEffect(() => {
     // 切换章节后滚到顶部
@@ -26,7 +31,7 @@ export function DocsPage() {
     );
   }, [query]);
 
-  if (!doc) {
+  if (!meta) {
     return (
       <div className="empty">
         <p>找不到章节「{slug}」。</p>
@@ -37,7 +42,7 @@ export function DocsPage() {
     );
   }
 
-  const headings = extractHeadings(doc.markdown).filter((h) => h.level === 2);
+  const headings = markdown ? extractHeadings(markdown).filter((h) => h.level === 2) : [];
   const index = DOC_META.findIndex((item) => item.slug === slug);
   const prev = index > 0 ? DOC_META[index - 1] : undefined;
   const next = index < DOC_META.length - 1 ? DOC_META[index + 1] : undefined;
@@ -76,7 +81,15 @@ export function DocsPage() {
         </div>
 
         <article className="docs-body">
-          <Markdown>{doc.markdown}</Markdown>
+          {loading ? <p className="muted">正在加载章节…</p> : null}
+          {error || (!loading && markdown === null) ? (
+            <div className="alert">章节加载失败{error ? `：${error}` : ""}</div>
+          ) : null}
+          {markdown ? (
+            <Suspense fallback={<p className="muted">正在加载渲染器…</p>}>
+              <Markdown>{markdown}</Markdown>
+            </Suspense>
+          ) : null}
 
           <div className="row between" style={{ marginTop: 28, gap: 10 }}>
             {prev ? (
@@ -94,9 +107,9 @@ export function DocsPage() {
           </div>
 
           <div className="alert" style={{ marginTop: 18 }}>
-            想检验这一章？<Link to={`/exam?topic=${doc.meta.topic}`}>开始本章主题考试</Link>
+            想检验这一章？<Link to={`/exam?topic=${meta.topic}`}>开始本章主题考试</Link>
             <span className="muted small">
-              （题目从「{doc.meta.summary}」相关主题随机抽取，答错自动进错题本）
+              （题目从「{meta.summary}」相关主题随机抽取，答错自动进错题本）
             </span>
           </div>
 
