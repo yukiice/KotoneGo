@@ -49,7 +49,7 @@ KotoneGo/
 │   └── scripts/
 │       ├── validate_questions.py # 校验题库格式（改完题库必跑）
 │       └── smoke_test.py         # 端到端冒烟测试（需后端已启动）
-├── backend/tests/                # pytest 单元测试（题库校验、热加载、抽题、回滚）
+├── backend/tests/                # pytest 测试（题库校验、热加载、抽题、回滚、HTTP 接口契约）
 └── frontend/                     # React 18 + TS + Vite
     ├── vite.config.ts            # /api 代理到 127.0.0.1:8000
     └── src/
@@ -345,7 +345,7 @@ cd frontend && npm run build
 6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
 7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
    每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
-8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚；可继续补充 API 层的端到端用例（目前 `smoke_test.py` 仍需后端运行）。
+8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚，以及 `test_api.py` 中的 HTTP 接口契约（状态码、请求校验、错题本、统计）；`smoke_test.py` 仍需后端运行。
 
 ---
 
