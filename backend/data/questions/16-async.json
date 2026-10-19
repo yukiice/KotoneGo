@@ -2,21 +2,22 @@
   "topic": "async",
   "label": "异步编程",
   "questions": [
+
     {
       "id": "async-01", "topic": "async", "difficulty": "medium",
       "question": "async def f(): 定义的是什么？",
       "options": {
         "A": "普通函数，调用后立即执行",
-        "B": "协程函数，调用后返回协程对象，需要 await 或事件循环驱动才执行",
-        "C": "后台线程",
-        "D": "多进程任务"
+        "B": "后台线程",
+        "C": "多进程任务",
+        "D": "协程函数，调用后返回协程对象，需要 await 或事件循环驱动才执行"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "协程函数调用不执行函数体，只创建 coroutine 对象；由 await / asyncio.run 驱动，这一点与生成器很像。",
       "distractors": {
         "A": "不会立即执行，还会打印 RuntimeWarning: coroutine was never awaited。",
-        "C": "协程不是线程，运行在单线程事件循环里。",
-        "D": "与多进程无关。"
+        "B": "协程不是线程，运行在单线程事件循环里。",
+        "C": "与多进程无关。"
       },
       "knowledge": ["async def", "协程对象", "事件循环"],
       "doc": "17-async"
@@ -25,15 +26,15 @@
       "id": "async-02", "topic": "async", "difficulty": "medium",
       "question": "asyncio.run(main()) 的作用是？",
       "options": {
-        "A": "创建事件循环、运行协程 main 直到完成，然后关闭循环",
-        "B": "在新线程里运行 main",
+        "A": "在新线程里运行 main",
+        "B": "创建事件循环、运行协程 main 直到完成，然后关闭循环",
         "C": "把 main 变成同步函数",
         "D": "启动一个 HTTP 服务器"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "asyncio.run 是启动异步程序的推荐入口，负责管理事件循环生命周期。",
       "distractors": {
-        "B": "事件循环默认运行在当前线程。",
+        "A": "事件循环默认运行在当前线程。",
         "C": "不改变函数性质。",
         "D": "起服务器是 uvicorn.run 或 asyncio 里手动 serve。"
       },
@@ -45,19 +46,20 @@
       "question": "await asyncio.sleep(1) 与 time.sleep(1) 的关键区别是？",
       "options": {
         "A": "没有区别",
-        "B": "asyncio.sleep 会让出控制权给事件循环（可并发其它协程）；time.sleep 会阻塞整个线程",
-        "C": "time.sleep 更省 CPU",
-        "D": "asyncio.sleep 只能在多进程中用"
+        "B": "time.sleep 更省 CPU",
+        "C": "asyncio.sleep 只能在多进程中用",
+        "D": "asyncio.sleep 会让出控制权给事件循环（可并发其它协程）；time.sleep 会阻塞整个线程"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "异步的关键是“阻塞时让出”，一旦在协程里调用同步阻塞函数，整个事件循环都会被卡住，应改用异步库或 run_in_executor。",
       "distractors": {
         "A": "行为完全不同。",
-        "C": "两者都不占 CPU（都是等待），区别在于是否阻塞事件循环。",
-        "D": "它在单线程事件循环里使用。"
+        "B": "两者都不占 CPU（都是等待），区别在于是否阻塞事件循环。",
+        "C": "它在单线程事件循环里使用。"
       },
       "knowledge": ["非阻塞 IO", "阻塞事件循环反模式", "run_in_executor"],
-      "doc": "17-async", "tags": ["pitfall"]
+      "doc": "17-async",
+      "tags": ["pitfall"]
     },
     {
       "id": "async-04", "topic": "async", "difficulty": "hard",
@@ -82,15 +84,15 @@
       "id": "async-05", "topic": "async", "difficulty": "medium",
       "question": "Python 的 asyncio 适合解决什么问题？",
       "options": {
-        "A": "CPU 密集计算（如矩阵乘、图像处理）",
-        "B": "IO 密集且高并发（大量网络请求、数据库访问）",
+        "A": "IO 密集且高并发（大量网络请求、数据库访问）",
+        "B": "CPU 密集计算（如矩阵乘、图像处理）",
         "C": "替代多进程",
         "D": "自动并行化任意代码"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "由于有 GIL 且事件循环单线程，asyncio 的优势在 IO 等待期间切换任务；CPU 密集应使用多进程或原生扩展。",
       "distractors": {
-        "A": "CPU 密集用多进程/向量化库（numpy）更合适。",
+        "B": "CPU 密集用多进程/向量化库（numpy）更合适。",
         "C": "两者解决不同问题，可共存。",
         "D": "只有异步 IO 操作才会让出控制权。"
       },
@@ -102,19 +104,20 @@
       "question": "在协程里直接调用 requests.get(url) 会怎样？",
       "options": {
         "A": "自动变成异步请求",
-        "B": "阻塞事件循环，让整个应用的并发能力失效；应改用 httpx/aiohttp 等异步客户端",
-        "C": "抛出 TypeError",
+        "B": "抛出 TypeError",
+        "C": "阻塞事件循环，让整个应用的并发能力失效；应改用 httpx/aiohttp 等异步客户端",
         "D": "只能在 Windows 上出问题"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "requests 是同步阻塞库；在 async 函数里调用它会阻塞事件循环，其它协程都无法推进。",
       "distractors": {
         "A": "不会有魔法转换。",
-        "C": "语法上完全合法，问题在运行时行为。",
+        "B": "语法上完全合法，问题在运行时行为。",
         "D": "所有平台都一样。"
       },
       "knowledge": ["同步库混用风险", "httpx/aiohttp", "事件循环阻塞"],
-      "doc": "17-async", "tags": ["pitfall"]
+      "doc": "17-async",
+      "tags": ["pitfall"]
     },
     {
       "id": "async-07", "topic": "async", "difficulty": "hard",
@@ -140,19 +143,447 @@
       "question": "协程函数 f 调用后直接丢弃返回值（没有 await），会发生什么？",
       "options": {
         "A": "正常执行完逻辑",
-        "B": "函数体不会执行，可能产生 RuntimeWarning: coroutine ... was never awaited",
-        "C": "立即当成同步函数执行",
-        "D": "自动创建后台任务"
+        "B": "立即当成同步函数执行",
+        "C": "自动创建后台任务",
+        "D": "函数体不会执行，可能产生 RuntimeWarning: coroutine ... was never awaited"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "协程必须被 await 或包成 Task 才会被调度；忘记 await 是新手最常见的异步 bug（静默不执行）。",
       "distractors": {
         "A": "函数体一行都不会跑。",
-        "C": "不会自动转同步。",
-        "D": "不会自动调度，需要 create_task。"
+        "B": "不会自动转同步。",
+        "C": "不会自动调度，需要 create_task。"
       },
       "knowledge": ["忘记 await", "RuntimeWarning", "create_task"],
-      "doc": "17-async", "tags": ["pitfall"]
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-09", "topic": "async", "difficulty": "easy",
+      "question": "调用 async def fetch(): ... 定义的函数，返回的是？",
+      "options": {
+        "A": "函数返回值",
+        "B": "Future 对象",
+        "C": "线程",
+        "D": "协程对象（coroutine），需要 await 或交给事件循环才会执行"
+      },
+      "answer": "D",
+      "explanation": "调用协程函数不会执行函数体，只创建 coroutine 对象；丢弃它会有 RuntimeWarning: coroutine was never awaited。这与生成器函数「调用只得到生成器」完全一致。",
+      "distractors": {
+        "A": "需要 await 才有返回值。",
+        "B": "Future 是更底层的封装。",
+        "C": "不涉及线程。"
+      },
+      "knowledge": ["协程对象", "调用不执行", "RuntimeWarning"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-10", "topic": "async", "difficulty": "easy",
+      "question": "把 await 直接写在普通 def 函数里，会怎样？",
+      "options": {
+        "A": "正常运行",
+        "B": "SyntaxError: 'await' outside async function",
+        "C": "自动变成异步函数",
+        "D": "返回 None"
+      },
+      "answer": "B",
+      "explanation": "await 只能出现在 async def 里，这是语法层面的限制。要调用协程，要么把外层函数也改成 async，要么用 asyncio.run 在顶层启动事件循环。",
+      "distractors": {
+        "A": "语法错误，连导入都过不了。",
+        "C": "不会自动升级。",
+        "D": "直接报错。"
+      },
+      "knowledge": ["await 语法限制", "SyntaxError", "async def"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-11", "topic": "async", "difficulty": "medium",
+      "question": "asyncio.create_task(coro) 的作用是？",
+      "options": {
+        "A": "同步等待协程完成",
+        "B": "把协程包装成任务并立刻调度到事件循环，实现并发执行",
+        "C": "在后台线程里运行",
+        "D": "创建新的进程"
+      },
+      "answer": "B",
+      "explanation": "create_task 立即返回 Task，协程会在当前事件循环里尽快开始跑，于是多个任务能交错推进；要拿结果再 await task。注意必须保留 task 的引用，否则可能被 GC 取消。",
+      "distractors": {
+        "A": "那是 await 的效果。",
+        "C": "仍在同一线程的事件循环里。",
+        "D": "与进程无关。"
+      },
+      "knowledge": ["create_task", "并发调度", "Task 引用"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-12", "topic": "async", "difficulty": "medium",
+      "question": "await asyncio.sleep(0) 的作用是？",
+      "options": {
+        "A": "休眠 0 毫秒，等价于什么也不做",
+        "B": "阻塞整个线程",
+        "C": "主动让出控制权，让事件循环有机会调度其他任务",
+        "D": "结束当前任务"
+      },
+      "answer": "C",
+      "explanation": "它会把当前任务挂起一次并被重新排队，让其他就绪任务先跑。写「长时间计算中定期让出」或测试并发顺序时常用。",
+      "distractors": {
+        "A": "它会触发一次调度，不是纯空操作。",
+        "B": "sleep(0) 不阻塞线程。",
+        "D": "任务会继续执行。"
+      },
+      "knowledge": ["asyncio.sleep(0)", "让出控制权", "协作式调度"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-13", "topic": "async", "difficulty": "medium",
+      "question": "async for 用于遍历什么？",
+      "options": {
+        "A": "普通列表",
+        "B": "文件对象",
+        "C": "异步迭代器/异步生成器（实现 __aiter__ 的对象）",
+        "D": "协程对象"
+      },
+      "answer": "C",
+      "explanation": "async for 每一步都隐含 await，适合「边等 IO 边产出」的场景（如逐条读网络流）。普通列表用普通 for 即可；异步生成器写法是 `async def gen(): yield x`。",
+      "distractors": {
+        "A": "普通列表同步迭代即可。",
+        "B": "文件对象是同步可迭代的。",
+        "D": "协程对象不可迭代。"
+      },
+      "knowledge": ["async for", "__aiter__", "异步生成器"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-14", "topic": "async", "difficulty": "hard",
+      "question": "asyncio.gather(a(), b(), return_exceptions=True) 的特点是？",
+      "options": {
+        "A": "返回结果列表，异常作为元素返回而不中断其他任务",
+        "B": "任一任务失败就立刻抛异常",
+        "C": "只返回第一个完成的结果",
+        "D": "按完成顺序返回"
+      },
+      "answer": "A",
+      "explanation": "默认情况下 gather 遇到第一个异常就向上抛（其他任务可能仍在跑）；return_exceptions=True 会把异常对象放进结果列表，便于逐个检查。结果顺序始终与传入顺序一致。",
+      "distractors": {
+        "B": "那是默认行为。",
+        "C": "那是 asyncio.wait(FIRST_COMPLETED)。",
+        "D": "gather 保持传入顺序。"
+      },
+      "knowledge": ["gather", "return_exceptions", "结果顺序"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-15", "topic": "async", "difficulty": "hard",
+      "question": "asyncio.TaskGroup 相比 gather 的主要优势是？",
+      "options": {
+        "A": "速度更快",
+        "B": "支持更多任务数量",
+        "C": "任一任务失败会取消其余任务，并以 ExceptionGroup 汇总错误",
+        "D": "能跨线程使用"
+      },
+      "answer": "C",
+      "explanation": "TaskGroup（3.11+）是结构化并发：`async with asyncio.TaskGroup() as tg:` 里创建任务，退出时统一等待；一个失败会取消兄弟任务并抛 ExceptionGroup，避免「任务泄漏」。",
+      "distractors": {
+        "A": "不是性能优化。",
+        "B": "数量不是关键差异。",
+        "D": "仍绑定单个事件循环。"
+      },
+      "knowledge": ["TaskGroup", "结构化并发", "ExceptionGroup"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-16", "topic": "async", "difficulty": "hard",
+      "question": "在已经运行的事件循环里（如在协程内部）调用 asyncio.run() 会怎样？",
+      "options": {
+        "A": "正常嵌套运行",
+        "B": "抛 RuntimeError: asyncio.run() cannot be called from a running event loop",
+        "C": "自动新建线程运行",
+        "D": "静默返回 None"
+      },
+      "answer": "B",
+      "explanation": "一个线程同时只能有一个运行中的事件循环，asyncio.run 负责创建并关闭循环，因此不能在循环内再次调用。需要并发就用 await/create_task/gather。",
+      "distractors": {
+        "A": "不支持嵌套。",
+        "C": "不会自动开线程。",
+        "D": "会显式报错。"
+      },
+      "knowledge": ["asyncio.run 限制", "事件循环唯一性", "RuntimeError"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-17", "topic": "async", "difficulty": "medium",
+      "question": "在异步代码里发 HTTP 请求，推荐用？",
+      "options": {
+        "A": "requests",
+        "B": "urllib.request",
+        "C": "socket 手动实现",
+        "D": "httpx.AsyncClient 或 aiohttp"
+      },
+      "answer": "D",
+      "explanation": "requests/urllib 是同步阻塞库，放进协程会卡住整个事件循环（所有任务一起停）。httpx.AsyncClient 提供 await 接口，且在多个请求间复用连接池。",
+      "distractors": {
+        "A": "同步库，会阻塞事件循环。",
+        "B": "同样是同步的。",
+        "C": "能写但等于重新实现 HTTP 客户端。"
+      },
+      "knowledge": ["httpx.AsyncClient", "aiohttp", "阻塞事件循环"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-18", "topic": "async", "difficulty": "hard",
+      "question": "调用 task.cancel() 之后，任务内部会收到什么？",
+      "options": {
+        "A": "立刻终止，不执行任何清理",
+        "B": "在下一个 await 点抛 asyncio.CancelledError",
+        "C": "收到 KeyboardInterrupt",
+        "D": "什么也不发生"
+      },
+      "answer": "B",
+      "explanation": "取消是协作式的：异常在下一次 await 时注入，任务可以用 try/finally 做清理，通常应把 CancelledError 继续抛出而不是吞掉。吞掉会让取消失效。",
+      "distractors": {
+        "A": "清理代码（finally）会执行。",
+        "C": "不是键盘中断。",
+        "D": "会在 await 点生效。"
+      },
+      "knowledge": ["task.cancel", "CancelledError", "协作式取消"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-19", "topic": "async", "difficulty": "medium",
+      "question": "给协程加超时，3.11 之前最常用的写法是？",
+      "options": {
+        "A": "await asyncio.sleep(coro, 5)",
+        "B": "await asyncio.wait_for(coro, timeout=5)",
+        "C": "coro.timeout = 5",
+        "D": "用 signal.alarm 包裹"
+      },
+      "answer": "B",
+      "explanation": "wait_for 在超时后取消内部任务并抛 asyncio.TimeoutError（3.11 起是内置 TimeoutError）。3.11+ 还可以用 `async with asyncio.timeout(5):`。",
+      "distractors": {
+        "A": "参数顺序与语义都不对。",
+        "C": "协程对象没有 timeout 属性。",
+        "D": "signal 是进程级且不能用于线程。"
+      },
+      "knowledge": ["wait_for", "TimeoutError", "asyncio.timeout"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-20", "topic": "async", "difficulty": "medium",
+      "question": "想限制同时最多 10 个并发请求，应该用？",
+      "options": {
+        "A": "asyncio.Lock()",
+        "B": "threading.Lock()",
+        "C": "asyncio.Semaphore(10)",
+        "D": "把任务放进 list 就会自动限流"
+      },
+      "answer": "C",
+      "explanation": "Semaphore 是计数信号量：`async with sem:` 保证最多 10 个协程同时进入临界区，适合爬虫/批量请求限流。Lock 只允许 1 个，线程锁不能跨事件循环 await。",
+      "distractors": {
+        "A": "Lock 是互斥（并发 1）。",
+        "B": "线程锁在协程里会阻塞循环。",
+        "D": "创建任务不会自动限流。"
+      },
+      "knowledge": ["Semaphore 限流", "并发控制", "asyncio.Lock 区别"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-21", "topic": "async", "difficulty": "hard",
+      "question": "asyncio 能绕过 GIL 实现「并行」吗？",
+      "options": {
+        "A": "能，await 时会开新线程",
+        "B": "能，asyncio 自动用多核",
+        "C": "不能，它只在单线程内并发（切换点阻塞 IO），CPU 密集仍要用多进程",
+        "D": "与 GIL 无关"
+      },
+      "answer": "C",
+      "explanation": "asyncio 的价值是「用单线程处理大量并发 IO」，一个任务等待时让出给其他任务；CPU 计算不会让出，所以多核并行要靠 multiprocessing 或把重计算丢给进程池。",
+      "distractors": {
+        "A": "不创建线程。",
+        "B": "单线程，无法利用多核。",
+        "D": "GIL 正是关键背景。"
+      },
+      "knowledge": ["GIL", "IO 密集 vs CPU 密集", "并发不等于并行"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-22", "topic": "async", "difficulty": "medium",
+      "question": "协程里必须调用一个阻塞的同步函数（如 pandas 计算），推荐做法是？",
+      "options": {
+        "A": "await asyncio.to_thread(fn, ...) 丢到线程池",
+        "B": "直接调用，阻塞一下没关系",
+        "C": "用 while 循环等待",
+        "D": "改用 time.sleep"
+      },
+      "answer": "A",
+      "explanation": "直接调用会卡住整个事件循环；`asyncio.to_thread`（3.9+）或 `loop.run_in_executor` 把阻塞调用放到线程池，事件循环可以继续调度其他任务。注意 GIL 下 CPU 密集仍不加速。",
+      "distractors": {
+        "B": "所有并发任务都会被卡住。",
+        "C": "忙等更糟。",
+        "D": "sleep 同样阻塞循环。"
+      },
+      "knowledge": ["to_thread", "run_in_executor", "线程池"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-23", "topic": "async", "difficulty": "medium",
+      "question": "asyncio.Queue 的典型用途是？",
+      "options": {
+        "A": "替代 list 存数据",
+        "B": "生产者-消费者模式，用 await put()/await get() 在协程间传递数据",
+        "C": "做进程间通信",
+        "D": "实现线程锁"
+      },
+      "answer": "B",
+      "explanation": "异步队列的 put/get 是会挂起的协程，队列满/空时自动让出控制权，天然实现背压。`task_done()` 与 `join()` 配合可等待全部处理完成。",
+      "distractors": {
+        "A": "普通 list 没有阻塞/背压语义。",
+        "C": "进程通信用 multiprocessing.Queue。",
+        "D": "锁用 Lock。"
+      },
+      "knowledge": ["asyncio.Queue", "生产者消费者", "背压"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-24", "topic": "async", "difficulty": "hard",
+      "question": "异步生成器（async def + yield）如何被消费？",
+      "options": {
+        "A": "用 async for 遍历，或用 anext() 取值",
+        "B": "直接用 for 遍历",
+        "C": "用 await gen() 取值",
+        "D": "必须先 list() 转换"
+      },
+      "answer": "A",
+      "explanation": "异步生成器实现 `__aiter__`/`__anext__`，只能 async for 消费；每次产出都可能隐含 await。`list(gen)` 会报错，要 `[x async for x in gen]`。",
+      "distractors": {
+        "B": "普通 for 不支持异步迭代。",
+        "C": "await 生成器对象本身不行。",
+        "D": "list() 不接受异步可迭代对象。"
+      },
+      "knowledge": ["异步生成器", "async for", "anext"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-25", "topic": "async", "difficulty": "medium",
+      "question": "下面两种写法哪个更快（两个请求各耗时 1 秒）？\n\n写法 1： await a(); await b()\n写法 2： await asyncio.gather(a(), b())",
+      "options": {
+        "A": "两者都是 2 秒",
+        "B": "写法 2 约 1 秒，写法 1 约 2 秒——gather 让两个协程并发等待",
+        "C": "写法 1 更快，因为顺序执行没有调度开销",
+        "D": "两者都是 1 秒"
+      },
+      "answer": "B",
+      "explanation": "顺序 await 是串行等待；gather 把两个协程同时挂起，IO 重叠，总耗时约等于最慢的那个。这是「异步」最直接的收益，也是批量请求必须并发的理由。",
+      "distractors": {
+        "A": "并发能把等待时间重叠。",
+        "C": "调度开销远小于 1 秒 IO。",
+        "D": "顺序 await 不会缩短总时间。"
+      },
+      "knowledge": ["顺序 await vs 并发", "gather 收益", "IO 重叠"],
+      "doc": "17-async",
+      "tags": ["performance"]
+    },
+    {
+      "id": "async-26", "topic": "async", "difficulty": "hard",
+      "question": "自定义异步上下文管理器需要实现？",
+      "options": {
+        "A": "__aenter__ 和 __aexit__（都是 async 方法）",
+        "B": "__enter__ 和 __exit__",
+        "C": "__init__ 和 __del__",
+        "D": "__iter__ 和 __next__"
+      },
+      "answer": "A",
+      "explanation": "`async with` 调用 `await obj.__aenter__()`，退出时 `await obj.__aexit__(...)`。典型场景是异步连接的获取与释放（aiohttp session、数据库连接池）。",
+      "distractors": {
+        "B": "那是同步 with 的协议。",
+        "C": "与生命周期无关。",
+        "D": "那是迭代协议。"
+      },
+      "knowledge": ["__aenter__/__aexit__", "async with", "异步资源管理"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-27", "topic": "async", "difficulty": "hard",
+      "question": "asyncio.gather 传入多个任务，返回列表的顺序是？",
+      "options": {
+        "A": "按完成先后排列",
+        "B": "随机顺序",
+        "C": "与传入顺序一致，与完成先后无关",
+        "D": "倒序"
+      },
+      "answer": "C",
+      "explanation": "gather 保持参数顺序，所以可以安心用下标取结果。要「谁先完成先处理」得用 `asyncio.as_completed(tasks)` 或 wait。",
+      "distractors": {
+        "A": "那是 as_completed。",
+        "B": "顺序是确定的。",
+        "D": "不会倒序。"
+      },
+      "knowledge": ["gather 顺序", "as_completed", "结果映射"],
+      "doc": "17-async"
+    },
+    {
+      "id": "async-28", "topic": "async", "difficulty": "medium",
+      "question": "在协程里用 time.sleep(1) 而不用 asyncio.sleep(1)，后果是？",
+      "options": {
+        "A": "只有当前任务暂停",
+        "B": "报错",
+        "C": "两者效果相同",
+        "D": "整个事件循环被阻塞 1 秒，其他任务全部停摆"
+      },
+      "answer": "D",
+      "explanation": "time.sleep 是线程级阻塞，事件循环跑在同一线程上，所以所有并发任务一起卡住。异步代码里必须用 asyncio.sleep，或用 to_thread 包装阻塞调用。",
+      "distractors": {
+        "A": "阻塞的是整个线程/循环。",
+        "B": "不报错，更隐蔽。",
+        "C": "差别巨大。"
+      },
+      "knowledge": ["time.sleep 阻塞循环", "asyncio.sleep", "隐蔽 bug"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-29", "topic": "async", "difficulty": "hard",
+      "question": "asyncio.create_task(coro) 之后不保存返回的 task 引用，可能发生什么？",
+      "options": {
+        "A": "任务会立即执行完",
+        "B": "没有任何副作用",
+        "C": "会抛 SyntaxError",
+        "D": "任务可能被垃圾回收，在完成前被静默取消"
+      },
+      "answer": "D",
+      "explanation": "事件循环只持有 task 的弱引用，局部变量消失后 task 可能被 GC 回收，导致任务中途消失。官方建议把 task 存进集合，或在 TaskGroup 里管理。",
+      "distractors": {
+        "A": "不保证。",
+        "B": "这是个真实存在的坑。",
+        "C": "语法没问题，问题在运行期。"
+      },
+      "knowledge": ["task 引用丢失", "弱引用 GC", "TaskGroup 管理"],
+      "doc": "17-async",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "async-30", "topic": "async", "difficulty": "medium",
+      "question": "Python 3.11+ 中给一段异步代码加超时的现代写法是？",
+      "options": {
+        "A": "async with asyncio.timeout(5): ...",
+        "B": "with timeout(5): ...",
+        "C": "await asyncio.timeout(5)",
+        "D": "coro.set_timeout(5)"
+      },
+      "answer": "A",
+      "explanation": "`asyncio.timeout()` 是异步上下文管理器，超时后在块内抛 TimeoutError，比 wait_for 更易读，也能覆盖块内多个 await。",
+      "distractors": {
+        "B": "必须用 async with。",
+        "C": "它不是可 await 的对象。",
+        "D": "协程对象没有这个方法。"
+      },
+      "knowledge": ["asyncio.timeout", "TimeoutError", "Python 3.11+"],
+      "doc": "17-async"
     }
   ]
 }

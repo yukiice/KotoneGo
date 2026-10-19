@@ -2,6 +2,7 @@
   "topic": "iterators",
   "label": "迭代器与生成器",
   "questions": [
+
     {
       "id": "iter-01", "topic": "iterators", "difficulty": "medium",
       "question": "可迭代对象（iterable）与迭代器（iterator）的关系是？",
@@ -45,19 +46,20 @@
       "question": "迭代器被遍历完之后再次迭代会发生什么？",
       "options": {
         "A": "从头再来一次",
-        "B": "得到空结果（迭代器是一次性的）",
-        "C": "抛 ValueError",
+        "B": "抛 ValueError",
+        "C": "得到空结果（迭代器是一次性的）",
         "D": "自动重建"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "迭代器内部只有“当前位置”状态，耗尽后继续 next 只会抛 StopIteration，for 循环因此什么都不做。",
       "distractors": {
         "A": "不会自动重置。",
-        "C": "不报错，只是空。",
+        "B": "不报错，只是空。",
         "D": "没有自动重建机制。"
       },
       "knowledge": ["一次性消费", "StopIteration"],
-      "doc": "10-iterators-generators", "tags": ["pitfall"]
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
     },
     {
       "id": "iter-04", "topic": "iterators", "difficulty": "easy",
@@ -82,15 +84,15 @@
       "id": "iter-05", "topic": "iterators", "difficulty": "hard",
       "question": "读取 10GB 日志文件时最省内存的做法是？",
       "options": {
-        "A": "f.read().splitlines()",
-        "B": "直接 for line in f: 逐行迭代",
+        "A": "直接 for line in f: 逐行迭代",
+        "B": "f.read().splitlines()",
         "C": "f.readlines()",
         "D": "f.read() 然后 split(\"\\n\")"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "文件对象是惰性迭代器，逐行读取只保留一行在内存中；read()/readlines() 会把整个文件装进内存。",
       "distractors": {
-        "A": "read() 一次性读入全部内容，容易 OOM。",
+        "B": "read() 一次性读入全部内容，容易 OOM。",
         "C": "readlines() 返回所有行的列表，同样占满内存。",
         "D": "与 A 等价，仍是全量载入。"
       },
@@ -101,15 +103,15 @@
       "id": "iter-06", "topic": "iterators", "difficulty": "medium",
       "question": "生成器表达式和列表推导式相比的优势是？",
       "options": {
-        "A": "语法更短，可以重复遍历",
-        "B": "惰性求值，内存占用小，适合大数据流或管道处理",
+        "A": "惰性求值，内存占用小，适合大数据流或管道处理",
+        "B": "语法更短，可以重复遍历",
         "C": "速度一定比列表推导快",
         "D": "支持随机索引访问"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "生成器不保存全部结果，因此内存友好；代价是不能重复遍历、不能索引、取长度。",
       "distractors": {
-        "A": "生成器只能遍历一次，这是它的限制。",
+        "B": "生成器只能遍历一次，这是它的限制。",
         "C": "有时生成器因为逐个 next 反而更慢，优势主要在内存。",
         "D": "生成器不支持索引访问。"
       },
@@ -139,15 +141,15 @@
       "id": "iter-08", "topic": "iterators", "difficulty": "hard",
       "question": "yield from iterable 的作用是？",
       "options": {
-        "A": "把 iterable 转成列表",
-        "B": "委托迭代，把子可迭代对象的值依次产出（等价于 for x in iterable: yield x）",
+        "A": "委托迭代，把子可迭代对象的值依次产出（等价于 for x in iterable: yield x）",
+        "B": "把 iterable 转成列表",
         "C": "中断生成器",
         "D": "只能在协程里使用"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "yield from 用于委托给子生成器/可迭代对象，代码更短，且会转发 send/throw 与返回值。",
       "distractors": {
-        "A": "不做类型转换。",
+        "B": "不做类型转换。",
         "C": "它不中断生成器。",
         "D": "普通生成器也能用（协程里同样常用）。"
       },
@@ -171,7 +173,8 @@
         "D": "print(\"created\") 会执行。"
       },
       "knowledge": ["惰性启动", "生成器对象创建时机"],
-      "doc": "10-iterators-generators", "tags": ["pitfall"]
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
     },
     {
       "id": "iter-10", "topic": "iterators", "difficulty": "medium",
@@ -197,16 +200,16 @@
       "question": "itertools.count() 与 range() 的区别是？",
       "options": {
         "A": "没有区别",
-        "B": "count() 是无限迭代器，需要 break 或 islice 限制；range 有确定终点",
-        "C": "count() 只能计数到 100",
-        "D": "count() 返回列表"
+        "B": "count() 只能计数到 100",
+        "C": "count() 返回列表",
+        "D": "count() 是无限迭代器，需要 break 或 islice 限制；range 有确定终点"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "count(start, step) 无限递增，常用于配合 zip、islice、takewhile 使用；range 必须有边界。",
       "distractors": {
         "A": "终点行为完全不同。",
-        "C": "没有 100 的限制。",
-        "D": "返回迭代器而不是列表。"
+        "B": "没有 100 的限制。",
+        "C": "返回迭代器而不是列表。"
       },
       "knowledge": ["itertools", "无限迭代器", "islice"],
       "doc": "10-iterators-generators"
@@ -228,6 +231,277 @@
         "D": "生成器确实有 send()、throw()、close() 三个方法。"
       },
       "knowledge": ["send()", "协程雏形", "首次 send 必须传 None"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-13", "topic": "iterators", "difficulty": "medium",
+      "question": "next(it, None) 与 next(it) 的区别是？",
+      "options": {
+        "A": "完全等价",
+        "B": "前者只能调用一次",
+        "C": "后者迭代结束时返回 None",
+        "D": "前者迭代结束时返回 None，后者抛 StopIteration"
+      },
+      "answer": "D",
+      "explanation": "next 的第二个参数是默认值，耗尽时返回它而不是抛异常，等价于 `next(it, default)`。写「取下一个，没有就算了」时很方便。",
+      "distractors": {
+        "A": "耗尽时行为不同。",
+        "B": "可以反复调用。",
+        "C": "无默认值时会抛 StopIteration。"
+      },
+      "knowledge": ["next(it, default)", "StopIteration", "迭代器协议"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-14", "topic": "iterators", "difficulty": "medium",
+      "question": "for x in obj: 在底层第一步做了什么？",
+      "options": {
+        "A": "直接读取 obj[0]、obj[1]",
+        "B": "调用 len(obj) 后按下标遍历",
+        "C": "调用 iter(obj) 拿到迭代器，再反复 next()",
+        "D": "把 obj 转成 list"
+      },
+      "answer": "C",
+      "explanation": "for 循环先 `iter(obj)` 得到迭代器，然后每轮 `next()`，捕获 StopIteration 结束。所以只要实现了 `__iter__`（或旧式 `__getitem__` 序列协议）就能被 for 遍历。",
+      "distractors": {
+        "A": "那只是序列协议的一种兜底方式。",
+        "B": "for 不需要长度。",
+        "D": "不会做整体转换，所以能遍历无限流。"
+      },
+      "knowledge": ["iter() 与 next()", "for 循环本质", "__iter__"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-15", "topic": "iterators", "difficulty": "hard",
+      "question": "itertools.tee(it, 2) 的作用是？",
+      "options": {
+        "A": "把迭代器塞进队列",
+        "B": "把迭代器转成元组",
+        "C": "判断迭代器是否为空",
+        "D": "把一个迭代器复制成两个，各自独立消费"
+      },
+      "answer": "D",
+      "explanation": "tee 返回 n 个独立迭代器，适合「同一份数据要遍历两遍」但不想把它整体 list() 下来的场景。注意它内部靠缓存已消费元素实现，两个副本消费进度差越大越占内存。",
+      "distractors": {
+        "A": "那是 queue 的事。",
+        "B": "转元组用 tuple()。",
+        "C": "没有这种功能。"
+      },
+      "knowledge": ["itertools.tee", "迭代器复制", "缓存开销"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-16", "topic": "iterators", "difficulty": "medium",
+      "question": "z = zip([1, 2], [\"a\", \"b\"]) 遍历一次后再遍历 z 会怎样？",
+      "options": {
+        "A": "重新从头开始",
+        "B": "报错",
+        "C": "得到空结果，zip 是迭代器，已被消费完",
+        "D": "返回原来的数据两次"
+      },
+      "answer": "C",
+      "explanation": "zip/map/filter/生成器都是一次性迭代器，消费完就空。要复用就 `pairs = list(zip(a, b))` 物化一次。这也是「迭代器 vs 可迭代容器」的核心区别。",
+      "distractors": {
+        "A": "迭代器不保存状态供重放。",
+        "B": "不会报错，只是空。",
+        "D": "不会复制数据。"
+      },
+      "knowledge": ["迭代器一次性", "zip 惰性", "list() 物化"],
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "iter-17", "topic": "iterators", "difficulty": "hard",
+      "question": "itertools.islice(it, 5) 的特点是？",
+      "options": {
+        "A": "惰性取前 5 个，不把整个迭代器物化，适合无限流",
+        "B": "等价于 it[:5]，但只对列表有效",
+        "C": "会把迭代器转成列表再切片",
+        "D": "随机取 5 个元素"
+      },
+      "answer": "A",
+      "explanation": "islice 只向前推进 5 步，内存 O(1)，因此能处理 `itertools.count()` 这类无限迭代器。注意它不支持负索引和步长为负。",
+      "distractors": {
+        "B": "迭代器不支持下标切片，islice 正是为此而生。",
+        "C": "它是惰性的，不物化。",
+        "D": "那是 random.sample。"
+      },
+      "knowledge": ["itertools.islice", "惰性切片", "无限迭代器"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-18", "topic": "iterators", "difficulty": "hard",
+      "question": "调用生成器的 close() 方法会怎样？",
+      "options": {
+        "A": "直接释放内存，不执行任何代码",
+        "B": "把生成器重置到开头",
+        "C": "什么也不做",
+        "D": "在暂停点抛 GeneratorExit，生成器随后终结"
+      },
+      "answer": "D",
+      "explanation": "close() 让生成器内部抛 GeneratorExit，finally 块会执行，适合释放文件句柄等资源。生成器不能在这个异常里 yield，否则会变成 RuntimeError。",
+      "distractors": {
+        "A": "内部会抛异常，finally 会被执行。",
+        "B": "生成器不可重置，要新建。",
+        "C": "它会终结生成器。"
+      },
+      "knowledge": ["generator.close()", "GeneratorExit", "finally 清理"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-19", "topic": "iterators", "difficulty": "medium",
+      "question": "gen = (x for x in range(3))，调用 any(gen) 之后再 list(gen)，结果是？",
+      "options": {
+        "A": "[0, 1, 2]",
+        "B": "[]",
+        "C": "[2]",
+        "D": "报错"
+      },
+      "answer": "C",
+      "explanation": "any 需要找到真值才返回：先取 0（假），再取 1（真）后停止，此时生成器已消费前两个，剩 [2]。这类「聚合函数偷偷消费迭代器」的 bug 很隐蔽。",
+      "distractors": {
+        "A": "前两个元素已被 any 消费掉。",
+        "B": "还有剩余元素 2。",
+        "D": "合法操作，不报错。"
+      },
+      "knowledge": ["短路消费", "迭代器状态", "any 副作用"],
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "iter-20", "topic": "iterators", "difficulty": "hard",
+      "question": "用生成器实现斐波那契数列，核心写法是？",
+      "options": {
+        "A": "用列表存全部结果再 return",
+        "B": "用 while 无限 append 到列表",
+        "C": "a, b = 0, 1 后循环 yield a，再 a, b = b, a + b",
+        "D": "必须用递归"
+      },
+      "answer": "C",
+      "explanation": "生成器每 yield 一个值就暂停，a, b 的状态保存在生成器帧里，所以能无限产出且内存恒定。这是「用生成器表达无限序列」的经典例子。",
+      "distractors": {
+        "A": "那就不是惰性了，无限序列会 OOM。",
+        "B": "同样会无限增长内存。",
+        "D": "递归会栈溢出且无法惰性产出。"
+      },
+      "knowledge": ["生成器实现无限序列", "yield 暂停恢复", "状态保存"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-21", "topic": "iterators", "difficulty": "medium",
+      "question": "sorted(f) 处理一个超大生成器时，内存表现如何？",
+      "options": {
+        "A": "会把所有元素读进内存再排序，可能吃满内存",
+        "B": "边读边排，内存恒定",
+        "C": "自动改用外部排序",
+        "D": "会比 list() 更省内存"
+      },
+      "answer": "A",
+      "explanation": "排序必须看到全部数据才能确定顺序，所以 sorted 会先把可迭代对象物化成列表，O(n) 内存。数据大到内存放不下时要用外部排序（分块排序再归并）。",
+      "distractors": {
+        "B": "排序无法做到流式。",
+        "C": "标准库没有自动外部排序。",
+        "D": "sorted 内部就是先建列表。"
+      },
+      "knowledge": ["sorted 需要全量", "内存 O(n)", "外部排序"],
+      "doc": "10-iterators-generators",
+      "tags": ["performance"]
+    },
+    {
+      "id": "iter-22", "topic": "iterators", "difficulty": "medium",
+      "question": "关于字典的 keys()/values()/items()，正确的是？",
+      "options": {
+        "A": "返回列表，可以下标访问",
+        "B": "返回视图对象，可重复迭代，且会反映字典后续的变化",
+        "C": "返回一次性迭代器，第二次遍历为空",
+        "D": "返回元组，不可变"
+      },
+      "answer": "B",
+      "explanation": "视图是「活的」：不复制数据，可反复迭代，字典改了视图也变。需要快照时才 `list(d.items())`。视图与迭代器不是一回事，这是常见混淆点。",
+      "distractors": {
+        "A": "视图不支持下标，要 list() 转换。",
+        "C": "视图可重复迭代，迭代器才是一次性的。",
+        "D": "视图不是元组。"
+      },
+      "knowledge": ["dict 视图", "视图 vs 迭代器", "可重复迭代"],
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "iter-23", "topic": "iterators", "difficulty": "medium",
+      "question": "sum(x * x for x in nums) 里生成器表达式为什么不用再加括号？",
+      "options": {
+        "A": "因为 sum 特殊支持",
+        "B": "省略会报语法错误",
+        "C": "因为 x * x 是常量",
+        "D": "作为唯一参数时，函数调用的括号已足够，可省略内层括号"
+      },
+      "answer": "D",
+      "explanation": "生成器表达式作为函数唯一实参时，外层调用括号即可界定它：`sum(x*x for x in nums)`。有其他参数时必须加括号，如 `sum((x*x for x in nums), 0)`。",
+      "distractors": {
+        "A": "所有接受单个可迭代参数的函数都如此。",
+        "B": "合法写法。",
+        "C": "与是否常量无关。"
+      },
+      "knowledge": ["生成器表达式括号省略", "函数实参", "语法糖"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-24", "topic": "iterators", "difficulty": "medium",
+      "question": "enumerate(items) 遍历两次会得到什么？",
+      "options": {
+        "A": "两次结果相同",
+        "B": "第二次从上次位置继续",
+        "C": "报错",
+        "D": "第二次为空，enumerate 是迭代器"
+      },
+      "answer": "D",
+      "explanation": "enumerate 返回迭代器，消费完就空。要多次使用就 `pairs = list(enumerate(items))`，或者每次重新调用 enumerate(items)（它会对 items 重新取迭代器）。",
+      "distractors": {
+        "A": "迭代器不可重放。",
+        "B": "耗尽后不会继续。",
+        "C": "不会报错。"
+      },
+      "knowledge": ["enumerate 是迭代器", "一次性消费", "重新创建"],
+      "doc": "10-iterators-generators",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "iter-25", "topic": "iterators", "difficulty": "hard",
+      "question": "生成器函数里同时出现 yield 和 return 42，return 的效果是？",
+      "options": {
+        "A": "把 42 作为最后一个 yield 值",
+        "B": "返回 42 给调用方，像普通函数一样",
+        "C": "结束生成器，42 存进 StopIteration.value，普通 for 循环拿不到",
+        "D": "语法错误"
+      },
+      "answer": "C",
+      "explanation": "`return value` 在生成器里等价于 `raise StopIteration(value)`，值挂在异常的 value 上，for 循环会静默丢弃。只有手动 next() 并捕获 StopIteration 才能拿到。",
+      "distractors": {
+        "A": "return 不会 yield 值。",
+        "B": "调用生成器函数得到的是生成器对象，不是 42。",
+        "D": "Python 3 允许 return value。"
+      },
+      "knowledge": ["生成器 return", "StopIteration.value", "yield from"],
+      "doc": "10-iterators-generators"
+    },
+    {
+      "id": "iter-26", "topic": "iterators", "difficulty": "hard",
+      "question": "想让自定义类支持 for 循环，最少需要实现什么？",
+      "options": {
+        "A": "__iter__，返回一个迭代器（自身实现 __next__ 也行）",
+        "B": "__len__",
+        "C": "__getitem__ 和 __len__",
+        "D": "__iter__ 和 __len__"
+      },
+      "answer": "A",
+      "explanation": "只要 `__iter__` 返回带 `__next__` 的对象即可。旧式兜底协议是 `__getitem__` 从 0 开始取直到 IndexError，但新代码应实现 `__iter__`。",
+      "distractors": {
+        "B": "长度与可迭代无关。",
+        "C": "旧式序列协议可行，但不是最少要求。",
+        "D": "__len__ 不是必需。"
+      },
+      "knowledge": ["__iter__ 协议", "__next__", "自定义可迭代类"],
       "doc": "10-iterators-generators"
     }
   ]

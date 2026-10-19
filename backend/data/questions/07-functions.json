@@ -2,20 +2,21 @@
   "topic": "functions",
   "label": "函数与作用域",
   "questions": [
+
     {
       "id": "func-01", "topic": "functions", "difficulty": "easy",
       "question": "定义一个接收参数 name 的函数，正确写法是？",
       "options": {
         "A": "function greet(name) { }",
-        "B": "def greet(name):",
-        "C": "const greet = (name) => { }",
+        "B": "const greet = (name) => { }",
+        "C": "def greet(name):",
         "D": "fun greet(name):"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "Python 用 def 定义函数，头部以冒号结尾，函数体缩进。",
       "distractors": {
         "A": "function 是 JS 关键字。",
-        "C": "箭头函数是 ES6 语法。",
+        "B": "箭头函数是 ES6 语法。",
         "D": "fun 是 Kotlin 的关键字。"
       },
       "knowledge": ["def", "函数声明", "与 JS 对比"],
@@ -24,12 +25,17 @@
     {
       "id": "func-02", "topic": "functions", "difficulty": "easy",
       "question": "没有 return 语句的函数返回值是？",
-      "options": { "A": "0", "B": "None", "C": "undefined", "D": "报错" },
-      "answer": "B",
+      "options": {
+        "A": "0",
+        "B": "undefined",
+        "C": "None",
+        "D": "报错"
+      },
+      "answer": "C",
       "explanation": "函数走到末尾自然返回 None；Python 里没有 undefined 这个概念。",
       "distractors": {
         "A": "不会自动返回 0。",
-        "C": "undefined 是 JS 的值，Python 无此概念。",
+        "B": "undefined 是 JS 的值，Python 无此概念。",
         "D": "无 return 是完全合法的。"
       },
       "knowledge": ["隐式返回 None", "与 JS undefined 对比"],
@@ -71,37 +77,44 @@
         "D": "语法合法，问题在运行语义。"
       },
       "knowledge": ["可变默认参数陷阱", "None 哨兵写法", "定义时求值"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-05", "topic": "functions", "difficulty": "medium",
       "question": "def f(*args) 中的 args 类型是？",
-      "options": { "A": "list", "B": "tuple", "C": "dict", "D": "set" },
-      "answer": "B",
+      "options": {
+        "A": "list",
+        "B": "dict",
+        "C": "tuple",
+        "D": "set"
+      },
+      "answer": "C",
       "explanation": "*args 把多余的位置参数收集成一个元组；**kwargs 才收集成字典。",
       "distractors": {
         "A": "不是 list（历史原因，用 tuple 更省内存）。",
-        "C": "字典对应 **kwargs。",
+        "B": "字典对应 **kwargs。",
         "D": "不是集合。"
       },
       "knowledge": ["*args 是 tuple", "**kwargs 是 dict"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-06", "topic": "functions", "difficulty": "medium",
       "question": "调用 f(*nums) 中的 * 起到什么作用？",
       "options": {
-        "A": "把 nums 里的元素展开成独立的位置参数",
-        "B": "把 nums 变成一个元组",
-        "C": "复制 nums",
-        "D": "表示 nums 是指针"
+        "A": "把 nums 变成一个元组",
+        "B": "复制 nums",
+        "C": "表示 nums 是指针",
+        "D": "把 nums 里的元素展开成独立的位置参数"
       },
-      "answer": "A",
+      "answer": "D",
       "explanation": "函数调用处的 * 是解包（unpacking）：f(*[1,2]) 等价于 f(1, 2)；** 则用于解包字典成关键字参数。",
       "distractors": {
-        "B": "那是定义处的语义，调用处是展开。",
-        "C": "不做复制。",
-        "D": "Python 没有指针语法。"
+        "A": "那是定义处的语义，调用处是展开。",
+        "B": "不做复制。",
+        "C": "Python 没有指针语法。"
       },
       "knowledge": ["解包调用 f(*a) / f(**d)", "定义与调用的区别"],
       "doc": "08-functions"
@@ -130,53 +143,55 @@
       "question": "Python 函数参数传递的语义是？",
       "options": {
         "A": "基本类型传值，对象传引用（两类分开）",
-        "B": "传对象引用（assignment passing）：函数内重新赋值不影响外部，但原地修改可变对象会影响外部",
-        "C": "全部深拷贝",
-        "D": "全部传指针，等价于 C 的指针"
+        "B": "全部深拷贝",
+        "C": "全部传指针，等价于 C 的指针",
+        "D": "传对象引用（assignment passing）：函数内重新赋值不影响外部，但原地修改可变对象会影响外部"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "参数是“对象引用的副本”：x.append(...) 影响调用者，但 x = [...] 只改局部名字绑定。",
       "distractors": {
         "A": "Python 不区分基本类型与对象，语义统一。",
-        "C": "不做深拷贝（这正是性能优势所在）。",
-        "D": "没有指针概念，且不能重新绑定调用者的变量。"
+        "B": "不做深拷贝（这正是性能优势所在）。",
+        "C": "没有指针概念，且不能重新绑定调用者的变量。"
       },
       "knowledge": ["对象引用传递", "原地修改 vs 重新绑定"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-09", "topic": "functions", "difficulty": "hard",
       "question": "函数内给外部变量赋值（而非读取）时，必须做什么？",
       "options": {
-        "A": "不需要任何声明，Python 允许隐式全局赋值",
-        "B": "使用 global 声明（列表等可变对象的原地修改则不需要）",
+        "A": "使用 global 声明（列表等可变对象的原地修改则不需要）",
+        "B": "不需要任何声明，Python 允许隐式全局赋值",
         "C": "必须使用 extern",
         "D": "必须把变量作为参数传入"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "赋值会让名字变成局部变量，要修改模块级变量需 global x；修改外层函数变量需 nonlocal x。注意 a.append() 属于读取后原地修改，不受此限制。",
       "distractors": {
-        "A": "直接赋值会创建局部变量，甚至引发 UnboundLocalError。",
+        "B": "直接赋值会创建局部变量，甚至引发 UnboundLocalError。",
         "C": "extern 是 C 的关键字。",
         "D": "参数传递是另一种做法，但语法上并非必须。"
       },
       "knowledge": ["global", "nonlocal", "UnboundLocalError", "LEGB"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-10", "topic": "functions", "difficulty": "medium",
       "question": "lambda x: x * 2 等价于？",
       "options": {
-        "A": "def f(x): return x * 2",
-        "B": "def f(x): x * 2",
-        "C": "只能用于比较运算",
+        "A": "def f(x): x * 2",
+        "B": "只能用于比较运算",
+        "C": "def f(x): return x * 2",
         "D": "一个类定义"
       },
-      "answer": "A",
+      "answer": "C",
       "explanation": "lambda 是“只有表达式”的匿名函数，会隐式返回表达式结果。",
       "distractors": {
-        "B": "缺少 return，会返回 None。",
-        "C": "lambda 可以包含任何表达式（如 x if x > 0 else -x）。",
+        "A": "缺少 return，会返回 None。",
+        "B": "lambda 可以包含任何表达式（如 x if x > 0 else -x）。",
         "D": "与类无关。"
       },
       "knowledge": ["lambda", "表达式限制", "常用于 key 函数"],
@@ -204,7 +219,12 @@
     {
       "id": "func-12", "topic": "functions", "difficulty": "easy",
       "question": "函数名后面加一对括号表示？",
-      "options": { "A": "引用函数对象本身", "B": "调用函数并执行函数体", "C": "声明函数", "D": "导出函数" },
+      "options": {
+        "A": "引用函数对象本身",
+        "B": "调用函数并执行函数体",
+        "C": "声明函数",
+        "D": "导出函数"
+      },
       "answer": "B",
       "explanation": "f 是函数对象（可作为参数传递），f() 才是调用；这是回调、装饰器的基础。",
       "distractors": {
@@ -218,13 +238,18 @@
     {
       "id": "func-13", "topic": "functions", "difficulty": "medium",
       "question": "想返回多个值 return a, b，实际返回的是？",
-      "options": { "A": "两个独立返回值", "B": "一个元组 (a, b)", "C": "一个列表", "D": "报错" },
-      "answer": "B",
+      "options": {
+        "A": "两个独立返回值",
+        "B": "一个列表",
+        "C": "报错",
+        "D": "一个元组 (a, b)"
+      },
+      "answer": "D",
       "explanation": "逗号会自动打包成元组，调用处可用 x, y = f() 解包。",
       "distractors": {
         "A": "Python 函数只能返回单个对象。",
-        "C": "默认打包成 tuple 而不是 list。",
-        "D": "完全合法。"
+        "B": "默认打包成 tuple 而不是 list。",
+        "C": "完全合法。"
       },
       "knowledge": ["元组打包/解包", "返回多值"],
       "doc": "08-functions"
@@ -252,20 +277,21 @@
       "id": "func-15", "topic": "functions", "difficulty": "hard",
       "question": "闭包中引用循环变量的经典陷阱，正确做法是？",
       "options": {
-        "A": "直接用 for 变量即可，不会有问题",
-        "B": "把变量作为默认参数或参数传入（如 lambda i=i: i），或用 functools.partial",
+        "A": "把变量作为默认参数或参数传入（如 lambda i=i: i），或用 functools.partial",
+        "B": "直接用 for 变量即可，不会有问题",
         "C": "必须使用 global",
         "D": "只能用 while 循环避免"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "闭包捕获的是变量本身（延迟绑定），循环结束后都指向最后一个值；用默认参数在定义时“冻结”当前值即可。",
       "distractors": {
-        "A": "所有闭包都会打印最后一个 i，是经典 bug。",
+        "B": "所有闭包都会打印最后一个 i，是经典 bug。",
         "C": "global 不解决绑定时机问题。",
         "D": "换循环类型同样会踩坑。"
       },
       "knowledge": ["延迟绑定", "默认参数冻结", "functools.partial"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-16", "topic": "functions", "difficulty": "medium",
@@ -291,16 +317,16 @@
       "question": "下面的函数能通过语法检查吗？\n\ndef f(a):\n    return a\n    print(\"unreachable\")",
       "options": {
         "A": "不能，return 后不能有代码",
-        "B": "能，但 print 永远不会执行（死代码）",
-        "C": "能，且会先打印再返回",
-        "D": "会抛 IndentationError"
+        "B": "能，且会先打印再返回",
+        "C": "会抛 IndentationError",
+        "D": "能，但 print 永远不会执行（死代码）"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "Python 不禁止 return 后面的语句，但永远执行不到；静态检查工具（如 pylint/mypy --warn-unreachable）会给出提示。",
       "distractors": {
         "A": "语法上允许，只有部分语言才把它当编译错误。",
-        "C": "return 会立即结束函数。",
-        "D": "缩进一致，没有缩进错误。"
+        "B": "return 会立即结束函数。",
+        "C": "缩进一致，没有缩进错误。"
       },
       "knowledge": ["return 立即返回", "死代码", "静态检查"],
       "doc": "08-functions"
@@ -329,37 +355,311 @@
       "question": "关于函数默认参数的求值时机，正确的是？",
       "options": {
         "A": "每次调用时重新求值",
-        "B": "定义函数时求值一次，之后复用",
-        "C": "第一次调用时求值，之后复用",
+        "B": "第一次调用时求值，之后复用",
+        "C": "定义函数时求值一次，之后复用",
         "D": "取决于参数类型"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "默认值在 def 语句执行时求值并被保存在函数对象里，这也是可变默认参数陷阱的根源。可用 f.__defaults__ 查看。",
       "distractors": {
         "A": "每次求值的话就不会有共享列表的问题了。",
-        "C": "不是第一次调用时。",
+        "B": "不是第一次调用时。",
         "D": "规则与类型无关。"
       },
       "knowledge": ["默认值求值时机", "__defaults__", "陷阱成因"],
-      "doc": "08-functions", "tags": ["pitfall"]
+      "doc": "08-functions",
+      "tags": ["pitfall"]
     },
     {
       "id": "func-20", "topic": "functions", "difficulty": "medium",
       "question": "类型注解中 -> None 表示？",
       "options": {
         "A": "函数没有参数",
-        "B": "函数返回 None（即只做副作用，不返回有用值）",
-        "C": "函数一定报错",
-        "D": "函数返回任意类型"
+        "B": "函数一定报错",
+        "C": "函数返回任意类型",
+        "D": "函数返回 None（即只做副作用，不返回有用值）"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "-> 后面是返回类型；-> None 表示该函数主要用于产生副作用（打印、写文件、修改传入对象）。",
       "distractors": {
         "A": "参数写在括号里。",
-        "C": "与报错无关。",
-        "D": "任意类型应写 Any 或省略注解。"
+        "B": "与报错无关。",
+        "C": "任意类型应写 Any 或省略注解。"
       },
       "knowledge": ["-> 返回注解", "副作用函数"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-21", "topic": "functions", "difficulty": "medium",
+      "question": "def add(a, b): ... 之后调用 add(1)，会发生什么？",
+      "options": {
+        "A": "b 自动取 None",
+        "B": "b 自动取 0",
+        "C": "返回 1",
+        "D": "抛 TypeError，缺少必需的位置参数 b"
+      },
+      "answer": "D",
+      "explanation": "没有默认值的参数必须传，否则 TypeError: add() missing 1 required positional argument: 'b'。想允许不传就写 `def add(a, b=0)`。",
+      "distractors": {
+        "A": "自动补 None 是错的，除非你显式写 b=None。",
+        "B": "没有隐式补 0 的规则。",
+        "C": "调用直接失败。"
+      },
+      "knowledge": ["必需参数", "TypeError", "默认参数"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-22", "topic": "functions", "difficulty": "medium",
+      "question": "调用 f(a=1, b=2) 时，关键字参数的顺序可以调换吗？",
+      "options": {
+        "A": "不可以，必须按定义顺序",
+        "B": "可以，关键字参数按名字匹配，与顺序无关",
+        "C": "只有两个参数时可以",
+        "D": "可以，但必须都带默认值"
+      },
+      "answer": "B",
+      "explanation": "关键字参数按名字绑定，`f(b=2, a=1)` 与 `f(a=1, b=2)` 等价。这也是关键字参数存在的意义：调用点可读性 + 顺序无关。",
+      "distractors": {
+        "A": "那是位置参数的限制。",
+        "C": "与参数个数无关。",
+        "D": "与默认值无关。"
+      },
+      "knowledge": ["关键字参数", "按名绑定", "调用可读性"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-23", "topic": "functions", "difficulty": "hard",
+      "question": "def f(**kwargs): 中 kwargs 的类型是？",
+      "options": {
+        "A": "dict，收集所有未匹配的关键字参数",
+        "B": "tuple，收集所有位置参数",
+        "C": "list，收集多余的键",
+        "D": "无法确定，取决于调用方式"
+      },
+      "answer": "A",
+      "explanation": "`*args` 收集多余位置参数为 tuple，`**kwargs` 收集多余关键字参数为 dict。二者可以同时用，且必须按 `def f(a, *args, **kwargs)` 的顺序。",
+      "distractors": {
+        "B": "那是 *args 的类型。",
+        "C": "kwargs 是字典不是列表。",
+        "D": "类型固定为 dict。"
+      },
+      "knowledge": ["**kwargs", "*args", "参数收集顺序"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-24", "topic": "functions", "difficulty": "medium",
+      "question": "在函数里对传入的列表做 items.append(1)，调用方会看到变化吗？",
+      "options": {
+        "A": "不会，函数内拿到的是副本",
+        "B": "只有参数名相同时才会",
+        "C": "会，参数传的是对象引用，原地修改对调用方可见",
+        "D": "会报错"
+      },
+      "answer": "C",
+      "explanation": "Python 按「对象引用」传参：函数内名字和外部名字指向同一对象，append 是原地修改所以可见。但函数内重新绑定 `items = []` 不会影响外部。",
+      "distractors": {
+        "A": "不会自动拷贝（这点容易和 C++ 的按值传递混淆）。",
+        "B": "与参数名无关。",
+        "D": "合法操作。"
+      },
+      "knowledge": ["引用传递", "原地修改可见", "重新绑定无效"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-25", "topic": "functions", "difficulty": "medium",
+      "question": "想在嵌套函数里修改外层函数的变量 count，应该声明？",
+      "options": {
+        "A": "nonlocal count",
+        "B": "global count",
+        "C": "outer count",
+        "D": "不需要声明，直接赋值即可"
+      },
+      "answer": "A",
+      "explanation": "nonlocal 让内层函数绑定到最近的外层函数作用域变量；global 指向模块级变量。不声明直接 `count += 1` 会抛 UnboundLocalError（被当成局部变量）。",
+      "distractors": {
+        "B": "global 指模块级，若 count 在外层函数里会改不到。",
+        "C": "没有 outer 关键字。",
+        "D": "会导致 UnboundLocalError。"
+      },
+      "knowledge": ["nonlocal", "global", "UnboundLocalError"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-26", "topic": "functions", "difficulty": "hard",
+      "question": "用递归实现阶乘，正确的终止条件是？",
+      "options": {
+        "A": "def fact(n): return 1 if n <= 1 else n * fact(n - 1)",
+        "B": "def fact(n): return n * fact(n - 1)",
+        "C": "def fact(n): return fact(n - 1)",
+        "D": "def fact(n): return n if n == 1 else fact(n - 1)"
+      },
+      "answer": "A",
+      "explanation": "递归必须有 base case（n <= 1 返回 1），否则无限递归直到 RecursionError。B 缺少终止条件，C 和 D 的计算逻辑都不对。",
+      "distractors": {
+        "B": "没有终止条件，必然 RecursionError。",
+        "C": "返回的是 None 的递归。",
+        "D": "没有乘上 n，结果错误。"
+      },
+      "knowledge": ["递归 base case", "RecursionError", "阶乘"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-27", "topic": "functions", "difficulty": "medium",
+      "question": "map(str, nums) 在 Python 3 中返回什么？",
+      "options": {
+        "A": "列表",
+        "B": "惰性迭代器，需要 list() 或 for 消费",
+        "C": "元组",
+        "D": "字符串"
+      },
+      "answer": "B",
+      "explanation": "Python 3 的 map/filter/zip 都返回迭代器（惰性、一次性），要列表得 `list(map(...))`。Python 2 的 map 返回列表，这是老代码迁移的常见坑。",
+      "distractors": {
+        "A": "Python 3 不再返回列表。",
+        "C": "同样不是元组。",
+        "D": "str 是另一个函数。"
+      },
+      "knowledge": ["map 返回迭代器", "惰性求值", "Python 2 差异"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-28", "topic": "functions", "difficulty": "medium",
+      "question": "functools.partial(pow, 2) 的作用是？",
+      "options": {
+        "A": "让 pow 变成惰性求值",
+        "B": "把 pow 缓存起来",
+        "C": "调用 pow(2)",
+        "D": "固定第一个参数，得到一个「只差一个参数」的新函数"
+      },
+      "answer": "D",
+      "explanation": "partial 做参数预绑定：`square = partial(pow, 2)` 相当于 `lambda x: pow(2, x)`。常用于回调、sorted 的 key、给已有函数裁剪签名。",
+      "distractors": {
+        "A": "惰性是生成器/map 的事。",
+        "B": "缓存是 lru_cache。",
+        "C": "partial 不执行函数，只创建新函数。"
+      },
+      "knowledge": ["functools.partial", "参数预绑定", "高阶函数"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-29", "topic": "functions", "difficulty": "hard",
+      "question": "想根据命令名分发到不同函数，避免长串 if/elif，常见写法是？",
+      "options": {
+        "A": "用 match 语句只能这么写",
+        "B": "把函数存进字典：handlers = {\"add\": add, \"del\": delete}，再 handlers[cmd]()",
+        "C": "用 lambda 嵌套 if",
+        "D": "用递归实现分发"
+      },
+      "answer": "B",
+      "explanation": "函数是一等对象，可以做字典的值，这是 Python 里替代 switch 的惯用法，扩展时只需加一行映射。注意字典里存的是函数对象本身（不加括号）。",
+      "distractors": {
+        "A": "match 也能用，但不是唯一方式。",
+        "C": "lambda 不能包含语句，无法写 if/else 多分支。",
+        "D": "递归与分发无关。"
+      },
+      "knowledge": ["函数一等对象", "字典分发", "替代 switch"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-30", "topic": "functions", "difficulty": "medium",
+      "question": "return 与 print 的区别是？",
+      "options": {
+        "A": "两者等价",
+        "B": "print 会返回值给调用方",
+        "C": "return 把值交给调用方，print 只是输出到屏幕",
+        "D": "return 会输出到屏幕"
+      },
+      "answer": "C",
+      "explanation": "print 有副作用（写标准输出）但返回 None；return 结束函数并把值交给调用方。新手常见 bug 是在函数里 print 结果却忘了 return，导致调用方拿到 None。",
+      "distractors": {
+        "A": "语义完全不同。",
+        "B": "print 返回 None。",
+        "D": "return 不产生输出。"
+      },
+      "knowledge": ["return 语义", "print 副作用", "返回 None"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-31", "topic": "functions", "difficulty": "medium",
+      "question": "Python 查找名字的顺序（LEGB）是？",
+      "options": {
+        "A": "Local → Enclosing → Global → Built-in",
+        "B": "Global → Local → Built-in → Enclosing",
+        "C": "Built-in → Local → Global → Enclosing",
+        "D": "Local → Global → Enclosing → Built-in"
+      },
+      "answer": "A",
+      "explanation": "先局部，再外层函数（闭包），再模块全局，最后内置命名空间。理解 LEGB 才能解释「为什么函数里给全局变量赋值会 UnboundLocalError」。",
+      "distractors": {
+        "B": "顺序反了。",
+        "C": "内置在最后，不是最先。",
+        "D": "Enclosing 在 Global 之前。"
+      },
+      "knowledge": ["LEGB", "作用域查找顺序", "命名空间"],
+      "doc": "08-functions"
+    },
+    {
+      "id": "func-32", "topic": "functions", "difficulty": "hard",
+      "question": "函数里写 list = [1, 2] 之后，再调用 list(\"abc\") 会怎样？",
+      "options": {
+        "A": "正常返回 ['a', 'b', 'c']",
+        "B": "返回 [1, 2]",
+        "C": "报 NameError",
+        "D": "抛 TypeError，局部变量 list 遮蔽了内置的 list"
+      },
+      "answer": "D",
+      "explanation": "局部变量赋值会让 list 在整个函数内绑定为那个列表对象，从而遮蔽内置类型，`list(\"abc\")` 变成「调用一个列表」→ TypeError: 'list' object is not callable。别用内置名做变量名。",
+      "distractors": {
+        "A": "内置名已被遮蔽。",
+        "B": "调用列表对象会报错，不会返回它。",
+        "C": "名字存在，只是不可调用。"
+      },
+      "knowledge": ["遮蔽内置名", "TypeError not callable", "命名规范"],
+      "doc": "08-functions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "func-33", "topic": "functions", "difficulty": "hard",
+      "question": "给递归的斐波那契加 @functools.lru_cache 为什么能大幅提速？",
+      "options": {
+        "A": "把递归改成了循环",
+        "B": "让 Python 开启了多线程",
+        "C": "缓存已算过的参数结果，把指数级重复计算降为线性",
+        "D": "减少了函数调用栈深度"
+      },
+      "answer": "C",
+      "explanation": "朴素递归 fib(n) 会重复计算同一子问题（复杂度 O(1.6ⁿ)）；lru_cache 按参数缓存返回值，每个 n 只算一次，降到 O(n)。要求参数可哈希。",
+      "distractors": {
+        "A": "仍是递归，只是命中缓存。",
+        "B": "与并发无关。",
+        "D": "栈深度不变，只是提前返回。"
+      },
+      "knowledge": ["lru_cache 记忆化", "重复子问题", "复杂度优化"],
+      "doc": "08-functions",
+      "tags": ["performance"]
+    },
+    {
+      "id": "func-34", "topic": "functions", "difficulty": "hard",
+      "question": "下面这个函数的作用是？\n\ndef make_multiplier(n):\n    def mul(x):\n        return x * n\n    return mul",
+      "options": {
+        "A": "返回 x * n 的计算结果",
+        "B": "返回一个闭包，把 n 记住，生成「乘 n」的新函数",
+        "C": "返回 None",
+        "D": "报错，函数不能返回函数"
+      },
+      "answer": "B",
+      "explanation": "外层函数返回内层函数对象（不加括号），内层函数捕获了外层的自由变量 n，这就是闭包。`triple = make_multiplier(3); triple(5) == 15`。",
+      "distractors": {
+        "A": "返回的是函数对象，不是数值。",
+        "C": "有显式 return。",
+        "D": "函数是一等对象，当然可以返回。"
+      },
+      "knowledge": ["闭包", "返回函数", "自由变量捕获"],
       "doc": "08-functions"
     }
   ]

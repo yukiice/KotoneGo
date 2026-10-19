@@ -2,6 +2,7 @@
   "topic": "files",
   "label": "文件与数据格式",
   "questions": [
+
     {
       "id": "file-01", "topic": "files", "difficulty": "easy",
       "question": "读取文件并自动关闭，推荐写法是？",
@@ -24,30 +25,42 @@
     {
       "id": "file-02", "topic": "files", "difficulty": "medium",
       "question": "open 的哪个模式会清空已有文件内容？",
-      "options": { "A": "\"r\"", "B": "\"w\"", "C": "\"a\"", "D": "\"x\"" },
-      "answer": "B",
+      "options": {
+        "A": "\"r\"",
+        "B": "\"a\"",
+        "C": "\"w\"",
+        "D": "\"x\""
+      },
+      "answer": "C",
       "explanation": "\"w\" 写模式会截断（清空）文件；追加用 \"a\"，独占新建用 \"x\"（文件已存在会报 FileExistsError）。",
       "distractors": {
         "A": "\"r\" 是只读，文件不存在会 FileNotFoundError。",
-        "C": "\"a\" 在末尾追加。",
+        "B": "\"a\" 在末尾追加。",
         "D": "\"x\" 要求文件不存在，否则报错，不会清空。"
       },
       "knowledge": ["文件模式 r/w/a/x/b", "FileExistsError"],
-      "doc": "14-files-json", "tags": ["pitfall"]
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
     },
     {
       "id": "file-03", "topic": "files", "difficulty": "medium",
       "question": "读写二进制文件（如图片）需要加什么？",
-      "options": { "A": "模式里加 b，如 \"rb\"", "B": "设置 binary=True", "C": "用 bytes() 包裹路径", "D": "不能读写二进制" },
-      "answer": "A",
+      "options": {
+        "A": "设置 binary=True",
+        "B": "模式里加 b，如 \"rb\"",
+        "C": "用 bytes() 包裹路径",
+        "D": "不能读写二进制"
+      },
+      "answer": "B",
       "explanation": "\"rb\"/\"wb\" 表示二进制模式，读写的是 bytes 而不是 str，此时不能指定 encoding。",
       "distractors": {
-        "B": "open 没有 binary 参数。",
+        "A": "open 没有 binary 参数。",
         "C": "与路径类型无关。",
         "D": "二进制读写是常见需求。"
       },
       "knowledge": ["二进制模式", "bytes vs str"],
-      "doc": "14-files-json", "tags": ["pitfall"]
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
     },
     {
       "id": "file-04", "topic": "files", "difficulty": "medium",
@@ -72,15 +85,15 @@
       "id": "file-05", "topic": "files", "difficulty": "hard",
       "question": "写入文本文件时忘记 flush/close 会有什么后果？",
       "options": {
-        "A": "没有任何后果",
-        "B": "数据可能还留在缓冲区里没写到磁盘，程序异常退出时会丢内容",
+        "A": "数据可能还留在缓冲区里没写到磁盘，程序异常退出时会丢内容",
+        "B": "没有任何后果",
         "C": "文件会被自动删除",
         "D": "会抛异常"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "写操作有缓冲；with 块结束会 close 并 flush。需要立即落盘时可显式 f.flush() 或 os.fsync()。",
       "distractors": {
-        "A": "缓冲区未刷新确实会丢数据。",
+        "B": "缓冲区未刷新确实会丢数据。",
         "C": "不会删除文件。",
         "D": "通常静默丢数据，不报错。"
       },
@@ -111,15 +124,15 @@
       "question": "为什么不应该用 pickle 加载不可信来源的数据？",
       "options": {
         "A": "速度太慢",
-        "B": "反序列化时会执行任意代码，存在安全风险；跨语言也不兼容",
-        "C": "pickle 只能存字符串",
+        "B": "pickle 只能存字符串",
+        "C": "反序列化时会执行任意代码，存在安全风险；跨语言也不兼容",
         "D": "只因为它不是标准库"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "pickle 的 __reduce__ 等机制可执行代码，因此只用于可信数据或内部缓存；对外交换数据用 JSON/CSV/MessagePack。",
       "distractors": {
         "A": "安全问题比性能重要得多。",
-        "C": "pickle 能存大多数 Python 对象。",
+        "B": "pickle 能存大多数 Python 对象。",
         "D": "pickle 是标准库，问题在执行代码的风险。"
       },
       "knowledge": ["pickle 安全风险", "数据交换格式选择"],
@@ -130,16 +143,16 @@
       "question": "json.load(f) 与 json.loads(s) 的区别是？",
       "options": {
         "A": "没有区别",
-        "B": "load 从文件对象读取；loads 从字符串解析",
-        "C": "loads 只能处理列表",
-        "D": "load 会加密数据"
+        "B": "loads 只能处理列表",
+        "C": "load 会加密数据",
+        "D": "load 从文件对象读取；loads 从字符串解析"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "带 s 的 dumps/loads 处理字符串（string），不带 s 的 dump/load 处理文件对象。",
       "distractors": {
         "A": "参数类型不同。",
-        "C": "loads 支持任意合法 JSON 顶层值（新版标准允许标量）。",
-        "D": "与加密无关。"
+        "B": "loads 支持任意合法 JSON 顶层值（新版标准允许标量）。",
+        "C": "与加密无关。"
       },
       "knowledge": ["dumps/loads vs dump/load", "命名规律"],
       "doc": "14-files-json"
@@ -161,7 +174,8 @@
         "D": "Linux/macOS 也建议写，避免依赖 locale。"
       },
       "knowledge": ["文本编码", "UnicodeDecodeError", "locale 差异"],
-      "doc": "14-files-json", "tags": ["pitfall"]
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
     },
     {
       "id": "file-10", "topic": "files", "difficulty": "hard",
@@ -181,6 +195,319 @@
       },
       "knowledge": ["mkdir(parents=True, exist_ok=True)", "FileNotFoundError"],
       "doc": "14-files-json"
+    },
+    {
+      "id": "file-11", "topic": "files", "difficulty": "medium",
+      "question": "逐行处理 1GB 日志文件，内存最友好的写法是？",
+      "options": {
+        "A": "lines = f.readlines() 再 for",
+        "B": "with open(p) as f: for line in f: ...",
+        "C": "f.read().splitlines()",
+        "D": "list(f)"
+      },
+      "answer": "B",
+      "explanation": "文件对象本身就是行迭代器，每轮只装载一行，内存 O(1)；readlines/read 会把整个文件读进内存。这是处理大文件最基础的习惯。",
+      "distractors": {
+        "A": "readlines 返回全量列表。",
+        "C": "read 会把 1GB 一次读入。",
+        "D": "list(f) 也是全量物化。"
+      },
+      "knowledge": ["文件逐行迭代", "内存 O(1)", "大文件处理"],
+      "doc": "14-files-json",
+      "tags": ["performance"]
+    },
+    {
+      "id": "file-12", "topic": "files", "difficulty": "medium",
+      "question": "想往已有文件末尾追加内容，open 的模式应该是？",
+      "options": {
+        "A": "\"a\"",
+        "B": "\"w\"",
+        "C": "\"x\"",
+        "D": "\"r+\""
+      },
+      "answer": "A",
+      "explanation": "\"a\" 追加且文件不存在时创建；\"w\" 会截断清空；\"x\" 要求文件不存在（存在则 FileExistsError）；\"r+\" 从开头开始写会覆盖原内容。",
+      "distractors": {
+        "B": "会清空已有内容。",
+        "C": "文件已存在时直接报错。",
+        "D": "指针在开头，写入会覆盖。"
+      },
+      "knowledge": ["追加模式 a", "w/x/r+ 区别", "文件模式"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-13", "topic": "files", "difficulty": "hard",
+      "question": "\"r+\" 模式的特点是？",
+      "options": {
+        "A": "可读可写，指针在开头，写入会覆盖已有字节",
+        "B": "可读可写，写入总是追加到末尾",
+        "C": "只读",
+        "D": "文件不存在时自动创建"
+      },
+      "answer": "A",
+      "explanation": "\"r+\" 要求文件已存在，指针初始在 0，写操作会就地覆盖；想追加到末尾要先 seek(0, 2)。因为覆盖语义容易出错，多数场景建议「读全文 → 处理后重写」。",
+      "distractors": {
+        "B": "追加用 \"a\"。",
+        "C": "r+ 是可写模式。",
+        "D": "文件不存在会抛 FileNotFoundError。"
+      },
+      "knowledge": ["r+ 模式", "seek 指针", "就地覆盖"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-14", "topic": "files", "difficulty": "medium",
+      "question": "json.dump(obj, f, ensure_ascii=False) 中 ensure_ascii=False 的作用是？",
+      "options": {
+        "A": "让输出不带缩进",
+        "B": "让输出可以被 JS 解析",
+        "C": "中文等非 ASCII 字符原样写入，而不是转成 \\uXXXX",
+        "D": "压缩输出体积"
+      },
+      "answer": "C",
+      "explanation": "默认 ensure_ascii=True 会把中文转义成 \\u4f60\\u597d，机器可读但人不可读；设 False 后直接写 UTF-8 字符，文件体积也更小。记得配合 encoding=\"utf-8\"。",
+      "distractors": {
+        "A": "缩进由 indent 控制。",
+        "B": "两种都是合法 JSON。",
+        "D": "转义反而更长。"
+      },
+      "knowledge": ["ensure_ascii=False", "中文 JSON", "indent"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-15", "topic": "files", "difficulty": "medium",
+      "question": "json.dumps({\"t\": datetime.now()}) 会怎样？",
+      "options": {
+        "A": "自动转成时间戳",
+        "B": "自动转成 ISO 字符串",
+        "C": "返回空对象",
+        "D": "抛 TypeError: Object of type datetime is not JSON serializable"
+      },
+      "answer": "D",
+      "explanation": "json 只支持 dict/list/str/int/float/bool/None，datetime 需要自己转换：`default=str` 或 `.isoformat()`。序列化后类型信息会丢，反序列化要自己解析。",
+      "distractors": {
+        "A": "不会自动转换。",
+        "B": "同样不会。",
+        "C": "直接报错。"
+      },
+      "knowledge": ["json 不支持 datetime", "default=str", "isoformat"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-16", "topic": "files", "difficulty": "medium",
+      "question": "列出当前目录下所有 .py 文件，pathlib 写法是？",
+      "options": {
+        "A": "list(Path(\".\").match(\"*.py\"))",
+        "B": "Path(\".\").glob(\"*.py\").read()",
+        "C": "list(Path(\".\").glob(\"*.py\"))",
+        "D": "os.listdir(\"*.py\")"
+      },
+      "answer": "C",
+      "explanation": "glob 返回生成器（惰性），支持 `**` 递归：`Path(\".\").rglob(\"*.py\")`。match 只判断单个路径是否匹配，os.listdir 不支持通配符。",
+      "distractors": {
+        "A": "match 作用于单个路径对象，不是目录扫描。",
+        "B": "生成器没有 read 方法。",
+        "D": "listdir 只接受目录路径。"
+      },
+      "knowledge": ["Path.glob", "rglob 递归", "pathlib"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-17", "topic": "files", "difficulty": "easy",
+      "question": "判断路径是否存在，pathlib 的写法是？",
+      "options": {
+        "A": "p.is_exist()",
+        "B": "os.path.exists(p) 是唯一的正确写法",
+        "C": "bool(p)",
+        "D": "p.exists()"
+      },
+      "answer": "D",
+      "explanation": "p.exists() 判断存在；p.is_file()/p.is_dir() 进一步区分类型。`bool(p)` 恒为 True（路径字符串非空），是个常见陷阱。",
+      "distractors": {
+        "A": "方法名不存在。",
+        "B": "os.path.exists 也可用，但 Path 上有更统一的写法。",
+        "C": "Path 对象没有 __bool__，恒为真。"
+      },
+      "knowledge": ["Path.exists", "is_file/is_dir", "bool(Path) 恒真"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-18", "topic": "files", "difficulty": "hard",
+      "question": "写文件时想避免「写一半崩溃导致文件损坏」，推荐做法是？",
+      "options": {
+        "A": "写到临时文件，写完再 os.replace 原子替换目标文件",
+        "B": "直接 open(dst, \"w\") 写，靠 finally 兜底",
+        "C": "写之前先删掉目标文件",
+        "D": "用 flush() 就足够了"
+      },
+      "answer": "A",
+      "explanation": "os.replace 在同一文件系统上是原子操作，要么是旧文件要么是新文件，不会出现半截内容；先 flush+fsync 再替换更稳妥。这是配置文件、数据库导出的常规做法。",
+      "distractors": {
+        "B": "崩溃时目标文件已被截断，数据丢失。",
+        "C": "崩溃后连旧文件都没了。",
+        "D": "flush 只把缓冲区交给操作系统，不保证原子性。"
+      },
+      "knowledge": ["原子写入", "os.replace", "临时文件 + 重命名"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-19", "topic": "files", "difficulty": "medium",
+      "question": "Path(\"data\") / \"a.json\" 的结果是？",
+      "options": {
+        "A": "报错，/ 不能用于 Path",
+        "B": "Path(\"data/a.json\")，用 / 拼接路径",
+        "C": "返回字符串 \"data/a.json\"",
+        "D": "做除法运算"
+      },
+      "answer": "B",
+      "explanation": "Path 重载了 __truediv__，用 / 拼路径，跨平台自动处理分隔符，比 os.path.join 更直观。结果仍是 Path 对象，可直接传给 open()。",
+      "distractors": {
+        "A": "这是 pathlib 的标志性语法。",
+        "C": "返回 Path 对象（str 会转成字符串）。",
+        "D": "不是数值除法。"
+      },
+      "knowledge": ["Path / 运算符", "跨平台路径", "pathlib"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-20", "topic": "files", "difficulty": "hard",
+      "question": "用 csv 模块读写文件时，为什么推荐 newline=\"\"？",
+      "options": {
+        "A": "能提高读取速度",
+        "B": "让 csv 支持中文",
+        "C": "必须写，否则报错",
+        "D": "避免 Windows 上换行被二次转换，导致每行之间多出空行"
+      },
+      "answer": "D",
+      "explanation": "csv 模块自己控制行结束符，若文本模式再做一次 \\n → \\r\\n 转换就会多出空行。官方文档明确要求 `open(path, newline=\"\")`。",
+      "distractors": {
+        "A": "与速度无关。",
+        "B": "编码由 encoding 控制。",
+        "C": "不写也能跑，只是可能出现空行。"
+      },
+      "knowledge": ["csv newline=\"\"", "换行转换", "跨平台"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-21", "topic": "files", "difficulty": "medium",
+      "question": "用 csv.DictWriter 写文件，写表头要调用？",
+      "options": {
+        "A": "writer.header()",
+        "B": "writerow(fieldnames)",
+        "C": "writer.write(fieldnames)",
+        "D": "writer.writeheader()"
+      },
+      "answer": "D",
+      "explanation": "DictWriter 用 fieldnames 定义列顺序，writeheader() 按该顺序输出表头，之后 writerow({\"列\": 值}) 写数据。字典缺键会报错，多余键也报错（除非 extrasaction=\"ignore\"）。",
+      "distractors": {
+        "A": "没有 header 方法。",
+        "B": "能写出一行，但不会走 DictWriter 的表头逻辑。",
+        "C": "没有 write 方法。"
+      },
+      "knowledge": ["csv.DictWriter", "writeheader", "fieldnames"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-22", "topic": "files", "difficulty": "medium",
+      "question": "复制整个目录树（含子目录），应该用？",
+      "options": {
+        "A": "shutil.copytree(src, dst)",
+        "B": "shutil.copy(src, dst)",
+        "C": "shutil.copyfile(src, dst)",
+        "D": "os.rename(src, dst)"
+      },
+      "answer": "A",
+      "explanation": "copytree 递归复制目录；copy 只复制单个文件（保留权限）；copyfile 只复制内容；rename 是移动/重命名。删除目录树用 `shutil.rmtree`（危险，务必确认路径）。",
+      "distractors": {
+        "B": "单文件。",
+        "C": "单文件且不保留元数据。",
+        "D": "那是移动，不是复制。"
+      },
+      "knowledge": ["shutil.copytree", "rmtree", "复制 vs 移动"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-23", "topic": "files", "difficulty": "medium",
+      "question": "文本模式（不带 b）读写时，Python 会做什么额外处理？",
+      "options": {
+        "A": "按 encoding 编解码，并做换行符转换（\\r\\n ↔ \\n）",
+        "B": "自动压缩数据",
+        "C": "什么都不做",
+        "D": "自动加 BOM"
+      },
+      "answer": "A",
+      "explanation": "文本模式是「str ↔ bytes」的编解码层，默认编码取决于平台（Windows 常是 cp936/utf-8），所以读写文件应显式写 encoding=\"utf-8\"，避免跨平台乱码。",
+      "distractors": {
+        "B": "不压缩。",
+        "C": "会做编解码和换行转换。",
+        "D": "BOM 只在特定编码（utf-8-sig）下出现。"
+      },
+      "knowledge": ["文本模式编解码", "换行转换", "encoding 显式指定"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-24", "topic": "files", "difficulty": "medium",
+      "question": "需要一个「用完自动删除」的临时文件，用？",
+      "options": {
+        "A": "手工 open(\"/tmp/x\") 后记得删",
+        "B": "open(\"temp.txt\")",
+        "C": "tempfile.NamedTemporaryFile(delete=True) 或 TemporaryDirectory()",
+        "D": "os.tmpfile()"
+      },
+      "answer": "C",
+      "explanation": "tempfile 会在系统临时目录创建唯一文件，并支持上下文管理器自动清理；TemporaryDirectory 适合需要多文件的工作区。手工拼路径容易撞名、忘记删、跨平台失效。",
+      "distractors": {
+        "A": "容易残留文件、并发撞名。",
+        "B": "会写到当前目录且不会自动删除。",
+        "D": "os.tmpfile 在 Python 3 中已被移除。"
+      },
+      "knowledge": ["tempfile", "自动清理", "临时目录"],
+      "doc": "14-files-json"
+    },
+    {
+      "id": "file-25", "topic": "files", "difficulty": "hard",
+      "question": "用 Excel 打开 CSV 中文乱码，写入时应改用哪种编码？",
+      "options": {
+        "A": "ascii",
+        "B": "latin-1",
+        "C": "utf-16 也可以，但 Excel 支持最稳的是 A",
+        "D": "utf-8-sig（带 BOM 的 UTF-8）"
+      },
+      "answer": "D",
+      "explanation": "Excel 默认按本地编码猜测，没有 BOM 时会把 UTF-8 中文显示成乱码；utf-8-sig 在文件头写 BOM，Excel 就能正确识别。程序内部处理仍建议用纯 utf-8。",
+      "distractors": {
+        "A": "ASCII 无法表示中文。",
+        "B": "latin-1 会把中文变成问号或乱码。",
+        "C": "utf-16 部分场景可用，但不是最通用选择。"
+      },
+      "knowledge": ["utf-8-sig", "BOM", "Excel 中文乱码"],
+      "doc": "14-files-json",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "file-26", "topic": "files", "difficulty": "hard",
+      "question": "要读取一个 5GB 的 JSON 数组文件，最合适的做法是？",
+      "options": {
+        "A": "json.load(f) 一次读进来",
+        "B": "f.read() 后 json.loads",
+        "C": "用流式解析（如 ijson），逐个元素处理",
+        "D": "用 pickle 更快"
+      },
+      "answer": "C",
+      "explanation": "标准 json 模块必须先得到完整字符串/结构，5GB 会直接 OOM。流式解析器（ijson、或改成 JSON Lines 逐行 json.loads）只保留当前元素，内存可控。",
+      "distractors": {
+        "A": "json.load 需要完整解析，内存爆炸。",
+        "B": "read 本身就占 5GB。",
+        "D": "pickle 同样需要整体反序列化，且不可跨语言。"
+      },
+      "knowledge": ["流式 JSON", "ijson", "JSON Lines"],
+      "doc": "14-files-json",
+      "tags": ["performance"]
     }
   ]
 }

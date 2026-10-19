@@ -2,20 +2,21 @@
   "topic": "pitfalls",
   "label": "易错点与 JS/TS 对比",
   "questions": [
+
     {
       "id": "pit-01", "topic": "pitfalls", "difficulty": "medium",
       "question": "作为 React/TS 开发者，下面哪个操作在 Python 中会踩坑？\n\nTS: const b = a; b.push(1)",
       "options": {
         "A": "完全没有问题，Python 也是引用语义",
-        "B": "Python 同样是引用语义（b = a 不复制），但从 TS 的“数组方法都返回新数组”思维切换到 Python 的原地修改方法（append/sort）时要小心",
-        "C": "Python 中 b = a 会深拷贝",
+        "B": "Python 中 b = a 会深拷贝",
+        "C": "Python 同样是引用语义（b = a 不复制），但从 TS 的“数组方法都返回新数组”思维切换到 Python 的原地修改方法（append/sort）时要小心",
         "D": "Python 不允许这种赋值"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "两个语言在“赋值 = 共享引用”上一致；差异在于 Python 的 list.sort()/append() 是原地修改，而 TS 的 map/filter/sort 常返回新数组，迁移思维时要重新确认是否希望共享状态。",
       "distractors": {
         "A": "表述不够准确：需要注意原地修改与共享引用。",
-        "C": "不会深拷贝。",
+        "B": "不会深拷贝。",
         "D": "赋值完全合法。"
       },
       "knowledge": ["引用语义", "原地修改", "React 不可变思维 vs Python 可变思维"],
@@ -44,20 +45,21 @@
       "id": "pit-03", "topic": "pitfalls", "difficulty": "hard",
       "question": "在 Python 里最接近 TS 的 undefined 检查（可选值）的写法是？",
       "options": {
-        "A": "x === undefined",
-        "B": "x is None 或 hasattr(obj, \"attr\") / getattr(obj, \"attr\", default)",
+        "A": "x is None 或 hasattr(obj, \"attr\") / getattr(obj, \"attr\", default)",
+        "B": "x === undefined",
         "C": "typeof x === \"undefined\"",
         "D": "x ?? \"default\""
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "Python 用 is None 判断空值；属性存在性用 hasattr/getattr，字典用 get 或 in，体现了不同的语言习惯。",
       "distractors": {
-        "A": "undefined 在 Python 中不存在。",
+        "B": "undefined 在 Python 中不存在。",
         "C": "typeof 是 JS 运算符。",
         "D": "?? 是 JS/TS 的空值合并运算符，Python 用 or 或 if-else 表达（注意 or 对 0/\"\" 也会回退）。"
       },
       "knowledge": ["getattr 默认值", "hasattr", "get 与 or 的区别"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-04", "topic": "pitfalls", "difficulty": "hard",
@@ -71,69 +73,73 @@
       "answer": "B",
       "explanation": "两边的 falsy 判断都包括 0 和空字符串，所以 or 兜底是常见陷阱；要区分“值为 0”与“值为 None”，必须显式判断。",
       "distractors": {
-        "A": "虽行为相似，但“完全一致”的说法忽略了 Python 无 ===/?? 的语法差异；最准确的答案是 B。",
+        "A": "虽行为相似，但“完全一致”的说法忽略了 Python 没有 ===/?? 运算符这一差异。",
         "C": "0 和空容器也会回退。",
         "D": "Python 有 or。"
       },
       "knowledge": ["falsy 值", "or 的兜底陷阱", "?? 运算符对比"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare", "pitfall"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare", "pitfall"]
     },
     {
       "id": "pit-05", "topic": "pitfalls", "difficulty": "medium",
       "question": "TS 中 arr.map(x => x * 2) 在 Python 中最常写成？",
       "options": {
-        "A": "[x * 2 for x in arr]",
-        "B": "arr.map(lambda x: x * 2)",
+        "A": "arr.map(lambda x: x * 2)",
+        "B": "[x * 2 for x in arr]",
         "C": "arr.forEach(x => x * 2)",
         "D": "arr.map((x) => x * 2)"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "Python 首选列表推导式（更快更清晰）；map() 也存在，但需要再套 list() 才会得到列表。",
       "distractors": {
-        "B": "arr.map 在 Python 中不存在（列表没有 map 方法）。",
+        "A": "arr.map 在 Python 中不存在（列表没有 map 方法）。",
         "C": "forEach 是 JS 的命名，且不返回新列表。",
         "D": "箭头函数是 JS/TS 语法。"
       },
       "knowledge": ["列表推导式 vs map", "lambda", "返回类型"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-06", "topic": "pitfalls", "difficulty": "medium",
       "question": "TS 的 arr.filter(x => x > 0) 对应 Python 的？",
       "options": {
-        "A": "[x for x in arr if x > 0]",
-        "B": "arr.filter(x => x > 0)",
-        "C": "[x if x > 0 for x in arr]",
-        "D": "arr.where(x > 0)"
+        "A": "arr.filter(x => x > 0)",
+        "B": "[x if x > 0 for x in arr]",
+        "C": "arr.where(x > 0)",
+        "D": "[x for x in arr if x > 0]"
       },
-      "answer": "A",
+      "answer": "D",
       "explanation": "if 子句在推导式末尾起过滤作用，与 filter 语义一致。",
       "distractors": {
-        "B": "filter 是 JS 的方法名。",
-        "C": "末尾漏了 if，会变成条件取值（且语法错误，因为缺少 else）。",
-        "D": "where 是 numpy/pandas 的方法。"
+        "A": "filter 是 JS 的方法名。",
+        "B": "末尾漏了 if，会变成条件取值（且语法错误，因为缺少 else）。",
+        "C": "where 是 numpy/pandas 的方法。"
       },
       "knowledge": ["推导式过滤", "与 filter 对比"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-07", "topic": "pitfalls", "difficulty": "hard",
       "question": "Python 的 dict 与 JS 的 Object/Map 相比，哪个说法正确？",
       "options": {
-        "A": "Python 的 dict 保留插入顺序（3.7+），键必须可哈希，且没有原型链风险",
-        "B": "dict 是无序的",
-        "C": "dict 的键可以是任意对象",
+        "A": "dict 是无序的",
+        "B": "dict 的键可以是任意对象",
+        "C": "Python 的 dict 保留插入顺序（3.7+），键必须可哈希，且没有原型链风险",
         "D": "dict 与 JS 的 Object 完全等价"
       },
-      "answer": "A",
+      "answer": "C",
       "explanation": "3.7 起 dict 保证插入顺序；查找平均 O(1)；不存在 JS 那种原型链带来的键污染问题（如 obj[\"toString\"]）。",
       "distractors": {
-        "B": "Python 3.7+ 保证插入顺序。",
-        "C": "键必须可哈希，list/dict/set 不行。",
+        "A": "Python 3.7+ 保证插入顺序。",
+        "B": "键必须可哈希，list/dict/set 不行。",
         "D": "两者语义、类型体系、键规则不同。"
       },
       "knowledge": ["dict 插入顺序", "可哈希键", "与 JS Object 对比"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-08", "topic": "pitfalls", "difficulty": "hard",
@@ -152,83 +158,448 @@
         "D": "tree-shaking 是打包工具的静态分析能力，Python 没有。"
       },
       "knowledge": ["sys.modules 缓存", "导入副作用", "__all__"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-09", "topic": "pitfalls", "difficulty": "hard",
       "question": "下面哪个是 Python 中最经典的“隐形共享状态”陷阱？",
       "options": {
-        "A": "def f(a=[]): a.append(1); return a",
-        "B": "def f(a): a.append(1); return a",
-        "C": "def f(a=None): return [] if a is None else a",
+        "A": "def f(a): a.append(1); return a",
+        "B": "def f(a=None): return [] if a is None else a",
+        "C": "def f(a=[]): a.append(1); return a",
         "D": "def f(*args): return list(args)"
       },
-      "answer": "A",
+      "answer": "C",
       "explanation": "可变默认参数在定义时求值一次，多次调用共享同一个列表，导致结果累积；B 的参数由调用方提供，C/D 都是安全写法。",
       "distractors": {
-        "B": "a 由调用者传入，不存在默认值共享问题。",
-        "C": "这是修复该陷阱的标准写法。",
+        "A": "a 由调用者传入，不存在默认值共享问题。",
+        "B": "这是修复该陷阱的标准写法。",
         "D": "args 默认是每次调用新建的元组，安全。"
       },
       "knowledge": ["可变默认参数", "None 哨兵", "共享状态"],
-      "doc": "18-pitfalls-vs-js", "tags": ["pitfall"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["pitfall"]
     },
     {
       "id": "pit-10", "topic": "pitfalls", "difficulty": "hard",
       "question": "TS 的 === 在 Python 中对应什么？",
       "options": {
         "A": "只有 ==，Python 没有身份比较",
-        "B": "==（值相等）与 is（身份相同）两个运算符，且 Python 不会做隐式类型转换，所以 == 已足够严格",
-        "C": "必须用 === 才安全",
+        "B": "必须用 === 才安全",
+        "C": "==（值相等）与 is（身份相同）两个运算符，且 Python 不会做隐式类型转换，所以 == 已足够严格",
         "D": "用 equals() 方法"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "Python 的 == 调用 __eq__ 比较值，且 \"1\" == 1 直接是 False（不做类型转换），因此不需要 ===；is 用于 None、单例或身份判断。",
       "distractors": {
         "A": "有 is 运算符，只是用途不同。",
-        "C": "Python 没有 === 语法。",
+        "B": "Python 没有 === 语法。",
         "D": "Java 才有 equals()（Python 用 __eq__ 协议）。"
       },
       "knowledge": ["== vs is", "无隐式转换", "与 === 对比"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     },
     {
       "id": "pit-11", "topic": "pitfalls", "difficulty": "hard",
       "question": "Python 中把大整数转成 JSON 时需要注意什么？",
       "options": {
         "A": "没有限制",
-        "B": "json 会正常序列化 Python 大整数，但 JS 端 Number 精度只有 53 位，可能丢精度；跨语言时应转成字符串",
-        "C": "Python 不支持序列化整数",
+        "B": "Python 不支持序列化整数",
+        "C": "json 会正常序列化 Python 大整数，但 JS 端 Number 精度只有 53 位，可能丢精度；跨语言时应转成字符串",
         "D": "必须用 pickle"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "Python int 无上限，而 JS Number 是双精度浮点；订单号/雪花 ID 这类大整数在前后端互传时建议用字符串，这也是我给后端 exam_id 用字符串的原因之一。",
       "distractors": {
         "A": "跨语言精度问题很常见。",
-        "C": "json 支持整数。",
+        "B": "json 支持整数。",
         "D": "pickle 不能被浏览器解析。"
       },
       "knowledge": ["JSON 精度", "JS Number 53 位限制", "ID 用字符串"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare", "pitfall"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare", "pitfall"]
     },
     {
       "id": "pit-12", "topic": "pitfalls", "difficulty": "medium",
       "question": "Python 中“真值”判断与 JS 最大的相似点与差异是？",
       "options": {
-        "A": "相似点：0、\"\"、[]、null/None 都为假；差异：Python 里空对象 {} 为假，而 JS 里 {} 为真",
-        "B": "完全不同，没有任何相似点",
+        "A": "完全不同，没有任何相似点",
+        "B": "相似点：0、\"\"、[]、null/None 都为假；差异：Python 里空对象 {} 为假，而 JS 里 {} 为真",
         "C": "Python 中所有对象都为真",
         "D": "JS 中 0 为真"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "Python 的 falsy 规则基于 __bool__/__len__，空容器为假；JS 的对象（包括空对象/空数组）都是真值，只有少数特定值（0、\"\"、null、undefined、NaN、false）为假。",
       "distractors": {
-        "B": "基础标量的假值规则非常相似。",
+        "A": "基础标量的假值规则非常相似。",
         "C": "空容器、0、None 为假。",
         "D": "JS 中 0 为假。"
       },
       "knowledge": ["真值测试对比", "__bool__/__len__", "空容器与空对象差异"],
-      "doc": "18-pitfalls-vs-js", "tags": ["js-compare"]
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-13", "topic": "pitfalls", "difficulty": "medium",
+      "question": "TS 的 typeof x === \"number\" 在 Python 里对应的写法是？",
+      "options": {
+        "A": "type(x) == \"number\"",
+        "B": "typeof(x) == \"number\"",
+        "C": "x.type == number",
+        "D": "isinstance(x, (int, float))（注意 bool 是 int 的子类）"
+      },
+      "answer": "D",
+      "explanation": "Python 没有统一的 number 类型，整数和浮点分开；isinstance 还会正确处理继承（True 也会命中 int）。要排除 bool 得额外判断 `type(x) is int`。",
+      "distractors": {
+        "A": "type() 返回类型对象，不是字符串。",
+        "B": "Python 没有 typeof 函数。",
+        "C": "没有这种属性。"
+      },
+      "knowledge": ["isinstance vs typeof", "bool 是 int 子类", "与 TS 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-14", "topic": "pitfalls", "difficulty": "medium",
+      "question": "JS 的 JSON.stringify(obj) 在 Python 里对应？",
+      "options": {
+        "A": "json.stringify(obj)",
+        "B": "json.dumps(obj)",
+        "C": "obj.to_json()",
+        "D": "str(obj)"
+      },
+      "answer": "B",
+      "explanation": "dumps = dump string（转成字符串），loads = load string（从字符串解析）；dump/load 则操作文件对象。命名规律记成「有 s 的是字符串」。",
+      "distractors": {
+        "A": "Python 的 json 模块没有 stringify。",
+        "C": "普通对象没有 to_json 方法。",
+        "D": "str() 输出的是 Python repr 风格，不是 JSON。"
+      },
+      "knowledge": ["json.dumps", "dumps/loads 命名", "与 stringify 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-15", "topic": "pitfalls", "difficulty": "hard",
+      "question": "TS 的 obj?.a?.b 在 Python 里最接近的写法是？",
+      "options": {
+        "A": "obj?.a?.b",
+        "B": "a = getattr(obj, \"a\", None); b = getattr(a, \"b\", None) if a else None",
+        "C": "obj.a.b or None",
+        "D": "obj.get(\"a\").get(\"b\")"
+      },
+      "answer": "B",
+      "explanation": "Python 没有可选链运算符，用 getattr 的三参数形式（带默认值）逐层取值，或在需要时写 try/except AttributeError。字典才用 .get()。",
+      "distractors": {
+        "A": "?. 不是 Python 语法。",
+        "C": "中间层为 None 时会 AttributeError。",
+        "D": "get 是 dict 的方法，对象没有。"
+      },
+      "knowledge": ["getattr 默认值", "可选链对比", "没有 ?."],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-16", "topic": "pitfalls", "difficulty": "medium",
+      "question": "Python 中对应 JS 的 undefined 概念是？",
+      "options": {
+        "A": "None 就是 undefined",
+        "B": "undefined 是内置常量",
+        "C": "用 nil 表示未定义",
+        "D": "没有对应物；未定义的名字抛 NameError，缺失的值用 None 表示"
+      },
+      "answer": "D",
+      "explanation": "JS 把「未赋值」和「空值」分成 undefined/null 两个值；Python 只有 None，而「名字没定义」是异常 NameError。所以从 JS 迁移时不要期待 `x is undefined` 这种判断。",
+      "distractors": {
+        "A": "None 更接近 null。",
+        "B": "Python 没有 undefined 这个名字。",
+        "C": "nil 是 Ruby/Lua 的。"
+      },
+      "knowledge": ["undefined vs None", "NameError", "与 JS 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-17", "topic": "pitfalls", "difficulty": "easy",
+      "question": "JS 的 arr.push(x) 在 Python 里对应？",
+      "options": {
+        "A": "arr.append(x)",
+        "B": "arr.push(x)",
+        "C": "arr.add(x)",
+        "D": "arr.insert(x)"
+      },
+      "answer": "A",
+      "explanation": "append 追加单个元素到末尾且返回 None（不是新数组）。注意区分：extend 追加多个元素，insert(i, x) 插入到指定位置，add 是 set 的方法。",
+      "distractors": {
+        "B": "list 没有 push。",
+        "C": "add 属于 set。",
+        "D": "insert 需要索引参数。"
+      },
+      "knowledge": ["append", "返回 None", "与 push 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-18", "topic": "pitfalls", "difficulty": "easy",
+      "question": "JS 的 arr.length 在 Python 里对应？",
+      "options": {
+        "A": "len(arr)",
+        "B": "arr.length",
+        "C": "arr.size()",
+        "D": "arr.count()"
+      },
+      "answer": "A",
+      "explanation": "Python 用内置函数 len() 而不是属性，且它是 O(1)。字符串、字典、集合、元组都用 len。",
+      "distractors": {
+        "B": "list 没有 length 属性。",
+        "C": "size 是部分第三方库的用法。",
+        "D": "count 是统计某值出现次数。"
+      },
+      "knowledge": ["len()", "内置函数 vs 属性", "O(1) 长度"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-19", "topic": "pitfalls", "difficulty": "medium",
+      "question": "JS 的 arr.slice(1, 3) 在 Python 里对应？",
+      "options": {
+        "A": "arr[1:3]",
+        "B": "arr.slice(1, 3)",
+        "C": "arr.splice(1, 3)",
+        "D": "arr[1, 3]"
+      },
+      "answer": "A",
+      "explanation": "Python 切片是 `[start:stop]`（含头不含尾），与 slice 语义一致，且支持步长、负索引、反转 `[::-1]`。splice 会修改原数组，对应 Python 的 del/切片赋值。",
+      "distractors": {
+        "B": "list 没有 slice 方法。",
+        "C": "splice 是原地修改。",
+        "D": "逗号是元组索引，不是切片。"
+      },
+      "knowledge": ["切片 [start:stop]", "含头不含尾", "与 slice 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-20", "topic": "pitfalls", "difficulty": "medium",
+      "question": "JS 的 Object.keys(obj) 在 Python 里对应？",
+      "options": {
+        "A": "d.keys",
+        "B": "list(d) 或 list(d.keys())",
+        "C": "d.objects()",
+        "D": "Object.keys(d)"
+      },
+      "answer": "B",
+      "explanation": "直接迭代 dict 得到的就是键，`list(d)` 即可物化成列表；keys() 返回的是视图对象（不是列表），需要列表就套 list()。",
+      "distractors": {
+        "A": "那是方法对象，需要调用。",
+        "C": "没有 objects 方法。",
+        "D": "Python 没有 Object 全局对象。"
+      },
+      "knowledge": ["list(d)", "keys() 视图", "与 Object.keys 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-21", "topic": "pitfalls", "difficulty": "hard",
+      "question": "JS 里 for...of 与 for...in 的区别，在 Python 里体现为？",
+      "options": {
+        "A": "Python 只有下标遍历",
+        "B": "Python 的 for...in 拿索引",
+        "C": "两者在 Python 中不存在",
+        "D": "for x in list 直接拿元素（类似 for...of）；遍历 dict 拿的是键（类似 for...in）"
+      },
+      "answer": "D",
+      "explanation": "Python 的 for 直接迭代「可迭代对象产出的值」：列表产出元素，字典产出键。要索引用 enumerate，要键值用 items()。JS 那边 for...in 遍历的是键名，for...of 遍历的是值。",
+      "distractors": {
+        "A": "Python 的 for 更抽象，不依赖下标。",
+        "B": "拿的是键/元素，不是索引。",
+        "C": "Python 的 for 就是 for...in 语法。"
+      },
+      "knowledge": ["for 迭代语义", "for...of 对比", "enumerate"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-22", "topic": "pitfalls", "difficulty": "medium",
+      "question": "TS 的 enum Color { Red, Green } 在 Python 里对应？",
+      "options": {
+        "A": "class Color(enum.Enum): RED = 1; GREEN = 2",
+        "B": "const enum Color",
+        "C": "Color = {\"Red\": 0}",
+        "D": "Python 不支持枚举"
+      },
+      "answer": "A",
+      "explanation": "标准库 enum 提供 Enum/IntEnum/StrEnum，成员是单例、可迭代、可比较，比 TS 的 enum 更严格（不能任意赋值数字）。日常用 `StrEnum` 做字符串常量很顺手。",
+      "distractors": {
+        "B": "Python 没有 const enum。",
+        "C": "那是普通字典，没有枚举语义。",
+        "D": "支持且推荐。"
+      },
+      "knowledge": ["enum.Enum", "IntEnum/StrEnum", "与 TS enum 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-23", "topic": "pitfalls", "difficulty": "hard",
+      "question": "TS 的 interface 描述对象结构，Python 里对应的两种做法是？",
+      "options": {
+        "A": "Protocol（结构化类型，运行时可用 isinstance 检查）和 TypedDict（描述字典结构）",
+        "B": "只有 class 继承",
+        "C": "只能用 dataclass",
+        "D": "Python 没有类型系统"
+      },
+      "answer": "A",
+      "explanation": "Protocol 表达「有这些方法的都算」——和 TS 的结构化类型最接近；TypedDict 则专门描述 JSON 风格的字典。用抽象基类（ABC）要求显式继承，不如 Protocol 灵活。",
+      "distractors": {
+        "B": "继承是名义子类型，不是唯一方式。",
+        "C": "dataclass 是数据容器，不描述接口。",
+        "D": "Python 有完整的类型注解体系。"
+      },
+      "knowledge": ["Protocol", "TypedDict", "结构化类型对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-24", "topic": "pitfalls", "difficulty": "medium",
+      "question": "JS 的 Promise.all([a, b]) 在 Python 里对应？",
+      "options": {
+        "A": "await asyncio.gather(a(), b())",
+        "B": "a() + b()",
+        "C": "Promise.all([a, b])",
+        "D": "await a() and await b()"
+      },
+      "answer": "A",
+      "explanation": "gather 并发等待多个协程并按传入顺序返回结果列表，等价于 Promise.all；`await a(); await b()` 是串行（对应 Promise 的链式 await），总耗时更长。",
+      "distractors": {
+        "B": "协程不能相加。",
+        "C": "Python 没有 Promise。",
+        "D": "那是串行等待。"
+      },
+      "knowledge": ["asyncio.gather", "与 Promise.all 对比", "并发 vs 串行"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-25", "topic": "pitfalls", "difficulty": "medium",
+      "question": "TS 的类字段写法 class A { x = 0 } 在 Python 里对应？",
+      "options": {
+        "A": "class A: x = 0 完全等价",
+        "B": "class A { x = 0 }",
+        "C": "只能用 dataclass",
+        "D": "在 __init__ 里 self.x = 0（直接写在类体里是类属性，全实例共享）"
+      },
+      "answer": "D",
+      "explanation": "类体里的 `x = 0` 是类属性；实例级别要在 __init__ 里 `self.x = 0`。如果是可变对象（列表/字典），写在类体里会导致所有实例共享同一份数据。",
+      "distractors": {
+        "A": "语义不同：类属性 vs 实例属性。",
+        "B": "Python 没有这种语法。",
+        "C": "dataclass 只是简化写法。"
+      },
+      "knowledge": ["类属性 vs 实例属性", "self.x 赋值", "可变共享陷阱"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare", "pitfall"]
+    },
+    {
+      "id": "pit-26", "topic": "pitfalls", "difficulty": "easy",
+      "question": "JS 的模板字符串 `Hello ${name}` 在 Python 里对应？",
+      "options": {
+        "A": "\"Hello ${name}\"",
+        "B": "\"Hello \" + {name}",
+        "C": "f\"Hello {name}\"",
+        "D": "\"Hello {}\".format 只能用 % "
+      },
+      "answer": "C",
+      "explanation": "f-string 用单个花括号插值，还支持表达式和格式说明符：`f\"{price:.2f}\"`。它是 3.6+ 的语法，性能也优于 % 和 format。",
+      "distractors": {
+        "A": "${} 是 JS 语法，Python 不识别。",
+        "B": "花括号字面量是 set/dict。",
+        "D": "format 和 % 仍可用，但不是唯一方式。"
+      },
+      "knowledge": ["f-string", "与模板字符串对比", "格式说明符"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-27", "topic": "pitfalls", "difficulty": "hard",
+      "question": "JS 里 0.1 + 0.2 !== 0.3，Python 里同样如此。想要金额精确计算应该？",
+      "options": {
+        "A": "用 round(0.1 + 0.2, 2) == 0.3 判断",
+        "B": "用 decimal.Decimal 并把金额存成字符串/整数分",
+        "C": "用 math.floor",
+        "D": "改用 BigInt"
+      },
+      "answer": "B",
+      "explanation": "二进制浮点无法精确表示 0.1，两个语言都一样。金额场景用 Decimal 或「以分为单位的整数」，比较浮点用 math.isclose。round 不能修复表示误差。",
+      "distractors": {
+        "A": "round 只改显示精度，比较仍可能失败。",
+        "C": "floor 会丢精度。",
+        "D": "Python 没有 BigInt，整数本身就是任意精度，但 float 仍是 float。"
+      },
+      "knowledge": ["浮点误差", "Decimal 金额", "math.isclose"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare", "pitfall"]
+    },
+    {
+      "id": "pit-28", "topic": "pitfalls", "difficulty": "hard",
+      "question": "TS 的实验性装饰器（@Component）与 Python 装饰器的关键区别是？",
+      "options": {
+        "A": "两者完全一样",
+        "B": "Python 装饰器只在编译期生效",
+        "C": "Python 装饰器是普通的高阶函数，运行时真的替换了函数/类；TS 装饰器是语言特性，主要给元数据/编译器用",
+        "D": "TS 装饰器性能更好"
+      },
+      "answer": "C",
+      "explanation": "Python 的 `@deco` 就是 `f = deco(f)`，没有魔法；TS 装饰器由编译器处理（emitDecoratorMetadata），语义和时机都不同。所以 Python 里可以随意写框架级装饰器，理解成本更低。",
+      "distractors": {
+        "A": "语义与实现机制不同。",
+        "B": "Python 装饰器在运行时生效。",
+        "D": "与性能无关。"
+      },
+      "knowledge": ["装饰器本质", "与 TS 装饰器对比", "高阶函数"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-29", "topic": "pitfalls", "difficulty": "medium",
+      "question": "npm install 在 Python 里的对应组合是？",
+      "options": {
+        "A": "pip install 就够了，不需要虚拟环境",
+        "B": "python install package.json",
+        "C": "conda 是唯一方式",
+        "D": "python -m venv .venv（建隔离环境）+ pip install -r requirements.txt（装依赖）"
+      },
+      "answer": "D",
+      "explanation": "Python 默认把包装进全局 site-packages，所以要先建虚拟环境隔离；依赖清单是 requirements.txt（或 pyproject.toml）。对应关系：node_modules ≈ .venv，package.json ≈ requirements.txt，npm ci ≈ pip install -r。",
+      "distractors": {
+        "A": "全局安装会互相污染、撞版本。",
+        "B": "Python 不读 package.json。",
+        "C": "venv/pip 是标准方案，conda 只是可选。"
+      },
+      "knowledge": ["venv + pip", "与 npm 对比", "依赖隔离"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
+    },
+    {
+      "id": "pit-30", "topic": "pitfalls", "difficulty": "easy",
+      "question": "JS 的 try { } catch (e) { } 在 Python 里对应？",
+      "options": {
+        "A": "try: ... catch e: ...",
+        "B": "try: ... catch (e): ...",
+        "C": "try: ... rescue e: ...",
+        "D": "try: ... except Exception as e: ..."
+      },
+      "answer": "D",
+      "explanation": "Python 用 except 而不是 catch，`as e` 绑定异常对象；还有 finally 和 else 分支。裸 except 会捕获包括 KeyboardInterrupt 在内的所有异常，应避免。",
+      "distractors": {
+        "A": "Python 没有 catch 关键字。",
+        "B": "括号语法不对。",
+        "C": "rescue 是 Ruby 的。"
+      },
+      "knowledge": ["try/except", "as e", "与 try/catch 对比"],
+      "doc": "18-pitfalls-vs-js",
+      "tags": ["js-compare"]
     }
   ]
 }

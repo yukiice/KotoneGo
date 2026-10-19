@@ -2,15 +2,21 @@
   "topic": "types",
   "label": "数据类型与转换",
   "questions": [
+
     {
       "id": "types-01", "topic": "types", "difficulty": "easy",
       "question": "表达式 3 / 2 的结果和类型分别是？",
-      "options": { "A": "1，int", "B": "1.5，float", "C": "1.5，int", "D": "1，float" },
-      "answer": "B",
+      "options": {
+        "A": "1，int",
+        "B": "1.5，int",
+        "C": "1.5，float",
+        "D": "1，float"
+      },
+      "answer": "C",
       "explanation": "Python 3 中 / 永远是“真除法”，结果一定是 float，所以 3 / 2 == 1.5。",
       "distractors": {
         "A": "那是 Python 2 的行为，Python 3 已改变。",
-        "C": "类型是 float 而不是 int，Python 不会截断结果。",
+        "B": "类型是 float 而不是 int，Python 不会截断结果。",
         "D": "1 是整除 // 的结果，而且类型应为 int。"
       },
       "knowledge": ["真除法 /", "整除 //", "Python 2 与 3 差异"],
@@ -19,11 +25,16 @@
     {
       "id": "types-02", "topic": "types", "difficulty": "easy",
       "question": "7 // 2 的结果是？",
-      "options": { "A": "3", "B": "3.5", "C": "4", "D": "3.0" },
-      "answer": "A",
+      "options": {
+        "A": "3.5",
+        "B": "3",
+        "C": "4",
+        "D": "3.0"
+      },
+      "answer": "B",
       "explanation": "// 是向下取整的整除，7 // 2 == 3，且两个 int 相除结果仍是 int。",
       "distractors": {
-        "B": "3.5 是 7 / 2 的结果。",
+        "A": "3.5 是 7 / 2 的结果。",
         "C": "整除是向下取整，不是四舍五入。",
         "D": "只有参与运算的一方是 float 时结果才是 float。"
       },
@@ -54,15 +65,15 @@
       "question": "None 表示什么？",
       "options": {
         "A": "数字 0",
-        "B": "空字符串",
-        "C": "没有值 / 空对象，且它是 NoneType 的唯一实例",
+        "B": "没有值 / 空对象，且它是 NoneType 的唯一实例",
+        "C": "空字符串",
         "D": "未定义的变量会被自动赋为 None"
       },
-      "answer": "C",
+      "answer": "B",
       "explanation": "None 是 NoneType 类型的唯一实例，表示“没有值”，常用于函数默认返回值。",
       "distractors": {
         "A": "0 是 int，None != 0；bool(None) 为 False，但二者不相等。",
-        "B": "空字符串是 str，None == \"\" 为 False。",
+        "C": "空字符串是 str，None == \"\" 为 False。",
         "D": "未定义变量会抛 NameError，不会自动变成 None。"
       },
       "knowledge": ["None", "NoneType", "NameError"],
@@ -71,13 +82,18 @@
     {
       "id": "types-05", "topic": "types", "difficulty": "easy",
       "question": "执行 \"1\" + 1 会发生什么？",
-      "options": { "A": "得到 \"11\"", "B": "得到 2", "C": "抛出 TypeError", "D": "得到 \"2\"" },
-      "answer": "C",
+      "options": {
+        "A": "得到 \"11\"",
+        "B": "得到 2",
+        "C": "得到 \"2\"",
+        "D": "抛出 TypeError"
+      },
+      "answer": "D",
       "explanation": "Python 不会隐式把字符串转成数字，str 与 int 相加直接抛 TypeError: can only concatenate str …",
       "distractors": {
         "A": "那是 JavaScript 的行为（\"1\" + 1 === \"11\"）。",
         "B": "不会自动把字符串解析为数字。",
-        "D": "同样需要显式转换，例如 str(1) 或 int(\"1\")。"
+        "C": "同样需要显式转换，例如 str(1) 或 int(\"1\")。"
       },
       "knowledge": ["强类型", "TypeError", "显式转换"],
       "doc": "03-data-types"
@@ -85,7 +101,12 @@
     {
       "id": "types-06", "topic": "types", "difficulty": "easy",
       "question": "把字符串 \"42\" 转成整数的正确写法是？",
-      "options": { "A": "int(\"42\")", "B": "\"42\".toInt()", "C": "parseInt(\"42\")", "D": "Integer(\"42\")" },
+      "options": {
+        "A": "int(\"42\")",
+        "B": "\"42\".toInt()",
+        "C": "parseInt(\"42\")",
+        "D": "Integer(\"42\")"
+      },
       "answer": "A",
       "explanation": "int() 是内置的类型转换函数，把字符串或浮点数转为整数。",
       "distractors": {
@@ -99,12 +120,17 @@
     {
       "id": "types-07", "topic": "types", "difficulty": "medium",
       "question": "int(\"abc\") 的结果是？",
-      "options": { "A": "0", "B": "None", "C": "抛出 ValueError", "D": "抛出 TypeError" },
-      "answer": "C",
+      "options": {
+        "A": "抛出 ValueError",
+        "B": "0",
+        "C": "None",
+        "D": "抛出 TypeError"
+      },
+      "answer": "A",
       "explanation": "字符串本身是非法的数字字面量，所以是 ValueError（值错误）；抛 TypeError 的是类型不对，如 int(None)。",
       "distractors": {
-        "A": "Python 不会像 JS 的 parseInt 那样返回 NaN 或 0，而是直接报错。",
-        "B": "不会返回 None。",
+        "B": "Python 不会像 JS 的 parseInt 那样返回 NaN 或 0，而是直接报错。",
+        "C": "不会返回 None。",
         "D": "TypeError 对应“类型不支持”，这里是 str 类型合法但内容非法。"
       },
       "knowledge": ["ValueError vs TypeError", "异常优先于返回错误码"],
@@ -113,12 +139,17 @@
     {
       "id": "types-08", "topic": "types", "difficulty": "medium",
       "question": "Python 中表示复数的内置类型是？",
-      "options": { "A": "complex", "B": "imaginary", "C": "float2", "D": "Python 没有内置复数类型" },
-      "answer": "A",
+      "options": {
+        "A": "imaginary",
+        "B": "float2",
+        "C": "complex",
+        "D": "Python 没有内置复数类型"
+      },
+      "answer": "C",
       "explanation": "complex 是内置类型，字面量写法为 1+2j，虚部单位是 j。",
       "distractors": {
-        "B": "imaginary 不是 Python 类型名。",
-        "C": "不存在 float2。",
+        "A": "imaginary 不是 Python 类型名。",
+        "B": "不存在 float2。",
         "D": "实际上有：complex(1, 2) == 1+2j。"
       },
       "knowledge": ["complex", "复数字面量 j"],
@@ -146,7 +177,12 @@
     {
       "id": "types-10", "topic": "types", "difficulty": "medium",
       "question": "bool(\"0\") 和 bool(\"\") 的值分别是？",
-      "options": { "A": "False / False", "B": "True / False", "C": "True / True", "D": "False / True" },
+      "options": {
+        "A": "False / False",
+        "B": "True / False",
+        "C": "True / True",
+        "D": "False / True"
+      },
       "answer": "B",
       "explanation": "字符串的“真值”只看长度是否非零，\"0\" 长度是 1 所以为 True，空字符串为 False。",
       "distractors": {
@@ -161,15 +197,15 @@
       "id": "types-11", "topic": "types", "difficulty": "medium",
       "question": "关于 Python 的整数大小，正确的是？",
       "options": {
-        "A": "最大 2**63-1，超出会溢出",
-        "B": "int 无固定上限，可以表示任意大的整数",
+        "A": "int 无固定上限，可以表示任意大的整数",
+        "B": "最大 2**63-1，超出会溢出",
         "C": "超过 2**31 会自动变成 float",
         "D": "需要用 long 类型才能表示大整数"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "Python 3 的 int 是任意精度整数，2 ** 1000 也能精确计算，代价是运算变慢。",
       "distractors": {
-        "A": "那是 C/Java 的 long 或 NumPy 定长整数的行为。",
+        "B": "那是 C/Java 的 long 或 NumPy 定长整数的行为。",
         "C": "不会自动降级为 float（除非发生除法或与 float 运算）。",
         "D": "Python 3 没有 long，只有 int。"
       },
@@ -179,11 +215,16 @@
     {
       "id": "types-12", "topic": "types", "difficulty": "medium",
       "question": "下面哪一组全部是可变（mutable）类型？",
-      "options": { "A": "list、dict、set", "B": "tuple、str、int", "C": "str、list、dict", "D": "tuple、frozenset、bytes" },
-      "answer": "A",
+      "options": {
+        "A": "tuple、str、int",
+        "B": "list、dict、set",
+        "C": "str、list、dict",
+        "D": "tuple、frozenset、bytes"
+      },
+      "answer": "B",
       "explanation": "list、dict、set 可以在原地修改；str、tuple、int、float、frozenset 都是不可变的。",
       "distractors": {
-        "B": "三者都不可变。",
+        "A": "三者都不可变。",
         "C": "str 不可变，只有 list 和 dict 可变。",
         "D": "三者都不可变（frozenset 是“冻结”的集合）。"
       },
@@ -195,15 +236,15 @@
       "question": "为什么 dict 的键不能是 list？",
       "options": {
         "A": "语法上不允许写 list 字面量",
-        "B": "dict 的键必须可哈希，而 list 是可变类型，不可哈希",
-        "C": "因为 list 太长",
+        "B": "因为 list 太长",
+        "C": "dict 的键必须可哈希，而 list 是可变类型，不可哈希",
         "D": "其实可以，dict 的键可以是任意对象"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "可哈希要求对象在其生命周期内哈希值不变，可变对象做不到，因此 list/set/dict 不能做键；tuple、str、int 可以。",
       "distractors": {
         "A": "语法上没问题，是运行时抛 TypeError: unhashable type: 'list'。",
-        "C": "与长度无关。",
+        "B": "与长度无关。",
         "D": "不可哈希对象会直接报错。"
       },
       "knowledge": ["可哈希", "hash()", "tuple 可做键"],
@@ -212,13 +253,18 @@
     {
       "id": "types-14", "topic": "types", "difficulty": "hard",
       "question": "判断“变量 x 是不是 None”最推荐的写法是？",
-      "options": { "A": "x == None", "B": "x is None", "C": "not x", "D": "type(x) == NoneType" },
-      "answer": "B",
+      "options": {
+        "A": "x == None",
+        "B": "not x",
+        "C": "type(x) == NoneType",
+        "D": "x is None"
+      },
+      "answer": "D",
       "explanation": "None 是单例，用 is 判断身份既准确又快；PEP 8 明确推荐 `is None` / `is not None`。",
       "distractors": {
         "A": "虽然通常能工作，但若类重写了 __eq__ 可能得到意外结果。",
-        "C": "not x 会把 0、\"\"、[] 也判成 True，语义完全不同。",
-        "D": "NoneType 需要额外导入，且不如 is None 直观。"
+        "B": "not x 会把 0、\"\"、[] 也判成 True，语义完全不同。",
+        "C": "NoneType 需要额外导入，且不如 is None 直观。"
       },
       "knowledge": ["is 与 == 的区别", "None 单例", "PEP 8 建议"],
       "doc": "03-data-types"
@@ -228,16 +274,16 @@
       "question": "为什么 0.1 + 0.2 == 0.3 在 Python 中是 False？",
       "options": {
         "A": "Python 的 bug",
-        "B": "浮点数用二进制表示，0.1/0.2 无法精确表示，存在舍入误差",
-        "C": "因为 == 对 float 有特殊规则",
-        "D": "因为 0.1 被当作字符串处理"
+        "B": "因为 == 对 float 有特殊规则",
+        "C": "因为 0.1 被当作字符串处理",
+        "D": "浮点数用二进制表示，0.1/0.2 无法精确表示，存在舍入误差"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "IEEE 754 双精度无法精确表示 0.1 这类十进制小数，结果约为 0.30000000000000004。比较时应使用 math.isclose() 或 decimal.Decimal。",
       "distractors": {
         "A": "这是所有使用 IEEE 754 的语言的共同现象，不是 Python 特有缺陷。",
-        "C": "== 对 float 是普通数值比较，没有特殊规则。",
-        "D": "0.1 是 float 字面量，不是字符串。"
+        "B": "== 对 float 是普通数值比较，没有特殊规则。",
+        "C": "0.1 是 float 字面量，不是字符串。"
       },
       "knowledge": ["浮点精度", "math.isclose()", "decimal.Decimal"],
       "doc": "03-data-types"
@@ -245,16 +291,312 @@
     {
       "id": "types-16", "topic": "types", "difficulty": "medium",
       "question": "round(2.675, 2) 的结果最可能是？",
-      "options": { "A": "2.68", "B": "2.67", "C": "2.7", "D": "3.0" },
-      "answer": "B",
+      "options": {
+        "A": "2.68",
+        "B": "2.7",
+        "C": "2.67",
+        "D": "3.0"
+      },
+      "answer": "C",
       "explanation": "2.675 的二进制近似值略小于 2.675，且 round 使用“银行家舍入”（四舍六入五取偶），因此得到 2.67。",
       "distractors": {
         "A": "直觉上的四舍五入，但浮点表示让 2.675 实际略小。",
-        "C": "第二个参数 2 表示保留两位小数。",
+        "B": "第二个参数 2 表示保留两位小数。",
         "D": "不会进到整数。"
       },
       "knowledge": ["round() 银行家舍入", "浮点误差"],
-      "doc": "03-data-types", "tags": ["pitfall"]
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-17", "topic": "types", "difficulty": "medium",
+      "question": "int(3.99) 的结果是？",
+      "options": {
+        "A": "3",
+        "B": "4",
+        "C": "3.0",
+        "D": "报错 ValueError"
+      },
+      "answer": "A",
+      "explanation": "int() 对浮点数是**向零截断**，不做四舍五入；要四舍五入得用 `round()`（且它采用银行家舍入）。",
+      "distractors": {
+        "B": "那是 round(3.99) 的结果。",
+        "C": "int() 返回 int 类型，不会是 3.0。",
+        "D": "把 float 转 int 是合法操作。"
+      },
+      "knowledge": ["int() 截断", "round() 四舍五入", "类型转换"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-18", "topic": "types", "difficulty": "easy",
+      "question": "float(\"1e3\") 的结果是？",
+      "options": {
+        "A": "\"1e3\"",
+        "B": "1000.0",
+        "C": "报错 ValueError",
+        "D": "1"
+      },
+      "answer": "B",
+      "explanation": "float() 支持科学计数法字符串，1e3 即 1×10³ = 1000.0，返回 float。",
+      "distractors": {
+        "A": "float() 返回数值，不是字符串。",
+        "C": "1e3 是合法的浮点字面量形式。",
+        "D": "结果类型是 float，会带 .0。"
+      },
+      "knowledge": ["float()", "科学计数法", "e 记法"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-19", "topic": "types", "difficulty": "medium",
+      "question": "str(3.0) 的结果是？",
+      "options": {
+        "A": "\"3\"",
+        "B": "3",
+        "C": "\"3.0\"",
+        "D": "报错"
+      },
+      "answer": "C",
+      "explanation": "float 的 str 形式保留小数点：str(3.0) == \"3.0\"。只想去掉小数末尾的 0 可以用格式化 `f\"{3.0:g}\"` 得到 \"3\"。",
+      "distractors": {
+        "A": "str() 不会自动裁掉 .0。",
+        "B": "str() 返回字符串带引号。",
+        "D": "合法操作。"
+      },
+      "knowledge": ["str()", "float 显示", "格式化 :g"],
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-20", "topic": "types", "difficulty": "hard",
+      "question": "为什么 a = 256; b = 256 时 a is b 为 True，而 a = 1000; b = 1000 可能为 False？",
+      "options": {
+        "A": "Python 对小于 1000 的数字都做了缓存",
+        "B": "is 比较的是值，两个 1000 不相等",
+        "C": "CPython 缓存了小整数 -5~256，同一对象被复用；大整数每次可能新建对象",
+        "D": "大整数无法用 is 比较，会报错"
+      },
+      "answer": "C",
+      "explanation": "CPython 预先分配 -5~256 的整数对象并复用，所以 `is` 偶然为 True；这是实现细节，**比较数值永远用 ==**，用 is 判断整数相等属于未定义行为。",
+      "distractors": {
+        "A": "边界是 256，不是 1000。",
+        "B": "is 比较的是身份（内存地址），不是值。",
+        "D": "is 可用于任何对象，只是结果不该依赖。"
+      },
+      "knowledge": ["小整数缓存", "is vs ==", "CPython 实现细节"],
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-21", "topic": "types", "difficulty": "medium",
+      "question": "用 decimal.Decimal(\"0.1\") + decimal.Decimal(\"0.2\") == decimal.Decimal(\"0.3\") 的结果是？",
+      "options": {
+        "A": "False，和 float 一样有误差",
+        "B": "报错，Decimal 不支持加法",
+        "C": "True，Decimal 用十进制精确表示，没有二进制浮点误差",
+        "D": "True，但结果类型是 float"
+      },
+      "answer": "C",
+      "explanation": "Decimal 用十进制定点表示，0.1+0.2 精确等于 0.3；适合金额计算。它比 float 慢，纯科学计算不必替换。",
+      "distractors": {
+        "A": "误差来自二进制表示，Decimal 规避了这点。",
+        "B": "Decimal 完整支持算术运算。",
+        "D": "结果仍是 Decimal。"
+      },
+      "knowledge": ["decimal.Decimal", "浮点误差", "金额计算"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-22", "topic": "types", "difficulty": "easy",
+      "question": "type(None).__name__ 的结果是？",
+      "options": {
+        "A": "\"NoneType\"",
+        "B": "\"None\"",
+        "C": "\"null\"",
+        "D": "None"
+      },
+      "answer": "A",
+      "explanation": "None 是 NoneType 的唯一实例，`type(None).__name__` 返回字符串 \"NoneType\"。所以判断「是不是 None」应写 `x is None`，而不是比较 type。",
+      "distractors": {
+        "B": "__name__ 是类型名，None 是值。",
+        "C": "null 是 JS 的概念，Python 没有。",
+        "D": "__name__ 返回字符串，不会是 None。"
+      },
+      "knowledge": ["NoneType", "type()", "__name__"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-23", "topic": "types", "difficulty": "medium",
+      "question": "\"ab\" * 3 的结果是？",
+      "options": {
+        "A": "\"ababab\"",
+        "B": "\"ab3\"",
+        "C": "报错 TypeError",
+        "D": "[\"ab\", \"ab\", \"ab\"]"
+      },
+      "answer": "A",
+      "explanation": "字符串支持 `*` 重复；注意 `\"ab\" * 0` 得到空串 \"\"，`\"ab\" * -1` 也是 \"\"。这在生成分隔线时很常用：`\"-\" * 20`。",
+      "distractors": {
+        "B": "字符串与数字不能用 + 拼接，* 是重复。",
+        "C": "str * int 是合法运算。",
+        "D": "结果仍是字符串，不是列表。"
+      },
+      "knowledge": ["字符串重复 *", "序列运算", "\"-\" * 20"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-24", "topic": "types", "difficulty": "medium",
+      "question": "sum([True, True, False]) 的结果是？",
+      "options": {
+        "A": "True",
+        "B": "报错，bool 不能求和",
+        "C": "3",
+        "D": "2"
+      },
+      "answer": "D",
+      "explanation": "bool 是 int 的子类（True == 1、False == 0），所以可以直接求和统计「满足条件的个数」，这是很常见的惯用法：`sum(x > 0 for x in nums)`。",
+      "distractors": {
+        "A": "sum 返回 int，不会折叠成 bool。",
+        "B": "bool 继承自 int，可以参与算术。",
+        "C": "False 贡献 0，不是 1。"
+      },
+      "knowledge": ["bool 是 int 子类", "sum() 计数惯用法", "生成器求和"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-25", "topic": "types", "difficulty": "easy",
+      "question": "判断字符串 s 是否为空，最 Pythonic 的写法是？",
+      "options": {
+        "A": "if s == \"\":",
+        "B": "if len(s) == 0:",
+        "C": "if not s:",
+        "D": "if s is \"\":"
+      },
+      "answer": "C",
+      "explanation": "空容器、空字符串、0、None 的真值都是 False，所以 `if not s:` 最简洁；PEP 8 明确推荐这种真值测试。",
+      "distractors": {
+        "A": "正确但啰嗦，不是惯用写法。",
+        "B": "正确但多此一举。",
+        "D": "is 比较身份，字符串身份比较不可靠，且会触发 SyntaxWarning。"
+      },
+      "knowledge": ["真值测试", "not s", "PEP 8 惯用法"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-26", "topic": "types", "difficulty": "medium",
+      "question": "print(repr(\"hi\")) 的输出是？",
+      "options": {
+        "A": "'hi'（带引号）",
+        "B": "hi",
+        "C": "\"hi\"（带双引号）",
+        "D": "报错"
+      },
+      "answer": "A",
+      "explanation": "repr 返回「尽量能重建该对象」的表示，所以字符串会带引号（CPython 优先用单引号）。print 直接打印 str，repr 适合调试。",
+      "distractors": {
+        "B": "那是 print(\"hi\") 或 print(str(\"hi\")) 的效果。",
+        "C": "CPython 的 repr 默认用单引号，除非内容含单引号。",
+        "D": "合法调用。"
+      },
+      "knowledge": ["repr()", "str vs repr", "调试输出"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-27", "topic": "types", "difficulty": "hard",
+      "question": "int(\"0b101\", 2) 的结果是？",
+      "options": {
+        "A": "101",
+        "B": "5",
+        "C": "报错 ValueError",
+        "D": "10"
+      },
+      "answer": "B",
+      "explanation": "int(x, base) 的第二参数指定进制；二进制 101 = 5。同理 `int(\"ff\", 16)` 得到 255，`int(\"0x1f\", 16)` 也能解析带前缀的写法。",
+      "distractors": {
+        "A": "base=2 时会按二进制解析，不会当十进制。",
+        "C": "0b 前缀在 int(x, 2) 里是允许的。",
+        "D": "与位数无关，是数值 5。"
+      },
+      "knowledge": ["int(x, base)", "进制转换", "二进制字面量"],
+      "doc": "03-data-types"
+    },
+    {
+      "id": "types-28", "topic": "types", "difficulty": "hard",
+      "question": "执行 b\"abc\" + \"def\" 会发生什么？",
+      "options": {
+        "A": "抛 TypeError，bytes 与 str 不能直接相加",
+        "B": "得到 b\"abcdef\"",
+        "C": "得到 \"abcdef\"",
+        "D": "得到 b\"abc\" 与 \"def\" 的元组"
+      },
+      "answer": "A",
+      "explanation": "bytes 和 str 是两种类型，必须显式转换：`b\"abc\" + \"def\".encode()` 或 `b\"abc\".decode() + \"def\"`。这是 Python 3 把文本和二进制分开的直接后果。",
+      "distractors": {
+        "B": "混合类型相加强制转换，Python 选择报错而不是猜测编码。",
+        "C": "同上，不会自动 decode。",
+        "D": "+ 号不会构造元组，那需要逗号。"
+      },
+      "knowledge": ["bytes vs str", "encode/decode", "TypeError"],
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-29", "topic": "types", "difficulty": "hard",
+      "question": "float(\"inf\") 或 1e400 的结果是？",
+      "options": {
+        "A": "抛 OverflowError",
+        "B": "抛 ValueError",
+        "C": "返回 None",
+        "D": "inf（浮点正无穷），不报错"
+      },
+      "answer": "D",
+      "explanation": "浮点溢出静默变成 inf，而不是抛异常；`float(\"inf\")` 也同样得到 inf。要检查可用 `math.isinf(x)`。整数则不同：Python 整数是任意精度，不会溢出。",
+      "distractors": {
+        "A": "浮点溢出不会抛异常（这一点与 JS 的 Infinity 一致）。",
+        "B": "inf 是合法的浮点字符串。",
+        "C": "返回 float，不是 None。"
+      },
+      "knowledge": ["inf", "浮点溢出", "math.isinf"],
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-30", "topic": "types", "difficulty": "medium",
+      "question": "执行 float(\"nan\") == float(\"nan\") 的结果是？",
+      "options": {
+        "A": "True，都是 nan",
+        "B": "报错",
+        "C": "None",
+        "D": "False，NaN 不等于任何值（包括自己）"
+      },
+      "answer": "D",
+      "explanation": "IEEE 754 规定 NaN 与任何数比较都为 False，所以判断 NaN 要用 `math.isnan(x)`，不能写 `x == float(\"nan\")`。",
+      "distractors": {
+        "A": "NaN 的自反性被标准明确否定了。",
+        "B": "比较合法，只是结果为 False。",
+        "C": "== 返回 bool。"
+      },
+      "knowledge": ["NaN", "math.isnan", "IEEE 754"],
+      "doc": "03-data-types",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "types-31", "topic": "types", "difficulty": "hard",
+      "question": "[1, [2, 3]] == [1, [2, 3]] 的结果是？",
+      "options": {
+        "A": "False，嵌套列表只比较引用",
+        "B": "报错，列表不能嵌套比较",
+        "C": "True，但必须用 is 才正确",
+        "D": "True，== 会递归比较嵌套内容"
+      },
+      "answer": "D",
+      "explanation": "list 的 __eq__ 逐元素递归比较，嵌套列表也按值比较，所以为 True；而 `is` 比较的是两个列表对象是否同一个（这里必然 False）。",
+      "distractors": {
+        "A": "== 是值比较，会深入嵌套结构。",
+        "B": "合法操作。",
+        "C": "is 在这里恰好是 False。"
+      },
+      "knowledge": ["== 递归比较", "is vs ==", "__eq__"],
+      "doc": "03-data-types"
     }
   ]
 }
