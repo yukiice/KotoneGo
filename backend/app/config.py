@@ -35,3 +35,9 @@ CORS_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+
+# 额外的正则白名单：前后端分域名时用来放行一批来源，例如 Vercel 的预览域名
+#   KOTONE_CORS_ORIGIN_REGEX=^https://.*\.vercel\.app$
+CORS_ORIGIN_REGEX = os.getenv(
+    "KOTONE_CORS_ORIGIN_REGEX", r"http://(localhost|127\.0\.0\.1)(:\d+)?"
+)

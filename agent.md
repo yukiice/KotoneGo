@@ -29,7 +29,7 @@ KotoneGo/
 ├── agent.md                      # ← 你正在读的文件
 ├── README.md                     # 人类快速上手（含 Docker 部署）
 ├── .gitignore / .dockerignore
-├── .github/workflows/          # ci.yml（校验/测试）+ image.yml（构建镜像/可选自动部署）
+├── .github/workflows/          # ci.yml（题库校验 + pytest + 冒烟 + 前端构建）+ image.yml（构建镜像/可选部署）
 ├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE / KOTONE_IMAGE（复制成 .env）
 ├── Dockerfile                    # 多阶段：Node 打包前端 → Python 运行时单容器
 ├── docker-compose.yml            # 单服务 + 命名卷 + 内存/日志限制 + 健康检查
@@ -54,6 +54,7 @@ KotoneGo/
 ├── backend/tests/                # pytest 测试（题库校验、热加载、抽题、回滚、HTTP 接口契约）
 └── frontend/                     # React 18 + TS + Vite
     ├── vite.config.ts            # /api 代理到 127.0.0.1:8000
+    ├── vercel.json               # 前端单独部署到 Vercel 时的配置（SPA 回落）
     └── src/
         ├── api/client.ts         # fetch 封装（唯一出网地点）
         ├── api/types.ts          # 与 Pydantic 模型一一对应的 TS 类型
@@ -136,7 +137,8 @@ cd ../backend && .venv/bin/uvicorn app.main:app --port 8000   # 打开 http://12
 | --- | --- | --- |
 | `KOTONE_DB_PATH` | `backend/data/kotone.db` | SQLite 路径 |
 | `KOTONE_EXAM_SIZE` | `10` | 默认题量 |
-| `KOTONE_CORS_ORIGINS` | localhost:5173/4173 | 允许的前端来源 |
+| `KOTONE_CORS_ORIGINS` | localhost:5173/4173 | 允许的前端来源（英文逗号分隔，精确匹配） |
+| `KOTONE_CORS_ORIGIN_REGEX` | localhost 正则 | 额外正则白名单，前后端分域名时用，如 `^https://.*\.vercel\.app$` |
 
 ---
 
