@@ -2,15 +2,21 @@
   "topic": "comprehensions",
   "label": "推导式",
   "questions": [
+
     {
       "id": "comp-01", "topic": "comprehensions", "difficulty": "easy",
       "question": "[x * 2 for x in range(3)] 的结果是？",
-      "options": { "A": "[0, 2, 4]", "B": "[2, 4, 6]", "C": "[0, 1, 2]", "D": "(0, 2, 4)" },
-      "answer": "A",
+      "options": {
+        "A": "[2, 4, 6]",
+        "B": "[0, 1, 2]",
+        "C": "[0, 2, 4]",
+        "D": "(0, 2, 4)"
+      },
+      "answer": "C",
       "explanation": "列表推导式对 range(3) 的 0、1、2 分别乘以 2，得到 [0, 2, 4]（类型仍是 list）。",
       "distractors": {
-        "B": "range(3) 从 0 开始，不是 1。",
-        "C": "忘记了 x * 2 的变换。",
+        "A": "range(3) 从 0 开始，不是 1。",
+        "B": "忘记了 x * 2 的变换。",
         "D": "方括号生成的是列表，不是元组。"
       },
       "knowledge": ["列表推导式", "与 map 对比"],
@@ -57,13 +63,18 @@
     {
       "id": "comp-04", "topic": "comprehensions", "difficulty": "medium",
       "question": "{x for x in [1, 1, 2]} 的结果是？",
-      "options": { "A": "{1, 2}", "B": "{1, 1, 2}", "C": "[1, 2]", "D": "(1, 2)" },
-      "answer": "A",
+      "options": {
+        "A": "{1, 1, 2}",
+        "B": "[1, 2]",
+        "C": "(1, 2)",
+        "D": "{1, 2}"
+      },
+      "answer": "D",
       "explanation": "集合推导式自动去重，得到集合 {1, 2}。",
       "distractors": {
-        "B": "集合不允许重复元素。",
-        "C": "方括号才是列表。",
-        "D": "圆括号加生成器语法得到的是生成器，不是元组（且这里用的是花括号）。"
+        "A": "集合不允许重复元素。",
+        "B": "方括号才是列表。",
+        "C": "圆括号加生成器语法得到的是生成器，不是元组（且这里用的是花括号）。"
       },
       "knowledge": ["集合推导式", "去重"],
       "doc": "09-comprehensions"
@@ -73,28 +84,34 @@
       "question": "(x * 2 for x in range(3)) 得到的是什么？",
       "options": {
         "A": "元组 (0, 2, 4)",
-        "B": "生成器对象，惰性求值且只能遍历一次",
-        "C": "列表 [0, 2, 4]",
+        "B": "列表 [0, 2, 4]",
+        "C": "生成器对象，惰性求值且只能遍历一次",
         "D": "报错"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "圆括号形式是生成器表达式（generator expression），不会立刻计算，占用内存小但只能消费一次。",
       "distractors": {
         "A": "它不是元组；要元组得写 tuple(...)。",
-        "C": "列表要用方括号。",
+        "B": "列表要用方括号。",
         "D": "完全合法。"
       },
       "knowledge": ["生成器表达式", "惰性求值", "只能迭代一次"],
-      "doc": "09-comprehensions", "tags": ["pitfall"]
+      "doc": "09-comprehensions",
+      "tags": ["pitfall"]
     },
     {
       "id": "comp-06", "topic": "comprehensions", "difficulty": "medium",
       "question": "把生成器表达式变成列表，应该？",
-      "options": { "A": "list(gen)", "B": "gen.list()", "C": "[gen]", "D": "tuple(gen) 会得到列表" },
-      "answer": "A",
+      "options": {
+        "A": "gen.list()",
+        "B": "list(gen)",
+        "C": "[gen]",
+        "D": "tuple(gen) 会得到列表"
+      },
+      "answer": "B",
       "explanation": "list() 会消费生成器并构建列表；也可以把括号换成方括号直接写列表推导式。",
       "distractors": {
-        "B": "生成器没有 list 方法。",
+        "A": "生成器没有 list 方法。",
         "C": "[gen] 得到只含一个生成器的列表。",
         "D": "tuple() 得到的是元组。"
       },
@@ -104,13 +121,18 @@
     {
       "id": "comp-07", "topic": "comprehensions", "difficulty": "hard",
       "question": "sum(x ** 2 for x in range(1, 4)) 的结果是？",
-      "options": { "A": "14", "B": "36", "C": "6", "D": "9" },
-      "answer": "A",
+      "options": {
+        "A": "36",
+        "B": "6",
+        "C": "9",
+        "D": "14"
+      },
+      "answer": "D",
       "explanation": "1²+2²+3² = 1+4+9 = 14；把生成器直接传给 sum 可以省内存，不必先建列表。",
       "distractors": {
-        "B": "36 是 (1+2+3)² 的结果。",
-        "C": "6 是 1+2+3。",
-        "D": "9 只是 3²。"
+        "A": "36 是 (1+2+3)² 的结果。",
+        "B": "6 是 1+2+3。",
+        "C": "9 只是 3²。"
       },
       "knowledge": ["sum()", "生成器省内存", "数值聚合"],
       "doc": "09-comprehensions"
@@ -120,15 +142,15 @@
       "question": "推导式里能嵌套推导式吗？",
       "options": {
         "A": "不能",
-        "B": "能，例如 [[1 for _ in range(2)] for _ in range(2)] 生成二维列表",
-        "C": "只有字典推导支持嵌套",
+        "B": "只有字典推导支持嵌套",
+        "C": "能，例如 [[1 for _ in range(2)] for _ in range(2)] 生成二维列表",
         "D": "必须用 map 代替"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "嵌套推导式可用来构建矩阵，且每个内层列表都是独立对象，能避免 [[0]*n]*m 的引用陷阱。",
       "distractors": {
         "A": "语法上完全允许。",
-        "C": "列表/集合/字典推导都支持嵌套。",
+        "B": "列表/集合/字典推导都支持嵌套。",
         "D": "map 也能做但不是必须。"
       },
       "knowledge": ["嵌套推导式", "构建矩阵", "与引用陷阱对比"],
@@ -151,26 +173,28 @@
         "D": "与 if 子句无关。"
       },
       "knowledge": ["推导式作用域", "Python 2 与 3 差异", "NameError"],
-      "doc": "09-comprehensions", "tags": ["pitfall"]
+      "doc": "09-comprehensions",
+      "tags": ["pitfall"]
     },
     {
       "id": "comp-10", "topic": "comprehensions", "difficulty": "medium",
       "question": "推导式里想同时用 if 和 else 做“条件取值”，正确写法是？",
       "options": {
-        "A": "[x if x > 0 else 0 for x in nums]",
-        "B": "[x for x in nums if x > 0 else 0]",
+        "A": "[x for x in nums if x > 0 else 0]",
+        "B": "[x if x > 0 else 0 for x in nums]",
         "C": "[x for x in nums if x > 0] else [0]",
         "D": "[if x > 0 then x else 0 for x in nums]"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "条件表达式（三元）放在最前面的表达式位置；放在末尾的 if 只能做过滤，不能配 else。",
       "distractors": {
-        "B": "末尾的 if 后面不能跟 else，会语法错误。",
+        "A": "末尾的 if 后面不能跟 else，会语法错误。",
         "C": "不是合法语法。",
         "D": "Python 没有 then 关键字。"
       },
       "knowledge": ["条件表达式在推导式中", "过滤 vs 映射"],
-      "doc": "09-comprehensions", "tags": ["pitfall"]
+      "doc": "09-comprehensions",
+      "tags": ["pitfall"]
     },
     {
       "id": "comp-11", "topic": "comprehensions", "difficulty": "medium",
@@ -212,19 +236,19 @@
     },
     {
       "id": "comp-13", "topic": "comprehensions", "difficulty": "hard",
-      "question": "下面哪个推导式的写法有 bug？\n\nA: [x for x in rows for y in x]\nB: [x for x in rows for x in rows]",
+      "question": "下面哪个推导式的写法有 bug？\n\n写法 1： [x for x in rows for y in x]\n写法 2： [x for x in rows for x in rows]",
       "options": {
-        "A": "A 有 bug",
-        "B": "B 有 bug：内外层用了同名变量 x，会互相覆盖语义",
-        "C": "两个都有语法错误",
-        "D": "两个都完全正确"
+        "A": "写法 1 有 bug",
+        "B": "两个都有语法错误",
+        "C": "两个都完全正确",
+        "D": "写法 2 有 bug：内外层用了同名变量 x，会互相覆盖语义"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "多重 for 的变量名应避免重复；重名会让代码含义混乱（也容易在嵌套循环里造成逻辑错误）。",
       "distractors": {
         "A": "A 的写法是合法的二维遍历写法。",
-        "C": "A 语法正确，B 语法也合法但有逻辑问题。",
-        "D": "B 存在命名冲突问题。"
+        "B": "A 语法正确，B 语法也合法但有逻辑问题。",
+        "C": "B 存在命名冲突问题。"
       },
       "knowledge": ["多重 for 推导式", "变量命名", "代码可读性"],
       "doc": "09-comprehensions"
@@ -233,19 +257,288 @@
       "id": "comp-14", "topic": "comprehensions", "difficulty": "medium",
       "question": "用推导式把字符串列表里的空白去掉并过滤空串，写法是？",
       "options": {
-        "A": "[s.strip() for s in lines if s.strip()]",
-        "B": "[s for s in lines if s.strip()]",
-        "C": "[s.strip() if s for s in lines]",
+        "A": "[s for s in lines if s.strip()]",
+        "B": "[s.strip() if s for s in lines]",
+        "C": "[s.strip() for s in lines if s.strip()]",
         "D": "[s.strip() for s in lines if not s]"
       },
-      "answer": "A",
+      "answer": "C",
       "explanation": "表达式位置做 strip，if 子句过滤 strip 后为空的结果；这是处理文本文件的常用模式。",
       "distractors": {
-        "B": "忘记对结果本身做 strip。",
-        "C": "if s 中 s 是原始字符串（含空白的行也是真值），过滤不正确。",
+        "A": "忘记对结果本身做 strip。",
+        "B": "if s 中 s 是原始字符串（含空白的行也是真值），过滤不正确。",
         "D": "if not s 会只保留空行，刚好相反。"
       },
       "knowledge": ["strip 与过滤组合", "文本清洗"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-15", "topic": "comprehensions", "difficulty": "medium",
+      "question": "[len(w) for w in words if w] 的作用是？",
+      "options": {
+        "A": "统计所有单词长度之和",
+        "B": "按长度排序",
+        "C": "过滤掉空字符串后，收集每个单词的长度",
+        "D": "报错，if 不能放在 for 后面"
+      },
+      "answer": "C",
+      "explanation": "推导式结构是 `[表达式 for 变量 in 可迭代对象 if 条件]`，if 在最后起过滤作用，表达式在前决定结果。要长度之和应改成 `sum(len(w) for w in words if w)`。",
+      "distractors": {
+        "A": "要 sum 才是求和。",
+        "B": "排序要 sorted。",
+        "D": "过滤子句正是放在 for 之后。"
+      },
+      "knowledge": ["推导式结构", "过滤与映射", "sum 聚合"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-16", "topic": "comprehensions", "difficulty": "medium",
+      "question": "把 [[1, 2], [3, 4]] 扁平化成 [1, 2, 3, 4]，写法是？",
+      "options": {
+        "A": "[y for y in row for row in rows]",
+        "B": "[rows[y] for y in row]",
+        "C": "[y for row in rows for y in row]",
+        "D": "[sum(row) for row in rows]"
+      },
+      "answer": "C",
+      "explanation": "多个 for 按从左到右嵌套，等价于外层 `for row in rows:` 再内层 `for y in row:`。B 的顺序反了，会先引用未定义的 row。",
+      "distractors": {
+        "A": "顺序反了，row 还没定义就被使用。",
+        "B": "索引方式错误，且 row 未定义。",
+        "D": "那是每行求和，得到 [3, 7]。"
+      },
+      "knowledge": ["多重 for 推导式", "扁平化", "嵌套顺序"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-17", "topic": "comprehensions", "difficulty": "hard",
+      "question": "[(i, j) for i in range(2) for j in range(2)] 的结果是？",
+      "options": {
+        "A": "[(0,0), (1,1)]",
+        "B": "[(0,1), (1,0)]",
+        "C": "[(0,0), (0,1), (1,0), (1,1)]",
+        "D": "报错，不能有两个 for"
+      },
+      "answer": "C",
+      "explanation": "外层 i 变化慢、内层 j 变化快，与嵌套循环顺序一致。若把两个 for 顺序调换，结果会变成 [(0,0),(1,0),(0,1),(1,1)]。",
+      "distractors": {
+        "A": "那是 zip(range(2), range(2)) 的结果。",
+        "B": "漏掉了对角组合。",
+        "D": "多重 for 是合法语法。"
+      },
+      "knowledge": ["多重 for 顺序", "嵌套循环等价", "元组元素"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-18", "topic": "comprehensions", "difficulty": "medium",
+      "question": "把 {1: \"a\", 2: \"b\"} 反转成 {\"a\": 1, \"b\": 2}，写法是？",
+      "options": {
+        "A": "{k: v for v, k in d}",
+        "B": "{v: k for k, v in d.items()}",
+        "C": "dict(d.values(), d.keys())",
+        "D": "d.reverse()"
+      },
+      "answer": "B",
+      "explanation": "items() 给出 (键, 值)，解包时把 v 放前面就实现反转。注意值重复时后面的会覆盖前面的；值必须可哈希。",
+      "distractors": {
+        "A": "直接迭代 dict 得到的是键，无法解包成两个。",
+        "C": "dict() 不接受这种参数顺序。",
+        "D": "dict 没有 reverse 方法。"
+      },
+      "knowledge": ["字典推导式反转", "items() 解包", "覆盖风险"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-19", "topic": "comprehensions", "difficulty": "medium",
+      "question": "len({c for c in \"hello\"}) 的结果是？",
+      "options": {
+        "A": "5",
+        "B": "1",
+        "C": "报错",
+        "D": "4"
+      },
+      "answer": "D",
+      "explanation": "集合推导式自动去重，\"hello\" 里不同的字母是 h、e、l、o 共 4 个。要统计不重复元素个数，这是最快写法。",
+      "distractors": {
+        "A": "5 是字符串长度，未去重。",
+        "B": "不是统计单字符。",
+        "C": "合法语法。"
+      },
+      "knowledge": ["集合推导式", "去重", "len(set)"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-20", "topic": "comprehensions", "difficulty": "hard",
+      "question": "下面这段代码能正常工作吗？\n\nvals = [y for x in data if (y := f(x)) > 0]",
+      "options": {
+        "A": "不能，推导式里不允许任意赋值",
+        "B": "能，但 y 会泄漏到推导式外",
+        "C": "不能，walrus 只能用在 while",
+        "D": "能，3.8+ 支持在推导式的 if 里用海象运算符赋值并复用"
+      },
+      "answer": "D",
+      "explanation": "海象运算符就是为这种「算一次、判一次、再用一次」的场景设计的，避免把 f(x) 写两遍。注意 y 的作用域仍被限制在推导式内。",
+      "distractors": {
+        "A": "walrus 在推导式里是合法的。",
+        "B": "推导式有独立作用域，y 不会泄漏。",
+        "C": "while/if/推导式里都能用。"
+      },
+      "knowledge": ["海象运算符 := ", "推导式作用域", "避免重复计算"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-21", "topic": "comprehensions", "difficulty": "medium",
+      "question": "想得到带编号的列表 [\"1:a\", \"2:b\"]，推导式怎么写？",
+      "options": {
+        "A": "[f\"{i}:{x}\" for x, i in enumerate(items, 1)]",
+        "B": "[f\"{i}:{x}\" for i, x in enumerate(items, 1)]",
+        "C": "[f\"{i}:{x}\" for i in enumerate(items, 1)]",
+        "D": "[f\"{i}:{x}\" for i in range(items)]"
+      },
+      "answer": "B",
+      "explanation": "enumerate 产生 (序号, 元素) 二元组，解包顺序不能反。C 会得到 (序号, 元素) 元组被当成 i，D 则 range 不接受列表。",
+      "distractors": {
+        "A": "解包顺序反了，i 拿到元素、x 拿到序号。",
+        "C": "i 是二元组，不是序号。",
+        "D": "range 参数必须是整数。"
+      },
+      "knowledge": ["enumerate 解包", "推导式格式化", "元组顺序"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-22", "topic": "comprehensions", "difficulty": "hard",
+      "question": "由两个列表 keys、values 构造字典，最简洁的写法是？",
+      "options": {
+        "A": "{k: v for k, v in keys, values}",
+        "B": "dict(keys, values)",
+        "C": "zip(keys, values).to_dict()",
+        "D": "dict(zip(keys, values))"
+      },
+      "answer": "D",
+      "explanation": "zip 产生 (k, v) 对，dict() 直接接受这种可迭代对，这是最惯用的写法。等价的推导式是 `{k: v for k, v in zip(keys, values)}`。",
+      "distractors": {
+        "A": "for 不能同时遍历两个独立可迭代对象。",
+        "B": "dict 只接受一个位置参数。",
+        "C": "zip 对象没有 to_dict 方法。"
+      },
+      "knowledge": ["dict(zip(...))", "键值配对", "推导式等价写法"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-23", "topic": "comprehensions", "difficulty": "medium",
+      "question": "[x if x > 0 else 0 for x in nums] 中 if/else 的位置说明？",
+      "options": {
+        "A": "if/else 在 for 之后，属于过滤",
+        "B": "if/else 在 for 之前，属于「映射」而非过滤，结果长度与输入相同",
+        "C": "语法错误，推导式只能有 if",
+        "D": "会报错，因为 else 不能出现在推导式里"
+      },
+      "answer": "B",
+      "explanation": "三元表达式（带 else）出现在表达式位置，是逐元素的条件映射，长度不变；只有 if（无 else）放在 for 之后才是过滤。这是最容易混淆的一对写法。",
+      "distractors": {
+        "A": "带 else 的条件在表达式位置，不是过滤。",
+        "C": "带 else 的三元表达式合法。",
+        "D": "合法。"
+      },
+      "knowledge": ["条件映射 vs 过滤", "三元表达式位置", "结果长度"],
+      "doc": "09-comprehensions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "comp-24", "topic": "comprehensions", "difficulty": "hard",
+      "question": "用 [[0] * 3 for _ in range(2)] 而不是 [[0] * 3] * 2，原因是？",
+      "options": {
+        "A": "后者两行是同一个列表对象，改一行另一行也变",
+        "B": "后者会报语法错误",
+        "C": "后者内存占用更大",
+        "D": "两者完全等价"
+      },
+      "answer": "A",
+      "explanation": "`*` 复制的是引用，`[[0]*3]*2` 的外层两个元素指向同一个内层列表；推导式每次迭代都新建列表，所以互不影响。构造二维数组一定要用推导式。",
+      "distractors": {
+        "B": "语法合法，只是语义错误。",
+        "C": "后者内存更小，但共享引用。",
+        "D": "行为完全不同。"
+      },
+      "knowledge": ["二维数组构造", "引用复制", "推导式新建对象"],
+      "doc": "09-comprehensions",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "comp-25", "topic": "comprehensions", "difficulty": "hard",
+      "question": "[int(x) for x in [\"1\", \"a\", \"3\"]] 会怎样？",
+      "options": {
+        "A": "跳过 \"a\"，返回 [1, 3]",
+        "B": "把 \"a\" 转成 0",
+        "C": "返回 None",
+        "D": "抛 ValueError，整个推导式中断，得不到部分结果"
+      },
+      "answer": "D",
+      "explanation": "推导式没有内建的异常跳过机制，遇到 ValueError 会整体失败。要容错得写成 `[int(x) for x in xs if x.isdigit()]` 或用 try/except 的显式循环。",
+      "distractors": {
+        "A": "不会自动跳过。",
+        "B": "int(\"a\") 直接抛异常。",
+        "C": "异常会向上抛。"
+      },
+      "knowledge": ["推导式异常传播", "容错写法", "ValueError"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-26", "topic": "comprehensions", "difficulty": "medium",
+      "question": "max(len(w) for w in words) 与 max([len(w) for w in words]) 的区别是？",
+      "options": {
+        "A": "前者是生成器，不建中间列表，内存更省",
+        "B": "后者更快且更省内存",
+        "C": "两者完全等价",
+        "D": "前者语法错误"
+      },
+      "answer": "A",
+      "explanation": "生成器表达式逐个产出，max 边产边比，内存 O(1)；列表推导式要先建完整列表。只做聚合时优先用生成器表达式。",
+      "distractors": {
+        "B": "后者要多分配一个列表。",
+        "C": "内存占用不同。",
+        "D": "合法写法，括号可省略。"
+      },
+      "knowledge": ["生成器表达式", "聚合函数", "内存优化"],
+      "doc": "09-comprehensions",
+      "tags": ["performance"]
+    },
+    {
+      "id": "comp-27", "topic": "comprehensions", "difficulty": "easy",
+      "question": "{x * 2 for x in range(3)} 的类型是？",
+      "options": {
+        "A": "set",
+        "B": "list",
+        "C": "dict",
+        "D": "frozenset"
+      },
+      "answer": "A",
+      "explanation": "花括号 + 单个表达式 = 集合推导式，得到 set（无序、去重）；`{k: v for ...}` 才是字典推导式，`[ ... ]` 是列表，`( ... )` 是生成器。",
+      "distractors": {
+        "B": "方括号才是 list。",
+        "C": "字典需要 key: value 形式。",
+        "D": "frozenset 要显式转换。"
+      },
+      "knowledge": ["集合推导式", "括号决定类型", "set"],
+      "doc": "09-comprehensions"
+    },
+    {
+      "id": "comp-28", "topic": "comprehensions", "difficulty": "medium",
+      "question": "只保留字典里值大于 0 的键值对，写法是？",
+      "options": {
+        "A": "{k: v for k, v in d.items() if v > 0}",
+        "B": "{k: v if v > 0 for k, v in d.items()}",
+        "C": "{k: v for k, v in d.items() if k > 0}",
+        "D": "{k for k, v in d.items() if v > 0}"
+      },
+      "answer": "A",
+      "explanation": "字典推导式同样支持末尾的 if 过滤，过滤条件作用于 v。B 语法错误（if 缺 else），C 过滤的是键，D 得到的是集合而不是字典。",
+      "distractors": {
+        "B": "表达式位置的 if 必须带 else，否则语法错误。",
+        "C": "过滤的是键 k，不是值。",
+        "D": "那会得到 set，丢失值。"
+      },
+      "knowledge": ["字典推导式过滤", "items()", "if 位置"],
       "doc": "09-comprehensions"
     }
   ]

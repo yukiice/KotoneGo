@@ -2,15 +2,21 @@
   "topic": "modules",
   "label": "模块、包与标准库",
   "questions": [
+
     {
       "id": "mod-01", "topic": "modules", "difficulty": "easy",
       "question": "导入 math 模块并调用 sqrt，正确写法是？",
-      "options": { "A": "include math; math.sqrt(4)", "B": "import math; math.sqrt(4)", "C": "require('math').sqrt(4)", "D": "using math; sqrt(4)" },
-      "answer": "B",
+      "options": {
+        "A": "include math; math.sqrt(4)",
+        "B": "require('math').sqrt(4)",
+        "C": "import math; math.sqrt(4)",
+        "D": "using math; sqrt(4)"
+      },
+      "answer": "C",
       "explanation": "import 模块名 之后用 模块名.属性 访问；也可以 from math import sqrt 直接引入名称。",
       "distractors": {
         "A": "include 是 PHP 的写法。",
-        "C": "require 是 Node.js 的 CommonJS 语法。",
+        "B": "require 是 Node.js 的 CommonJS 语法。",
         "D": "using 是 C# 的写法。"
       },
       "knowledge": ["import", "from ... import ...", "命名空间"],
@@ -21,16 +27,16 @@
       "question": "from math import * 的主要问题是？",
       "options": {
         "A": "语法错误",
-        "B": "会污染命名空间，可能覆盖已有名字且看不出符号来源，PEP 8 不推荐",
-        "C": "只能导入函数，不能导入常量",
-        "D": "会导入所有第三方库"
+        "B": "只能导入函数，不能导入常量",
+        "C": "会导入所有第三方库",
+        "D": "会污染命名空间，可能覆盖已有名字且看不出符号来源，PEP 8 不推荐"
       },
-      "answer": "B",
+      "answer": "D",
       "explanation": "星号导入让代码可读性和可维护性变差；推荐显式导入或 import 模块名。",
       "distractors": {
         "A": "语法合法但不推荐。",
-        "C": "常量也会一起导入。",
-        "D": "只影响该模块的公开名称。"
+        "B": "常量也会一起导入。",
+        "C": "只影响该模块的公开名称。"
       },
       "knowledge": ["通配符导入反模式", "PEP 8", "__all__"],
       "doc": "13-modules-stdlib"
@@ -38,7 +44,12 @@
     {
       "id": "mod-03", "topic": "modules", "difficulty": "medium",
       "question": "一个包含 __init__.py 的目录在 Python 中表示？",
-      "options": { "A": "一个包（package）", "B": "一个虚拟环境", "C": "一个模块文件", "D": "一个编译产物" },
+      "options": {
+        "A": "一个包（package）",
+        "B": "一个虚拟环境",
+        "C": "一个模块文件",
+        "D": "一个编译产物"
+      },
       "answer": "A",
       "explanation": "包是用点号分层组织的模块集合；Python 3.3+ 支持隐式命名空间包，__init__.py 不再是硬性要求，但常规项目仍会保留。",
       "distractors": {
@@ -73,15 +84,15 @@
       "question": "pip install requests 会安装到哪里？",
       "options": {
         "A": "项目的 node_modules",
-        "B": "当前 Python 环境的 site-packages（虚拟环境中则装进该环境）",
-        "C": "当前脚本所在目录",
+        "B": "当前脚本所在目录",
+        "C": "当前 Python 环境的 site-packages（虚拟环境中则装进该环境）",
         "D": "系统 /usr/lib 固定位置"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "pip 把包安装到当前解释器的 site-packages；先激活虚拟环境再安装，可以避免污染全局环境。",
       "distractors": {
         "A": "node_modules 是 npm 的目录。",
-        "C": "不会装到脚本目录。",
+        "B": "不会装到脚本目录。",
         "D": "位置取决于环境，虚拟环境下会装在环境内部。"
       },
       "knowledge": ["pip", "site-packages", "虚拟环境隔离"],
@@ -92,15 +103,15 @@
       "question": "创建并激活虚拟环境的常用命令是？",
       "options": {
         "A": "npm init && npm start",
-        "B": "python3 -m venv .venv && source .venv/bin/activate",
-        "C": "pip venv create .venv",
+        "B": "pip venv create .venv",
+        "C": "python3 -m venv .venv && source .venv/bin/activate",
         "D": "virtualenv --activate .venv"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "标准库 venv 创建独立环境；Windows 上激活命令是 .venv\\Scripts\\activate。",
       "distractors": {
         "A": "那是 Node 生态。",
-        "C": "pip 没有这个子命令。",
+        "B": "pip 没有这个子命令。",
         "D": "virtualenv 是第三方工具，激活方式也不是这样。"
       },
       "knowledge": ["venv", "activate", "requirements.txt"],
@@ -110,17 +121,17 @@
       "id": "mod-07", "topic": "modules", "difficulty": "medium",
       "question": "requirements.txt 的作用是？",
       "options": {
-        "A": "记录依赖及版本，可用 pip install -r requirements.txt 复现环境",
-        "B": "Python 会自动读取它来安装依赖",
-        "C": "相当于 package.json 的 scripts",
-        "D": "只能记录标准库"
+        "A": "Python 会自动读取它来安装依赖",
+        "B": "相当于 package.json 的 scripts",
+        "C": "只能记录标准库",
+        "D": "记录依赖及版本，可用 pip install -r requirements.txt 复现环境"
       },
-      "answer": "A",
+      "answer": "D",
       "explanation": "它是约定俗成的依赖清单（非 Python 自动读取），可用 pip freeze > requirements.txt 生成。",
       "distractors": {
-        "B": "必须手动执行 pip install -r 才会安装。",
-        "C": "它只列依赖，不含脚本命令。",
-        "D": "主要记录第三方包。"
+        "A": "必须手动执行 pip install -r 才会安装。",
+        "B": "它只列依赖，不含脚本命令。",
+        "C": "主要记录第三方包。"
       },
       "knowledge": ["requirements.txt", "pip freeze", "现代替代 pyproject.toml"],
       "doc": "13-modules-stdlib"
@@ -128,7 +139,12 @@
     {
       "id": "mod-08", "topic": "modules", "difficulty": "medium",
       "question": "json 模块中把 Python 对象转成 JSON 字符串的方法是？",
-      "options": { "A": "json.stringify(obj)", "B": "json.dumps(obj)", "C": "json.encode(obj)", "D": "json.serialize(obj)" },
+      "options": {
+        "A": "json.stringify(obj)",
+        "B": "json.dumps(obj)",
+        "C": "json.encode(obj)",
+        "D": "json.serialize(obj)"
+      },
       "answer": "B",
       "explanation": "dumps = dump string（序列化），loads = load string（反序列化）；dump/load 则直接操作文件对象。",
       "distractors": {
@@ -163,15 +179,15 @@
       "question": "datetime.datetime.now() 得到的是？",
       "options": {
         "A": "带时区信息的对象",
-        "B": "本地时间的 naive datetime（无时区信息），UTC 用 datetime.now(timezone.utc)",
-        "C": "时间戳浮点数",
+        "B": "时间戳浮点数",
+        "C": "本地时间的 naive datetime（无时区信息），UTC 用 datetime.now(timezone.utc)",
         "D": "字符串"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "要避免时区混乱，推荐存 UTC 或使用 aware datetime；时间戳用 time.time() 或 dt.timestamp()。",
       "distractors": {
         "A": "默认是 naive（无 tzinfo）。",
-        "C": "那是 time.time() 的返回值。",
+        "B": "那是 time.time() 的返回值。",
         "D": "返回 datetime 对象，str() 才是字符串。"
       },
       "knowledge": ["datetime", "naive vs aware", "timezone.utc"],
@@ -181,39 +197,310 @@
       "id": "mod-11", "topic": "modules", "difficulty": "hard",
       "question": "random 模块的 random() 与 randint(1, 6) 的区别是？",
       "options": {
-        "A": "random() 返回 [0.0, 1.0) 的浮点数；randint 返回含两端的整数",
-        "B": "两者都返回整数",
+        "A": "两者都返回整数",
+        "B": "random() 返回 [0.0, 1.0) 的浮点数；randint 返回含两端的整数",
         "C": "randint 不含上界 6",
         "D": "random() 返回字符串"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "randint(a, b) 包含 a 和 b；range 风格的 randrange(1, 7) 才是不含上界；密码学安全要用 secrets 模块。",
       "distractors": {
-        "B": "random() 是浮点。",
+        "A": "random() 是浮点。",
         "C": "randint 含上界（这与 range 不同，容易记混）。",
         "D": "random() 返回 float。"
       },
       "knowledge": ["random.random/randint/randrange", "secrets 模块"],
-      "doc": "13-modules-stdlib", "tags": ["pitfall"]
+      "doc": "13-modules-stdlib",
+      "tags": ["pitfall"]
     },
     {
       "id": "mod-12", "topic": "modules", "difficulty": "medium",
       "question": "想给脚本加上启动加速的“缓存编译”，Python 会自动做什么？",
       "options": {
-        "A": "把 .py 编译成 __pycache__ 下的 .pyc 字节码缓存",
-        "B": "把脚本打包成 exe",
+        "A": "把脚本打包成 exe",
+        "B": "把 .py 编译成 __pycache__ 下的 .pyc 字节码缓存",
         "C": "把代码翻译成 C",
         "D": "什么都不做，每次重新解析"
       },
-      "answer": "A",
+      "answer": "B",
       "explanation": "导入模块时会生成 __pycache__/*.pyc 缓存以提高后续启动速度；这也是不该提交到 git 的目录之一。",
       "distractors": {
-        "B": "打包需要 PyInstaller 等工具。",
+        "A": "打包需要 PyInstaller 等工具。",
         "C": "翻译成 C 是 Cython/Nuitka 之类的方案。",
         "D": "字节码缓存是默认行为。"
       },
       "knowledge": ["字节码缓存", "__pycache__", ".gitignore"],
       "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-13", "topic": "modules", "difficulty": "medium",
+      "question": "同一个模块被 import 两次（在两个文件里各 import 一次），模块代码会执行几次？",
+      "options": {
+        "A": "一次，第二次直接从 sys.modules 缓存取",
+        "B": "两次",
+        "C": "取决于是否有 __init__.py",
+        "D": "每次 import 都执行"
+      },
+      "answer": "A",
+      "explanation": "import 时若 sys.modules 里已有该模块就直接复用，所以模块级代码只跑一次。想让「每次调用都执行」就得封装成函数，而不是依赖 import 的副作用。",
+      "distractors": {
+        "B": "缓存机制保证只执行一次。",
+        "C": "包也是同样的缓存逻辑。",
+        "D": "不会重复执行。"
+      },
+      "knowledge": ["sys.modules 缓存", "import 副作用", "模块单例"],
+      "doc": "13-modules-stdlib",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "mod-14", "topic": "modules", "difficulty": "medium",
+      "question": "from math import sqrt 与 import math 的区别是？",
+      "options": {
+        "A": "前者性能更好",
+        "B": "前者会执行两次模块代码",
+        "C": "后者不能调用 sqrt",
+        "D": "前者把 sqrt 直接绑到当前命名空间，用 sqrt()；后者用 math.sqrt()"
+      },
+      "answer": "D",
+      "explanation": "`from m import x` 只把 x 引入当前作用域，名字短但看不出出处；`import m` 保留命名空间，可读性更好、也不易与本地变量重名冲突。",
+      "distractors": {
+        "A": "调用开销一样。",
+        "B": "模块只执行一次。",
+        "C": "两种都能调用。"
+      },
+      "knowledge": ["from ... import", "命名空间", "可读性"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-15", "topic": "modules", "difficulty": "medium",
+      "question": "读取环境变量 PORT（没有则用 8000）的正确写法是？",
+      "options": {
+        "A": "os.environ.get(\"PORT\", \"8000\")",
+        "B": "os.environ[\"PORT\"] or 8000",
+        "C": "os.getenv(\"PORT\") ?? 8000",
+        "D": "os.env.PORT"
+      },
+      "answer": "A",
+      "explanation": "`os.environ.get(key, default)`（或等价的 `os.getenv(key, default)`）在缺失时返回默认值；直接下标访问会抛 KeyError。注意环境变量永远是字符串。",
+      "distractors": {
+        "B": "键不存在时直接 KeyError，or 来不及生效。",
+        "C": "?? 是 JS 语法。",
+        "D": "os 模块没有 env 属性对象。"
+      },
+      "knowledge": ["os.environ.get", "os.getenv", "环境变量是字符串"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-16", "topic": "modules", "difficulty": "medium",
+      "question": "写命令行脚本想解析 --count 3 这类参数，标准库方案是？",
+      "options": {
+        "A": "自己 sys.argv[1] 判断",
+        "B": "argparse.ArgumentParser",
+        "C": "optparse（推荐）",
+        "D": "json.load(sys.argv)"
+      },
+      "answer": "B",
+      "explanation": "argparse 自动生成帮助信息、做类型转换和必需参数校验，是最常用的标准库方案；更现代的选择是第三方 typer/click。手工解析 sys.argv 容易在参数顺序、缺值时报错。",
+      "distractors": {
+        "A": "能用但脆弱，要自己处理 --help、类型、错误提示。",
+        "C": "optparse 已不推荐用于新代码。",
+        "D": "与命令行解析无关。"
+      },
+      "knowledge": ["argparse", "命令行参数", "--help 自动生成"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-17", "topic": "modules", "difficulty": "medium",
+      "question": "为什么生产代码推荐 logging 而不是 print？",
+      "options": {
+        "A": "可分级、可输出到文件/服务、可带时间戳和调用位置，且能运行时调整级别",
+        "B": "logging 更快",
+        "C": "print 会抛异常",
+        "D": "logging 能自动修复错误"
+      },
+      "answer": "A",
+      "explanation": "logging 提供级别（DEBUG/INFO/WARNING）、格式化、多目标输出和按级别过滤；print 只能写标准输出，无法区分「调试信息」和「告警」，线上排障时信息量不足。",
+      "distractors": {
+        "B": "速度不是主要原因，logging 反而有额外开销。",
+        "C": "print 不会抛异常。",
+        "D": "它只记录，不修复。"
+      },
+      "knowledge": ["logging", "日志级别", "生产可观测性"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-18", "topic": "modules", "difficulty": "easy",
+      "question": "把当前环境的依赖版本固定下来，常用命令是？",
+      "options": {
+        "A": "pip list > requirements.txt",
+        "B": "pip install -r requirements.txt",
+        "C": "pip show > requirements.txt",
+        "D": "pip freeze > requirements.txt"
+      },
+      "answer": "D",
+      "explanation": "pip freeze 输出 `包==版本` 格式，正好能作为 requirements.txt 复现环境；pip list 是人读表格，pip install -r 是安装而不是导出。",
+      "distractors": {
+        "A": "pip list 的输出格式不能直接用于安装。",
+        "B": "那是安装命令。",
+        "C": "pip show 只显示单个包的详情。"
+      },
+      "knowledge": ["pip freeze", "requirements.txt", "环境复现"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-19", "topic": "modules", "difficulty": "medium",
+      "question": "统计 / 分组 / 双端队列，分别对应 collections 里的？",
+      "options": {
+        "A": "list / dict / set",
+        "B": "OrderedDict / namedtuple / ChainMap",
+        "C": "deque / Counter / defaultdict",
+        "D": "Counter / defaultdict / deque"
+      },
+      "answer": "D",
+      "explanation": "Counter 计数、defaultdict 免去「键不存在就先初始化」、deque 双端 O(1) 操作。顺带一提：普通 dict 从 3.7 起已保证插入顺序，OrderedDict 主要用于需要 move_to_end 等额外能力时。",
+      "distractors": {
+        "A": "那是内置容器，不是 collections 的增强类型。",
+        "B": "顺序反了，这些不是对应功能。",
+        "C": "顺序错位。"
+      },
+      "knowledge": ["collections", "Counter", "defaultdict", "deque"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-20", "topic": "modules", "difficulty": "hard",
+      "question": "把多个列表串成一条流、边读边处理，用哪个工具？",
+      "options": {
+        "A": "list_a + list_b",
+        "B": "itertools.chain(list_a, list_b)",
+        "C": "itertools.groupby(list_a, list_b)",
+        "D": "zip(list_a, list_b)"
+      },
+      "answer": "B",
+      "explanation": "chain 按顺序惰性串联多个可迭代对象，不复制数据；`+` 会新建整个列表。groupby 要求先按键排序，zip 是配对，语义都不同。",
+      "distractors": {
+        "A": "会立即分配新列表。",
+        "C": "groupby 只有一个可迭代参数，语义是分组。",
+        "D": "zip 是并行配对。"
+      },
+      "knowledge": ["itertools.chain", "惰性串联", "内存友好"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-21", "topic": "modules", "difficulty": "hard",
+      "question": "两个模块互相 import 时，可能出现什么问题？",
+      "options": {
+        "A": "Python 会自动拆分循环，永远没问题",
+        "B": "会导致内存泄漏",
+        "C": "只会让启动变慢",
+        "D": "循环导入：可能拿到尚未定义完的模块，抛 ImportError/AttributeError"
+      },
+      "answer": "D",
+      "explanation": "循环导入时模块 A 还在执行中就被 B 引用，B 看到的 A 是「半成品」，取其中的名字可能失败。解决办法：把 import 移进函数、提取公共模块、或用 `TYPE_CHECKING` 延迟导入。",
+      "distractors": {
+        "A": "Python 不做自动重构。",
+        "B": "与内存泄漏无关。",
+        "C": "可能直接报错。"
+      },
+      "knowledge": ["循环导入", "延迟导入", "TYPE_CHECKING"],
+      "doc": "13-modules-stdlib",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "mod-22", "topic": "modules", "difficulty": "medium",
+      "question": "模块里定义 __all__ = [\"foo\", \"bar\"] 的作用是？",
+      "options": {
+        "A": "禁止其他模块导入本模块",
+        "B": "声明模块的版本号",
+        "C": "规定 from module import * 时导出哪些名字",
+        "D": "把 foo/bar 变成私有"
+      },
+      "answer": "C",
+      "explanation": "__all__ 只影响通配符导入的范围，也能被 IDE 用来做补全提示；它不会阻止显式 `from m import x`。想标私有用下划线前缀约定。",
+      "distractors": {
+        "A": "显式导入不受限制。",
+        "B": "版本号用 __version__。",
+        "D": "私有靠命名约定（_x）。"
+      },
+      "knowledge": ["__all__", "通配符导入", "公开 API"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-23", "topic": "modules", "difficulty": "hard",
+      "question": "import 时 Python 按什么顺序查找模块？",
+      "options": {
+        "A": "随机顺序",
+        "B": "先看 sys.modules 缓存，再按 sys.path（内置模块 → 标准库 → 第三方 site-packages → 当前目录）查找",
+        "C": "只查当前目录",
+        "D": "先查第三方包，再查标准库"
+      },
+      "answer": "B",
+      "explanation": "sys.path 的顺序决定了同名模块谁被加载。常见坑是「项目里有个 random.py 把标准库的 random 顶掉」，因为脚本所在目录排在很前面。",
+      "distractors": {
+        "A": "顺序是确定的。",
+        "C": "当前目录只是其中一项。",
+        "D": "标准库优先于 site-packages。"
+      },
+      "knowledge": ["sys.path 顺序", "模块遮蔽", "内置模块优先"],
+      "doc": "13-modules-stdlib",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "mod-24", "topic": "modules", "difficulty": "hard",
+      "question": "想在运行时按字符串名字加载模块（如插件机制），用？",
+      "options": {
+        "A": "importlib.import_module(\"pkg.mod\")",
+        "B": "eval(\"import pkg.mod\")",
+        "C": "__import__(\"pkg/mod\")",
+        "D": "exec(\"import \" + name)"
+      },
+      "answer": "A",
+      "explanation": "importlib.import_module 是动态导入的标准方式，返回模块对象，名字用点号分隔；配合 pkgutil.iter_modules 可扫描插件目录。用 eval/exec 拼字符串既慢又不安全。",
+      "distractors": {
+        "B": "eval 不能执行语句，且存在注入风险。",
+        "C": "__import__ 要用点号而不是斜杠，且属于底层接口。",
+        "D": "exec 拼接字符串有注入风险，也不返回模块。"
+      },
+      "knowledge": ["importlib.import_module", "动态导入", "插件机制"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-25", "topic": "modules", "difficulty": "medium",
+      "question": "pip install -e . 中的 -e 表示？",
+      "options": {
+        "A": "只安装依赖，不装项目",
+        "B": "从 PyPI 安装最新版",
+        "C": "可编辑安装：把项目以「开发模式」链接进环境，改代码立即生效",
+        "D": "安装到系统目录"
+      },
+      "answer": "C",
+      "explanation": "-e（editable）会创建指向源码目录的链接，不用每次改完都重装，是开发本地包的常规做法；项目需要 pyproject.toml/setup.py 定义包结构。",
+      "distractors": {
+        "A": "它也会安装项目本身（以链接形式）。",
+        "B": "-e 后跟的是本地路径。",
+        "D": "装进当前虚拟环境。"
+      },
+      "knowledge": ["pip install -e", "开发模式安装", "pyproject.toml"],
+      "doc": "13-modules-stdlib"
+    },
+    {
+      "id": "mod-26", "topic": "modules", "difficulty": "hard",
+      "question": "datetime.now() 与 datetime.now(timezone.utc) 的关键区别是？",
+      "options": {
+        "A": "前者是 naive（无时区），后者是 aware（带 UTC 时区），跨时区计算必须用 aware",
+        "B": "后者返回字符串",
+        "C": "前者总比后者快 8 小时",
+        "D": "两者完全等价"
+      },
+      "answer": "A",
+      "explanation": "naive 时间不知道自己属于哪个时区，做跨时区加减会错。存储统一用 UTC aware 时间，展示时再转本地时区：`dt.astimezone(ZoneInfo(\"Asia/Shanghai\"))`。",
+      "distractors": {
+        "B": "都是 datetime 对象。",
+        "C": "与机器本地时区有关，不是固定差。",
+        "D": "时区属性不同。"
+      },
+      "knowledge": ["naive vs aware", "timezone.utc", "ZoneInfo"],
+      "doc": "13-modules-stdlib",
+      "tags": ["pitfall"]
     }
   ]
 }

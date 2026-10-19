@@ -13,7 +13,7 @@
 | 模块 | 内容 |
 | --- | --- |
 | 语法文档 | 18 章 Markdown，`frontend/src/content/docs/*.md`，网页端渲染（PC/移动端自适应） |
-| 题库 | 238+ 道选择题，`backend/data/questions/*.json`，按主题分文件 |
+| 题库 | 500 道选择题，`backend/data/questions/*.json`，按主题分文件 |
 | 考试 | 每次随机抽 10 题（可配），每题 10 分，满分 100；作答后**实时**给出对错、正确选项、正确理由、错因、知识点、对应文档 |
 | 错题本 | 答错的题自动入库，记录错误次数 / 最近一次错误选项与时间 / 笔记 / 已掌握标记 |
 | 考试记录 | 每场考试落库，含分数、用时、各主题正确率、逐题解析 |
@@ -29,7 +29,8 @@ KotoneGo/
 ├── agent.md                      # ← 你正在读的文件
 ├── README.md                     # 人类快速上手（含 Docker 部署）
 ├── .gitignore / .dockerignore
-├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE（复制成 .env）
+├── .github/workflows/          # ci.yml（题库校验 + pytest + 冒烟 + 前端构建）+ image.yml（构建镜像/可选部署）
+├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE / KOTONE_IMAGE（复制成 .env）
 ├── Dockerfile                    # 多阶段：Node 打包前端 → Python 运行时单容器
 ├── docker-compose.yml            # 单服务 + 命名卷 + 内存/日志限制 + 健康检查
 ├── backend/                      # FastAPI + SQLite（Python 3.11+）
@@ -38,6 +39,7 @@ KotoneGo/
 │   ├── app/
 │   │   ├── config.py             # 路径、题量、分值、CORS、STATIC_DIR
 │   │   ├── db.py                 # sqlite3 建表 + 连接（表结构定义在这里）
+│   │   ├── export.py             # 错题本导出：Markdown / Anki CSV 纯格式化
 │   │   ├── question_bank.py      # 题库加载 + 严格校验 + 主题中文名
 │   │   ├── schemas.py            # Pydantic 请求/响应模型
 │   │   ├── service.py            # 业务逻辑：抽题、判分、错题本、统计
@@ -49,9 +51,10 @@ KotoneGo/
 │   └── scripts/
 │       ├── validate_questions.py # 校验题库格式（改完题库必跑）
 │       └── smoke_test.py         # 端到端冒烟测试（需后端已启动）
-├── backend/tests/                # pytest 单元测试（题库校验、热加载、抽题、回滚）
+├── backend/tests/                # pytest 测试（题库校验、热加载、抽题、回滚、HTTP 接口契约）
 └── frontend/                     # React 18 + TS + Vite
     ├── vite.config.ts            # /api 代理到 127.0.0.1:8000
+    ├── vercel.json               # 前端单独部署到 Vercel 时的配置（SPA 回落）
     └── src/
         ├── api/client.ts         # fetch 封装（唯一出网地点）
         ├── api/types.ts          # 与 Pydantic 模型一一对应的 TS 类型
@@ -113,7 +116,8 @@ docker compose down               # 停止（数据留在命名卷 kotone-data�
 
 端口约定：**容器内部永远是 8000**（Dockerfile CMD 里写死），对外端口由根目录 `.env` 的
 `KOTONE_PORT`（默认 8010）决定；`KOTONE_BIND` 控制监听地址（默认 `0.0.0.0`，填 `127.0.0.1` 则只允许本机访问）；
-`KOTONE_NAME` 控制容器名（默认 `kotonego`，同机跑多份时必改）。
+`KOTONE_NAME` 控制容器名（默认 `kotonego`，同机跑多份时必改）；`KOTONE_IMAGE` 留空则本地构建，
+填 `ghcr.io/<owner>/kotonego:latest` 则直接拉 CI 构建好的镜像（`docker compose pull`）。
 改这些都不需要重新构建镜像，`docker compose up -d` 即可。
 
 - 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
@@ -133,7 +137,8 @@ cd ../backend && .venv/bin/uvicorn app.main:app --port 8000   # 打开 http://12
 | --- | --- | --- |
 | `KOTONE_DB_PATH` | `backend/data/kotone.db` | SQLite 路径 |
 | `KOTONE_EXAM_SIZE` | `10` | 默认题量 |
-| `KOTONE_CORS_ORIGINS` | localhost:5173/4173 | 允许的前端来源 |
+| `KOTONE_CORS_ORIGINS` | localhost:5173/4173 | 允许的前端来源（英文逗号分隔，精确匹配） |
+| `KOTONE_CORS_ORIGIN_REGEX` | localhost 正则 | 额外正则白名单，前后端分域名时用，如 `^https://.*\.vercel\.app$` |
 
 ---
 
@@ -173,6 +178,10 @@ wrong_questions(question_id PK, topic, wrong_count, last_selected, first_wrong_a
 | GET | `/api/wrong-questions?topic&mastered` | 错题列表（含完整题目与解析） |
 | PATCH | `/api/wrong-questions/{qid}` | `{mastered, note}` |
 | DELETE | `/api/wrong-questions/{qid}` | 移出错题本 |
+| GET | `/api/wrong-questions/export?format=markdown\|anki&topic&mastered` | 导出错题本（附件下载；Markdown 复习笔记 / Anki 可导入 CSV） |
+| POST | `/api/questions/{qid}/reports` | 题目纠错上报 `{category, message}`，category ∈ answer_wrong/explanation_wrong/unclear/other，返回 201 |
+| GET | `/api/question-reports?status=open\|resolved` | 查看上报列表（新到旧） |
+| PATCH | `/api/question-reports/{id}` | `{status: open\|resolved}` 标记已修复 / 重新打开（不改题库） |
 | GET | `/api/stats` | 总体统计 + 各主题正确率 + 最近考试 |
 
 ---
@@ -330,6 +339,12 @@ cd frontend && npm run build
 13. **`container_name` 是可覆盖的（`KOTONE_NAME`）**：compose 里写死容器名时，
     同一台机器上第二份 checkout 执行 `up` 会报 `Conflict. The container name "/kotonego" is already in use`。
     同机多实例就加 `KOTONE_NAME` + `KOTONE_PORT`，两套独立命名卷互不影响。
+14. **CI 镜像名必须全小写**：GHCR 拒绝大写仓库名，所以 `image.yml` 里用
+    `ghcr.io/${{ github.repository_owner }}/kotonego`（写死小写），不要直接拼 `github.repository`。
+    另外 GHCR 新建的包默认私有，要么改成 public，要么在服务器 `docker login ghcr.io`。
+15. **CI 的 `deploy` job 靠 secret 存在性开关**：GitHub 不允许在 job 级 `if` 里用 `secrets`，
+    所以先写成 job 级 `env: HAS_SSH: ${{ secrets.X != '' }}`，再在 step 上 `if: env.HAS_SSH == 'true'`。
+    不要改成直接判断 secret。
 
 ---
 
@@ -339,13 +354,14 @@ cd frontend && npm run build
 
 1. **间隔重复（SRS）**：给 `wrong_questions` 加 `due_at` / `ease`，错题按 SM-2 排期复现 → 复习效率最高。
 2. **按选项生成题目变体**：同一知识点换问法，减少“记住了答案位置”的假成绩。
-3. **导出/导入**：`GET /api/wrong-questions/export` 输出 Markdown/Anki CSV，方便离线背。
+3. **导入**（导出已完成）：`GET /api/wrong-questions/export` 已支持 Markdown / Anki CSV；反向导入尚未实现。
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
-5. **题目质量反馈**：对每道题支持「这题有问题」上报（新表 `question_reports`）。
-6. **前端代码分割**：把 `react-markdown` + `highlight.js` 拆成 lazy chunk，首屏更快。
-7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
-   每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
-8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚；可继续补充 API 层的端到端用例（目前 `smoke_test.py` 仍需后端运行）。
+5. **题目质量反馈**（上报、处理界面已完成）：`/reports` 页面可按待处理 / 已修复筛选并标记状态；题库修订仍需手动编辑 JSON 并校验，尚无自动修正流程。
+6. **前端代码分割（已完成）**：`react-markdown` 与 `highlight.js` 已在懒加载的 `Markdown` 分块中，主包 `index` 210 kB（gzip 68 kB）不含它们。进一步缩小 Markdown 分块需绕过 `rehype-highlight`（它会强制打包 lowlight 的 common 全集），改用 lowlight 自定义插件；实测只注册所需语言并不能缩小分块（反而变大到 357 kB），收益有限，暂不做。
+7. **部署增强**：GitHub Actions 构建镜像 + 自动部署已实现（见 `.github/workflows/`），
+   还可以加：每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控、
+   镜像瘦身（alpine 基础镜像）。
+8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚，以及 `test_api.py` 中的 HTTP 接口契约（状态码、请求校验、错题本、统计）；`smoke_test.py` 仍需后端运行。
 
 ---
 

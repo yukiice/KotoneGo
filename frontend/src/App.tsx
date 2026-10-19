@@ -4,6 +4,7 @@ import { DocsPage } from "./pages/DocsPage";
 import { ExamResultPage, ExamRunnerPage, ExamSetupPage } from "./pages/ExamPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { HomePage } from "./pages/HomePage";
+import { ReportsPage } from "./pages/ReportsPage";
 import { StatsPage } from "./pages/StatsPage";
 import { WrongBookPage } from "./pages/WrongBookPage";
 
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/result/:examId" element={<ExamResultPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/wrong" element={<WrongBookPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="/stats" element={<StatsPage />} />
         <Route
           path="*"

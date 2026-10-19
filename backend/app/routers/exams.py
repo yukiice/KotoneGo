@@ -32,6 +32,7 @@ def create_exam(payload: CreateExamRequest) -> dict:
             topics=payload.topics,
             difficulty=payload.difficulty,
             only_wrong=payload.only_wrong,
+            weighted=payload.weighted,
         )
     except (service.NotFoundError, service.ConflictError) as exc:
         raise _handle(exc) from exc

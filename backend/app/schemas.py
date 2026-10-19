@@ -12,6 +12,10 @@ class CreateExamRequest(BaseModel):
     topics: list[str] = Field(default_factory=list, description="留空表示全部主题")
     difficulty: Literal["easy", "medium", "hard", "any"] = "any"
     only_wrong: bool = Field(default=False, description="只从错题本里抽题")
+    weighted: bool = Field(
+        default=False,
+        description="按历史正确率加权抽题：错得多的题更容易被抽中，从未作答的题保持中性权重",
+    )
 
 
 class SubmitAnswerRequest(BaseModel):
@@ -148,3 +152,23 @@ class StatsResponse(BaseModel):
     wrong_mastered_count: int
     by_topic: list[TopicStat]
     recent_exams: list[ExamHistoryItem]
+
+
+class ReportQuestionRequest(BaseModel):
+    category: Literal["answer_wrong", "explanation_wrong", "unclear", "other"]
+    message: str = Field(default="", max_length=500, description="补充说明，可留空")
+
+
+class QuestionReportItem(BaseModel):
+    id: int
+    question_id: str
+    question: str
+    category: str
+    category_label: str
+    message: str
+    status: str
+    created_at: str
+
+
+class UpdateReportStatusRequest(BaseModel):
+    status: Literal["open", "resolved"]

@@ -2,10 +2,16 @@
   "topic": "basics",
   "label": "基础语法与变量",
   "questions": [
+
     {
       "id": "basics-01", "topic": "basics", "difficulty": "easy",
       "question": "在 Python 3 中，把文本输出到屏幕的正确写法是？",
-      "options": { "A": "print(\"hello\")", "B": "console.log(\"hello\")", "C": "echo \"hello\"", "D": "printf(\"hello\")" },
+      "options": {
+        "A": "print(\"hello\")",
+        "B": "console.log(\"hello\")",
+        "C": "echo \"hello\"",
+        "D": "printf(\"hello\")"
+      },
       "answer": "A",
       "explanation": "Python 内置 print() 函数负责输出，参数会自动转成字符串并用空格分隔。",
       "distractors": {
@@ -14,39 +20,47 @@
         "D": "printf 是 C 语言函数，Python 里没有这个名字的内置函数。"
       },
       "knowledge": ["内置函数 print()", "Python 与 JS 的输出差异"],
-      "doc": "02-syntax-basics", "tags": ["hello-world"]
+      "doc": "02-syntax-basics",
+      "tags": ["hello-world"]
     },
     {
       "id": "basics-02", "topic": "basics", "difficulty": "easy",
       "question": "下面这段代码会怎样执行？\n\nif True:\nprint(\"hi\")",
       "options": {
         "A": "正常打印 hi",
-        "B": "报 IndentationError（缩进错误）",
-        "C": "打印空行",
+        "B": "打印空行",
+        "C": "报 IndentationError（缩进错误）",
         "D": "SyntaxError，因为 if 后面不能直接写 True"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "Python 用缩进表示代码块，属于 if 的语句必须比 if 多缩进一级，否则抛出 IndentationError。",
       "distractors": {
         "A": "没有缩进时这一行不属于 if 的代码块，解释器会直接报错。",
-        "C": "报的是缩进错误，不会执行成功。",
+        "B": "报的是缩进错误，不会执行成功。",
         "D": "if True: 本身完全合法，问题出在缩进。"
       },
       "knowledge": ["缩进即代码块", "IndentationError"],
-      "doc": "02-syntax-basics", "tags": ["indent"]
+      "doc": "02-syntax-basics",
+      "tags": ["indent"]
     },
     {
       "id": "basics-03", "topic": "basics", "difficulty": "easy",
       "question": "Python 中单行注释使用哪个符号？",
-      "options": { "A": "#", "B": "//", "C": "/* */", "D": "--" },
-      "answer": "A",
+      "options": {
+        "A": "//",
+        "B": "/* */",
+        "C": "--",
+        "D": "#"
+      },
+      "answer": "D",
       "explanation": "# 后面的内容到行尾都是注释，解释器会忽略。",
       "distractors": {
-        "B": "// 在 Python 里是整数除法运算符，不是注释。",
-        "C": "/* */ 是 C/Java/JS 的块注释，Python 没有这种语法。",
-        "D": "-- 是 SQL 的注释，Python 里会报语法错误。"
+        "A": "// 在 Python 里是整数除法运算符，不是注释。",
+        "B": "/* */ 是 C/Java/JS 的块注释，Python 没有这种语法。",
+        "C": "-- 是 SQL 的注释，Python 里会报语法错误。"
       },
-      "knowledge": ["注释 #", "三引号文档字符串"], "doc": "02-syntax-basics"
+      "knowledge": ["注释 #", "三引号文档字符串"],
+      "doc": "02-syntax-basics"
     },
     {
       "id": "basics-04", "topic": "basics", "difficulty": "easy",
@@ -70,7 +84,12 @@
     {
       "id": "basics-05", "topic": "basics", "difficulty": "easy",
       "question": "下面哪个变量名在 Python 中是非法的？",
-      "options": { "A": "_count", "B": "user2", "C": "2user", "D": "user_name" },
+      "options": {
+        "A": "_count",
+        "B": "user2",
+        "C": "2user",
+        "D": "user_name"
+      },
       "answer": "C",
       "explanation": "标识符不能以数字开头，所以 2user 非法。",
       "distractors": {
@@ -84,12 +103,17 @@
     {
       "id": "basics-06", "topic": "basics", "difficulty": "easy",
       "question": "input(\"请输入年龄：\") 得到的数据类型是什么？",
-      "options": { "A": "int", "B": "str", "C": "float", "D": "取决于用户输入的内容" },
-      "answer": "B",
+      "options": {
+        "A": "int",
+        "B": "float",
+        "C": "str",
+        "D": "取决于用户输入的内容"
+      },
+      "answer": "C",
       "explanation": "input() 永远返回字符串，需要数字时要自己用 int() 转换。",
       "distractors": {
         "A": "即使输入 18，得到的也是 \"18\" 字符串，不是 int。",
-        "C": "同样不会自动识别为 float。",
+        "B": "同样不会自动识别为 float。",
         "D": "input() 不做类型推断，返回值固定是 str。"
       },
       "knowledge": ["input()", "类型转换 int()/float()"],
@@ -98,12 +122,17 @@
     {
       "id": "basics-07", "topic": "basics", "difficulty": "easy",
       "question": "Python 语句末尾通常需要写什么？",
-      "options": { "A": "分号 ;", "B": "什么都不用写，换行即语句结束", "C": "冒号 :", "D": "反斜杠 \\" },
-      "answer": "B",
+      "options": {
+        "A": "分号 ;",
+        "B": "冒号 :",
+        "C": "什么都不用写，换行即语句结束",
+        "D": "反斜杠 \\"
+      },
+      "answer": "C",
       "explanation": "Python 以换行作为语句结束符；分号只在想在一行写多条语句时使用，且不推荐。",
       "distractors": {
         "A": "分号可写但非必需，属于风格问题（PEP 8 不推荐）。",
-        "C": "冒号只用在 if/for/def 等复合语句的头部。",
+        "B": "冒号只用在 if/for/def 等复合语句的头部。",
         "D": "反斜杠用于把一条长语句拆成多行。"
       },
       "knowledge": ["语句结束符", "PEP 8 风格"],
@@ -113,15 +142,15 @@
       "id": "basics-08", "topic": "basics", "difficulty": "easy",
       "question": "想把一条很长的表达式拆成多行，最“Pythonic”的写法是？",
       "options": {
-        "A": "每行末尾加分号",
-        "B": "用圆括号/方括号包起来，直接换行",
+        "A": "用圆括号/方括号包起来，直接换行",
+        "B": "每行末尾加分号",
         "C": "每行末尾加 &&",
         "D": "必须使用反斜杠，没有其他办法"
       },
-      "answer": "B",
+      "answer": "A",
       "explanation": "括号（() [] {}）内允许自然换行，这是推荐做法；反斜杠也能续行，但不美观且易出错。",
       "distractors": {
-        "A": "分号不能续行。",
+        "B": "分号不能续行。",
         "C": "&& 在 Python 中是语法错误，逻辑与写 and。",
         "D": "反斜杠只是备选方案，括号内换行更常见。"
       },
@@ -131,7 +160,12 @@
     {
       "id": "basics-09", "topic": "basics", "difficulty": "medium",
       "question": "按 PEP 8 约定，常量名（如最大重试次数）推荐写成？",
-      "options": { "A": "MAX_RETRY", "B": "maxRetry", "C": "MaxRetry", "D": "max_retry" },
+      "options": {
+        "A": "MAX_RETRY",
+        "B": "maxRetry",
+        "C": "MaxRetry",
+        "D": "max_retry"
+      },
       "answer": "A",
       "explanation": "PEP 8 规定常量使用全大写 + 下划线，例如 MAX_RETRY。",
       "distractors": {
@@ -145,7 +179,12 @@
     {
       "id": "basics-10", "topic": "basics", "difficulty": "medium",
       "question": "下面哪个是 Python 的保留字（关键字），不能用作变量名？",
-      "options": { "A": "lambda", "B": "value", "C": "data", "D": "type" },
+      "options": {
+        "A": "lambda",
+        "B": "value",
+        "C": "data",
+        "D": "type"
+      },
       "answer": "A",
       "explanation": "lambda 是创建匿名函数的关键字；关键字列表可用 keyword.kwlist 查看。",
       "distractors": {
@@ -159,13 +198,18 @@
     {
       "id": "basics-11", "topic": "basics", "difficulty": "easy",
       "question": "Python 复合语句（if / for / def 等）头部末尾必须有什么？",
-      "options": { "A": "花括号 {", "B": "冒号 :", "C": "then", "D": "do" },
-      "answer": "B",
+      "options": {
+        "A": "花括号 {",
+        "B": "then",
+        "C": "do",
+        "D": "冒号 :"
+      },
+      "answer": "D",
       "explanation": "头部以冒号结尾，表示“下面开始是代码块”，块内靠缩进界定。",
       "distractors": {
         "A": "花括号在 Python 里表示字典或集合，不用来划分代码块。",
-        "C": "then 是某些伪代码/Shell 的写法。",
-        "D": "do 不是 Python 语法。"
+        "B": "then 是某些伪代码/Shell 的写法。",
+        "C": "do 不是 Python 语法。"
       },
       "knowledge": ["冒号 + 缩进", "复合语句"],
       "doc": "02-syntax-basics"
@@ -211,13 +255,18 @@
     {
       "id": "basics-14", "topic": "basics", "difficulty": "medium",
       "question": "print(\"a\", \"b\", \"c\", sep=\"-\") 的输出是？",
-      "options": { "A": "a b c", "B": "a-b-c", "C": "a,b,c", "D": "abc" },
-      "answer": "B",
+      "options": {
+        "A": "a b c",
+        "B": "a,b,c",
+        "C": "abc",
+        "D": "a-b-c"
+      },
+      "answer": "D",
       "explanation": "sep 参数指定多个参数之间的分隔符，默认是空格，这里改成 -。",
       "distractors": {
         "A": "默认 sep 是空格，但这里显式改成了 -。",
-        "C": "逗号不是默认分隔符。",
-        "D": "没有指定空字符串，不会直接拼接。"
+        "B": "逗号不是默认分隔符。",
+        "C": "没有指定空字符串，不会直接拼接。"
       },
       "knowledge": ["print(sep=)", "print(end=)"],
       "doc": "02-syntax-basics"
@@ -226,17 +275,17 @@
       "id": "basics-15", "topic": "basics", "difficulty": "medium",
       "question": "print(\"hi\", end=\"\") 的作用是？",
       "options": {
-        "A": "不换行输出",
-        "B": "输出空字符串",
-        "C": "报错，end 参数不存在",
-        "D": "在 hi 前面插入换行"
+        "A": "输出空字符串",
+        "B": "报错，end 参数不存在",
+        "C": "在 hi 前面插入换行",
+        "D": "不换行输出"
       },
-      "answer": "A",
+      "answer": "D",
       "explanation": "end 指定输出结尾要打印的字符，默认是换行符 \\n，改成空字符串就不会换行。",
       "distractors": {
-        "B": "它并不改变要输出的内容 hi，只改变结尾符。",
-        "C": "end 是 print 的合法关键字参数。",
-        "D": "end 影响结尾，不是开头。"
+        "A": "它并不改变要输出的内容 hi，只改变结尾符。",
+        "B": "end 是 print 的合法关键字参数。",
+        "C": "end 影响结尾，不是开头。"
       },
       "knowledge": ["print(end=)", "换行符 \\\\n"],
       "doc": "02-syntax-basics"
@@ -244,12 +293,17 @@
     {
       "id": "basics-16", "topic": "basics", "difficulty": "easy",
       "question": "Python 用缩进代替了其他语言里的什么？",
-      "options": { "A": "分号", "B": "花括号 {} 组成的代码块", "C": "括号 ()", "D": "类型声明" },
-      "answer": "B",
+      "options": {
+        "A": "分号",
+        "B": "括号 ()",
+        "C": "花括号 {} 组成的代码块",
+        "D": "类型声明"
+      },
+      "answer": "C",
       "explanation": "其他语言用 {} 圈出代码块，Python 用缩进层级表达同样的结构，因此缩进是语法的一部分。",
       "distractors": {
         "A": "分号对应的是“语句结束”，Python 用换行代替。",
-        "C": "圆括号用于函数调用和分组。",
+        "B": "圆括号用于函数调用和分组。",
         "D": "类型声明与变量系统有关，与缩进无关。"
       },
       "knowledge": ["缩进即语法", "代码块"],
@@ -258,11 +312,16 @@
     {
       "id": "basics-17", "topic": "basics", "difficulty": "medium",
       "question": "在交互式解释器里想查看某个函数或对象的帮助文档，最直接的方式是？",
-      "options": { "A": "help(函数名)", "B": "doc(函数名)", "C": "info(函数名)", "D": "函数名.help()" },
-      "answer": "A",
+      "options": {
+        "A": "doc(函数名)",
+        "B": "help(函数名)",
+        "C": "info(函数名)",
+        "D": "函数名.help()"
+      },
+      "answer": "B",
       "explanation": "内置 help() 会打印对象的文档字符串（docstring）与用法说明，dir() 则可列出属性。",
       "distractors": {
-        "B": "doc() 不是内置函数。",
+        "A": "doc() 不是内置函数。",
         "C": "info() 也不存在（部分库自己实现过）。",
         "D": "没有 .help() 这个通用属性（IPython 里有 ? 语法糖）。"
       },
@@ -274,18 +333,269 @@
       "question": "一个 .py 文件里常见的 if __name__ == \"__main__\": 语句的作用是？",
       "options": {
         "A": "定义主函数 main",
-        "B": "让代码只在“直接运行该文件”时执行，被 import 时不执行",
-        "C": "声明这是入口文件，Python 会强制校验",
+        "B": "声明这是入口文件，Python 会强制校验",
+        "C": "让代码只在“直接运行该文件”时执行，被 import 时不执行",
         "D": "把文件注册为模块"
       },
-      "answer": "B",
+      "answer": "C",
       "explanation": "__name__ 在直接运行时等于 \"__main__\"，被当作模块导入时等于模块名，因此该判断可区分两种场景。",
       "distractors": {
         "A": "它不定义任何函数，只是条件判断。",
-        "C": "Python 不会强制要求这个语句，它只是社区惯例。",
+        "B": "Python 不会强制要求这个语句，它只是社区惯例。",
         "D": "模块注册与它无关，import 机制本身就会处理。"
       },
       "knowledge": ["__name__", "脚本入口惯例", "import 语义"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-19", "topic": "basics", "difficulty": "easy",
+      "question": "在终端里确认本机 Python 3 解释器能否正常使用，最直接的命令是？",
+      "options": {
+        "A": "python3 --version",
+        "B": "python3 --help",
+        "C": "pip --version",
+        "D": "which python3 --version"
+      },
+      "answer": "A",
+      "explanation": "`python3 --version`（或 `python3 -V`）打印版本号，是验证环境是否装好的第一步；能打印出来说明解释器可执行。",
+      "distractors": {
+        "B": "--help 打印用法说明，不显示版本。",
+        "C": "pip 是包管理器，版本与解释器版本无关。",
+        "D": "which 只输出路径，不能确认能否运行（可能存在损坏的软链）。"
+      },
+      "knowledge": ["python3 --version", "python3 -V", "环境检查"],
+      "doc": "01-hello-python",
+      "tags": ["hello-world"]
+    },
+    {
+      "id": "basics-20", "topic": "basics", "difficulty": "easy",
+      "question": "当前目录下有个 hello.py，想运行它，正确写法是？",
+      "options": {
+        "A": "hello.py",
+        "B": "python3 hello",
+        "C": "run hello.py",
+        "D": "python3 hello.py"
+      },
+      "answer": "D",
+      "explanation": "Python 脚本需要用解释器执行：`python3 文件名.py`。Windows 上可写 `python hello.py`，macOS/Linux 上通常是 `python3`。",
+      "distractors": {
+        "A": "没有 #!/usr/bin/env python3 首行和可执行权限时，会报 command not found。",
+        "B": "缺了 .py 扩展名，找不到文件。",
+        "C": "run 是 Windows 的旧工具，不是 Python 的。"
+      },
+      "knowledge": ["运行脚本", "python3 xxx.py", "解释器"],
+      "doc": "01-hello-python"
+    },
+    {
+      "id": "basics-21", "topic": "basics", "difficulty": "easy",
+      "question": "在交互式解释器（REPL）里想退出，可以输入？",
+      "options": {
+        "A": "stop()",
+        "B": "quit 或 exit()（macOS/Linux 也可按 Ctrl-D）",
+        "C": "end()",
+        "D": "close()"
+      },
+      "answer": "B",
+      "explanation": "REPL 里可输入 `exit()`、`quit()`，或按 Ctrl-D（Windows 是 Ctrl-Z 再回车）。三者都能退出。",
+      "distractors": {
+        "A": "没有 stop() 这个内置函数。",
+        "C": "end 是 print 的参数名，不是退出命令。",
+        "D": "close() 是文件/连接的方法，与退出解释器无关。"
+      },
+      "knowledge": ["REPL", "exit()", "Ctrl-D"],
+      "doc": "01-hello-python"
+    },
+    {
+      "id": "basics-22", "topic": "basics", "difficulty": "easy",
+      "question": "为本项目创建一个名为 .venv 的虚拟环境，正确命令是？",
+      "options": {
+        "A": "python3 -m venv .venv",
+        "B": "python3 venv create .venv",
+        "C": "pip install venv",
+        "D": "python3 -m virtualenv .venv"
+      },
+      "answer": "A",
+      "explanation": "venv 是标准库模块，用 `python3 -m venv .venv` 创建；之后 `source .venv/bin/activate` 激活。virtualenv 是第三方包，需额外安装。",
+      "distractors": {
+        "B": "venv 模块没有 create 子命令。",
+        "C": "venv 是标准库，不需要也无法用 pip 安装。",
+        "D": "virtualenv 需要先 pip install virtualenv，标准库用的是 venv。"
+      },
+      "knowledge": ["venv", "python3 -m venv", "虚拟环境"],
+      "doc": "01-hello-python",
+      "tags": ["env"]
+    },
+    {
+      "id": "basics-23", "topic": "basics", "difficulty": "medium",
+      "question": "激活虚拟环境后再执行 pip install requests，包装到哪个位置？",
+      "options": {
+        "A": "系统 Python 的 site-packages",
+        "B": "当前虚拟环境的 site-packages 目录",
+        "C": "项目根目录下的随意位置",
+        "D": "用户主目录的 ~/.pip"
+      },
+      "answer": "B",
+      "explanation": "激活后 PATH 指向 `.venv/bin/pip`，安装目标就是 `.venv/lib/python3.x/site-packages`，与系统 Python 完全隔离。",
+      "distractors": {
+        "A": "未激活虚拟环境时才会装到系统 Python，容易污染并撞权限。",
+        "C": "pip 只装到 site-packages，不会随意放项目目录。",
+        "D": "~/.pip 是 pip 的缓存/配置文件位置，不是安装目标。"
+      },
+      "knowledge": ["虚拟环境隔离", "site-packages", "pip"],
+      "doc": "01-hello-python",
+      "tags": ["env"]
+    },
+    {
+      "id": "basics-24", "topic": "basics", "difficulty": "medium",
+      "question": "Python 语句末尾为什么会见到分号，它能省掉吗？",
+      "options": {
+        "A": "不能省，Python 语法强制要求分号",
+        "B": "能省，换行就是语句结束；分号主要用于一行写多条语句",
+        "C": "能省，但省略后性能会下降",
+        "D": "只有函数内部需要分号"
+      },
+      "answer": "B",
+      "explanation": "Python 用换行分隔语句，分号是「语句分隔符」而非结束符：`a = 1; b = 2` 合法但 PEP 8 不推荐。这也解释了为什么一行末尾不小心留分号不会报错。",
+      "distractors": {
+        "A": "绝大多数 Python 代码都不写分号。",
+        "C": "分号与性能无关，纯语法问题。",
+        "D": "函数体内同样不需要分号。"
+      },
+      "knowledge": ["语句分隔", "换行即语句结束", "PEP 8"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-25", "topic": "basics", "difficulty": "easy",
+      "question": "PEP 8 建议用几个空格做一级缩进？",
+      "options": {
+        "A": "2 个空格",
+        "B": "1 个 Tab",
+        "C": "8 个空格",
+        "D": "4 个空格"
+      },
+      "answer": "D",
+      "explanation": "PEP 8 规定用 4 个空格；同一文件内必须一致，混用空格和 Tab 会报 TabError。这是 Python 用缩进表达代码块带来的硬约束。",
+      "distractors": {
+        "A": "2 个空格是 JS/Ruby 社区习惯，Python 不用。",
+        "B": "Tab 能与空格混用报错，PEP 8 明确不建议。",
+        "C": "8 个空格是老式 C 风格，会让嵌套过深。"
+      },
+      "knowledge": ["缩进 4 空格", "TabError", "PEP 8"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-26", "topic": "basics", "difficulty": "hard",
+      "question": "执行 a = b = [] 之后，a.append(1)，b 会变成什么？",
+      "options": {
+        "A": "b 仍是 []，赋值会各自复制一份",
+        "B": "b 变成 [1] 但 a 仍是 []",
+        "C": "b 也变成 [1]，因为 a 和 b 指向同一个列表对象",
+        "D": "报错，不能对多个变量赋值同一个列表"
+      },
+      "answer": "C",
+      "explanation": "链式赋值把**同一个**列表对象绑定给两个名字：`a is b` 为 True。要各自独立必须写 `a = []; b = []`。这一点和 JS 的 `const a = b = []` 行为一致，都是引用共享。",
+      "distractors": {
+        "A": "Python 不会隐式拷贝，赋值只是绑定名字。",
+        "B": "两者是同一个对象，改一个另一个必然变。",
+        "D": "语法合法，不会报错。"
+      },
+      "knowledge": ["链式赋值", "引用语义", "别名 aliasing"],
+      "doc": "02-syntax-basics",
+      "tags": ["pitfall"]
+    },
+    {
+      "id": "basics-27", "topic": "basics", "difficulty": "medium",
+      "question": "下面代码能正常运行吗？\n\nx = 1\nx = \"hello\"",
+      "options": {
+        "A": "能，Python 是动态类型，变量只是名字，可以重新绑定到不同类型的对象",
+        "B": "不能，变量一旦赋值成 int 就不能改类型",
+        "C": "能，但会先隐式把 1 转成字符串",
+        "D": "不能，会抛 TypeError"
+      },
+      "answer": "A",
+      "explanation": "Python 变量是「名字到对象的绑定」，没有类型声明；`x` 先指向 int 1，再指向 str。类型注解也只是提示，运行时不做限制。",
+      "distractors": {
+        "B": "那是静态类型语言（Java/TS 的 let）的规则。",
+        "C": "重新绑定不涉及任何转换，旧的 1 只是被解引用。",
+        "D": "合法代码，不会抛异常。"
+      },
+      "knowledge": ["动态类型", "重新绑定", "变量是名字"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-28", "topic": "basics", "difficulty": "easy",
+      "question": "print(\"a\\nb\") 会输出几行？",
+      "options": {
+        "A": "1 行：a\\nb",
+        "B": "1 行：ab",
+        "C": "2 行：a 和 b",
+        "D": "报错，\\n 不合法"
+      },
+      "answer": "C",
+      "explanation": "`\\n` 是换行转义字符，在普通字符串里被解释成换行；想原样输出反斜杠要用 raw string `r\"a\\nb\"`。",
+      "distractors": {
+        "A": "那是 r\"a\\nb\" 或 \"a\\\\nb\" 的效果。",
+        "B": "\\n 不是空字符。",
+        "D": "是合法转义序列。"
+      },
+      "knowledge": ["转义字符 \\n", "raw string", "字符串字面量"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-29", "topic": "basics", "difficulty": "easy",
+      "question": "print() 不带任何参数会输出什么？",
+      "options": {
+        "A": "空字符串，不产生任何输出",
+        "B": "报错 TypeError",
+        "C": "输出 None",
+        "D": "一个空行"
+      },
+      "answer": "D",
+      "explanation": "print 默认 end=\"\\n\"，没有参数时先输出空内容再输出换行，所以是一个空行。",
+      "distractors": {
+        "A": "end 默认是换行，所以仍会有输出。",
+        "B": "参数全都有默认值，不会报错。",
+        "C": "print 的返回值是 None，但它不打印返回值。"
+      },
+      "knowledge": ["print()", "end 参数", "空行"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-30", "topic": "basics", "difficulty": "medium",
+      "question": "Python 3 的 print 与 Python 2 的 print 最大的区别是？",
+      "options": {
+        "A": "Python 3 里 print 是普通函数，必须写括号",
+        "B": "Python 3 里 print 是语句，可以写 print \"hi\"",
+        "C": "Python 3 的 print 默认不换行",
+        "D": "Python 3 移除了 print"
+      },
+      "answer": "A",
+      "explanation": "Python 2 的 `print \"hi\"` 是语句；Python 3 把它改成内置函数 `print(\"hi\")`，于是能传 sep、end、file 等参数。看老教程时这是最常见的踩坑点。",
+      "distractors": {
+        "B": "这正好说反了，Python 2 才是语句。",
+        "C": "Python 3 默认仍然换行（end=\"\\n\"）。",
+        "D": "print 仍是内置函数，只是写法变了。"
+      },
+      "knowledge": ["print 函数", "Python 2 vs 3", "语法迁移"],
+      "doc": "02-syntax-basics"
+    },
+    {
+      "id": "basics-31", "topic": "basics", "difficulty": "hard",
+      "question": "在项目目录下想临时起一个静态文件服务器，最省事的写法是？",
+      "options": {
+        "A": "python3 http.server 8000",
+        "B": "python3 -m http.server 8000",
+        "C": "python3 -c http.server",
+        "D": "python3 -m http 8000"
+      },
+      "answer": "B",
+      "explanation": "-m 表示「以模块方式运行」，Python 会把模块当 __main__ 执行。所以 `python3 -m http.server` 等同于把 http/server.py 当脚本跑，同理还有 `python -m venv`、`python -m pip`。",
+      "distractors": {
+        "A": "http.server 是模块名不是文件路径，直接运行会找不到文件。",
+        "C": "-c 是执行一段代码字符串，不是模块名。",
+        "D": "模块名是 http.server，少了 .server。"
+      },
+      "knowledge": ["python -m", "模块即脚本", "http.server"],
       "doc": "02-syntax-basics"
     }
   ]

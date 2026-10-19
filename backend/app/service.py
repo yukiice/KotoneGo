@@ -37,13 +37,15 @@ def pick_questions(
     topics: list[str] | None = None,
     difficulty: str = "any",
     only_wrong: bool = False,
+    weighted: bool = False,
 ) -> list[Question]:
     """随机抽题。
 
     规则：
       1. 先按主题 / 难度 / 错题本筛选候选池；
       2. 候选不足时，从剩余题目里补足（保证一定能凑满 size）；
-      3. 题库总量不足 size 时，返回题库全部。
+      3. 题库总量不足 size 时，返回题库全部；
+      4. weighted=True 时按历史表现加权，且同一场考试内不重复抽题。
     """
     bank = load_questions()
     pool = list(bank.values())
@@ -67,7 +69,63 @@ def pick_questions(
         raise ConflictError("没有符合条件（主题 / 难度 / 错题）的题目，请放宽筛选条件")
 
     size = max(1, min(size, len(pool)))
-    return random.sample(pool, size)
+    if not weighted:
+        return random.sample(pool, size)
+
+    weights = _question_weights(pool)
+    return _weighted_sample(pool, weights, size)
+
+
+def _question_weights(pool: list[Question]) -> list[float]:
+    """计算每道题的抽题权重。
+
+    权重 = 1 + (1 - 历史正确率) + 未结束的错题加成(0.5)。
+    - 从未作答：正确率按 0.5 处理，权重为中性值 1.5 附近，新题依然有机会出现；
+    - 错题本里未掌握的题额外加权，保证“错过的题会回来”。
+    """
+    ids = [q.id for q in pool]
+    placeholders = ",".join("?" for _ in ids)
+    with get_conn() as conn:
+        stat_rows = conn.execute(
+            f"SELECT question_id, attempts, correct_count FROM question_stats WHERE question_id IN ({placeholders})",
+            ids,
+        ).fetchall()
+        wrong_rows = conn.execute(
+            f"SELECT question_id FROM wrong_questions WHERE mastered = 0 AND question_id IN ({placeholders})",
+            ids,
+        ).fetchall()
+
+    stats = {row["question_id"]: (row["attempts"], row["correct_count"]) for row in stat_rows}
+    open_wrong = {row["question_id"] for row in wrong_rows}
+
+    weights: list[float] = []
+    for question in pool:
+        attempts, correct = stats.get(question.id, (0, 0))
+        accuracy = correct / attempts if attempts else 0.5
+        weight = 1.0 + (1.0 - accuracy)
+        if question.id in open_wrong:
+            weight += 0.5
+        weights.append(weight)
+    return weights
+
+
+def _weighted_sample(pool: list[Question], weights: list[float], size: int) -> list[Question]:
+    """不放回的加权抽样：每次按权重抽一题，抽中后从候选中移除。"""
+    items = list(zip(pool, weights))
+    chosen: list[Question] = []
+    for _ in range(size):
+        total = sum(w for _, w in items)
+        pick = random.uniform(0, total)
+        acc = 0.0
+        for index, (question, weight) in enumerate(items):
+            acc += weight
+            if pick <= acc:
+                chosen.append(question)
+                items.pop(index)
+                break
+        else:  # 浮点误差兜底：取最后一个
+            chosen.append(items.pop()[0])
+    return chosen
 
 
 # --------------------------------------------------------------------------- #
@@ -78,8 +136,11 @@ def create_exam(
     topics: list[str] | None = None,
     difficulty: str = "any",
     only_wrong: bool = False,
+    weighted: bool = False,
 ) -> dict[str, Any]:
-    questions = pick_questions(size=size, topics=topics, difficulty=difficulty, only_wrong=only_wrong)
+    questions = pick_questions(
+        size=size, topics=topics, difficulty=difficulty, only_wrong=only_wrong, weighted=weighted
+    )
     exam_id = uuid.uuid4().hex[:12]
     created_at = now_iso()
 
@@ -526,3 +587,69 @@ def get_stats() -> dict[str, Any]:
         "by_topic": by_topic,
         "recent_exams": list_exams(limit=10),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 题目纠错上报
+# --------------------------------------------------------------------------- #
+REPORT_CATEGORIES: dict[str, str] = {
+    "answer_wrong": "答案有误",
+    "explanation_wrong": "解析不准确",
+    "unclear": "题干或选项表述不清",
+    "other": "其他",
+}
+
+
+def _report_row_to_dict(row: sqlite3.Row, question: Question | None) -> dict[str, Any]:
+    return {
+        "id": row["id"],
+        "question_id": row["question_id"],
+        "question": question.question if question else "（题目已从题库移除）",
+        "category": row["category"],
+        "category_label": REPORT_CATEGORIES.get(row["category"], row["category"]),
+        "message": row["message"],
+        "status": row["status"],
+        "created_at": row["created_at"],
+    }
+
+
+def create_report(question_id: str, category: str, message: str) -> dict[str, Any]:
+    bank = load_questions()
+    question = bank.get(question_id)
+    if question is None:
+        raise NotFoundError(f"题目不存在: {question_id}")
+    if category not in REPORT_CATEGORIES:
+        raise ConflictError(f"未知的反馈类型: {category!r}")
+
+    with get_conn() as conn:
+        cursor = conn.execute(
+            "INSERT INTO question_reports (question_id, category, message, status, created_at) "
+            "VALUES (?, ?, ?, 'open', ?)",
+            (question_id, category, message.strip(), now_iso()),
+        )
+        row = conn.execute("SELECT * FROM question_reports WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    return _report_row_to_dict(row, question)
+
+
+def list_reports(status: str | None = None) -> list[dict[str, Any]]:
+    bank = load_questions()
+    sql = "SELECT * FROM question_reports WHERE 1 = 1"
+    params: list[Any] = []
+    if status is not None:
+        sql += " AND status = ?"
+        params.append(status)
+    sql += " ORDER BY id DESC"
+    with get_conn() as conn:
+        rows = conn.execute(sql, params).fetchall()
+    return [_report_row_to_dict(row, bank.get(row["question_id"])) for row in rows]
+
+
+def update_report_status(report_id: int, status: str) -> dict[str, Any]:
+    """标记上报为已修复（resolved）或重新打开（open）。"""
+    with get_conn() as conn:
+        cursor = conn.execute("UPDATE question_reports SET status = ? WHERE id = ?", (status, report_id))
+        if cursor.rowcount == 0:
+            raise NotFoundError(f"上报记录不存在: {report_id}")
+        row = conn.execute("SELECT * FROM question_reports WHERE id = ?", (report_id,)).fetchone()
+    question = load_questions().get(row["question_id"])
+    return _report_row_to_dict(row, question)

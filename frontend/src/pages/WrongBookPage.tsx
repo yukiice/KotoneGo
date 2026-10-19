@@ -5,6 +5,7 @@ import type { WrongQuestion } from "../api/types";
 import { Empty, ErrorBox, Loading, formatTime } from "../components/ui";
 import { docTitle } from "../content";
 import { useAsync } from "../hooks/useAsync";
+import { ReportQuestion } from "../components/ReportQuestion";
 
 type Filter = "open" | "mastered" | "all";
 
@@ -81,6 +82,14 @@ export function WrongBookPage() {
     navigate(`/exam/${exam.id}`);
   }
 
+  // 导出沿用当前的状态与主题筛选；关键词只用于页面内搜索，不影响导出
+  function exportUrl(format: "markdown" | "anki") {
+    const params = new URLSearchParams({ format });
+    if (topic) params.set("topic", topic);
+    if (filter !== "all") params.set("mastered", String(filter === "mastered"));
+    return `/api/wrong-questions/export?${params.toString()}`;
+  }
+
   if (state.loading) return <Loading text="加载错题本…" />;
   if (state.error) return <ErrorBox message={state.error} onRetry={state.reload} />;
 
@@ -94,6 +103,12 @@ export function WrongBookPage() {
           </p>
         </div>
         <div className="row">
+          <a className="btn sm" style={{ textDecoration: "none" }} href={exportUrl("markdown")}>
+            导出 Markdown
+          </a>
+          <a className="btn sm" style={{ textDecoration: "none" }} href={exportUrl("anki")}>
+            导出 Anki
+          </a>
           <button className="btn primary sm" onClick={() => void practiceWrong()}>
             只练错题
           </button>
@@ -299,6 +314,10 @@ function WrongItem({
                 保存笔记
               </button>
             </div>
+          </div>
+
+          <div className="section">
+            <ReportQuestion questionId={item.question_id} />
           </div>
         </div>
       ) : null}

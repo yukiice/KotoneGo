@@ -7,6 +7,7 @@ const NAV = [
   { to: "/exam", label: "开始考试" },
   { to: "/history", label: "考试记录" },
   { to: "/wrong", label: "错题本" },
+  { to: "/reports", label: "题目反馈" },
   { to: "/stats", label: "统计" },
 ];
 
