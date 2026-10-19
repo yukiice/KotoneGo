@@ -134,6 +134,10 @@ docker compose pull && docker compose up -d
 GitHub → 你的头像 → Your packages → `kotonego` → Package settings → Danger Zone → Change visibility → Public。
 不想公开包也可以：在服务器上 `docker login ghcr.io`，用有 `read:packages` 权限的 PAT 登录一次（凭据会存在服务器上）。
 
+> 注意：`docker compose up -d` 在本机没有该镜像时会**退回用 `build:` 段现场构建**。
+> 所以顺序必须是先 `pull` 再 `up`；pull 失败时不要直接 `up`（小内存机器会当场 OOM）。
+> 镜像在 GHCR 上是压缩传输的，服务器实际只下载约 **54 MB**（解压后磁盘占 271 MB）。
+
 ### 全自动部署（可选）
 
 在仓库 Settings → Secrets and variables → Actions 里添加 3 个 secret：
