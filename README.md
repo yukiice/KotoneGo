@@ -102,6 +102,64 @@ docker compose up -d --build     # 重建镜像并重启；数据库在命名卷
 ```
 
 数据库表用 `CREATE TABLE IF NOT EXISTS`，改代码后直接重建即可，**不需要迁移脚本**。
+
+---
+
+## GitHub Actions（自动构建 / 自动部署）
+
+仓库里已经带了两个 workflow，推到分支即自动运行：
+
+| 文件 | 触发 | 作用 |
+| --- | --- | --- |
+| `.github/workflows/ci.yml` | push / PR | 题库校验 + 后端冒烟测试 + `tsc` + 前端构建 |
+| `.github/workflows/image.yml` | push 到 `main` / `python/0.0.1` | 构建镜像并推到 GHCR（amd64 + arm64） |
+
+> 为什么在 CI 构建镜像：`npm ci` + Vite 构建峰值要几百 MB，在你那台小内存服务器上容易 OOM。
+> CI 构建好之后，服务器只负责拉镜像，**零编译、不占内存**。
+
+### 服务器使用 CI 构建的镜像
+
+```bash
+# 服务器上：.env 里指定镜像，不再本地构建
+echo 'KOTONE_IMAGE=ghcr.io/yukiice/kotonego:latest' >> .env
+
+# 首次使用（公开包，无需登录）
+docker compose pull && docker compose up -d
+
+# 之后每次发版git push后，在服务器执行：
+docker compose pull && docker compose up -d
+```
+
+**关键一步**：GHCR 里新建的包默认是私有的，需要把包改成公开（否则服务器 pull 会 401）：
+GitHub → 你的头像 → Your packages → `kotonego` → Package settings → Danger Zone → Change visibility → Public。
+不想公开包也可以：在服务器上 `docker login ghcr.io`，用有 `read:packages` 权限的 PAT 登录一次（凭据会存在服务器上）。
+
+### 全自动部署（可选）
+
+在仓库 Settings → Secrets and variables → Actions 里添加 3 个 secret：
+
+| Secret | 内容 |
+| --- | --- |
+| `SSH_HOST` | 服务器 IP / 域名 |
+| `SSH_USER` | 登录用户名（如 `root` 或 `ubuntu`） |
+| `SSH_KEY` | 私钥全文（对应公钥已放进服务器 `~/.ssh/authorized_keys`） |
+
+另外把 `image.yml` 里的 `cd "$HOME/KotoneGo"` 改成你服务器上的实际目录。之后每次 push 到这两个分支，
+GitHub 会自动构建并远程执行 `git pull && docker compose pull && up -d`；不配 secret 则只构建镜像，不会连服务器。
+
+### 回滚到某个提交
+
+每个提交都会打一个不可变 tag（`sha-<前7位>`），`docker compose ps` 看不到也没关系，直接指定：
+
+```bash
+KOTONE_IMAGE=ghcr.io/yukiice/kotonego:sha-8ed6072 docker compose up -d
+```
+
+### 架构说明
+
+默认构建 `linux/amd64` + `linux/arm64` 双架构（ARM 小鸡也能拉），代价是 arm64 那段在 QEMU 下跑
+`npm ci` 会慢一些（首次约 10 分钟，有缓存后快）。如果服务器是普通 x86，把 `image.yml` 里
+`platforms: linux/amd64,linux/arm64` 改成 `platforms: linux/amd64` 即可明显加速。
 - 前端产物由后端托管，已开 gzip（主包 650KB → 220KB）与长缓存；**不要再另外起 nginx 或 `npm run dev`**
 
 ### 数据备份 / 恢复

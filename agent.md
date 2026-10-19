@@ -29,7 +29,8 @@ KotoneGo/
 ├── agent.md                      # ← 你正在读的文件
 ├── README.md                     # 人类快速上手（含 Docker 部署）
 ├── .gitignore / .dockerignore
-├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE（复制成 .env）
+├── .github/workflows/          # ci.yml（校验/测试）+ image.yml（构建镜像/可选自动部署）
+├── .env.example                  # KOTONE_PORT / KOTONE_BIND / KOTONE_EXAM_SIZE / KOTONE_IMAGE（复制成 .env）
 ├── Dockerfile                    # 多阶段：Node 打包前端 → Python 运行时单容器
 ├── docker-compose.yml            # 单服务 + 命名卷 + 内存/日志限制 + 健康检查
 ├── backend/                      # FastAPI + SQLite（Python 3.11+）
@@ -114,7 +115,8 @@ docker compose down               # 停止（数据留在命名卷 kotone-data�
 
 端口约定：**容器内部永远是 8000**（Dockerfile CMD 里写死），对外端口由根目录 `.env` 的
 `KOTONE_PORT`（默认 8010）决定；`KOTONE_BIND` 控制监听地址（默认 `0.0.0.0`，填 `127.0.0.1` 则只允许本机访问）；
-`KOTONE_NAME` 控制容器名（默认 `kotonego`，同机跑多份时必改）。
+`KOTONE_NAME` 控制容器名（默认 `kotonego`，同机跑多份时必改）；`KOTONE_IMAGE` 留空则本地构建，
+填 `ghcr.io/<owner>/kotonego:latest` 则直接拉 CI 构建好的镜像（`docker compose pull`）。
 改这些都不需要重新构建镜像，`docker compose up -d` 即可。
 
 - 镜像内：`frontend/dist` 被拷到 `/app/backend/static`，`main.py` 检测到该目录存在就挂载
@@ -335,6 +337,12 @@ cd frontend && npm run build
 13. **`container_name` 是可覆盖的（`KOTONE_NAME`）**：compose 里写死容器名时，
     同一台机器上第二份 checkout 执行 `up` 会报 `Conflict. The container name "/kotonego" is already in use`。
     同机多实例就加 `KOTONE_NAME` + `KOTONE_PORT`，两套独立命名卷互不影响。
+14. **CI 镜像名必须全小写**：GHCR 拒绝大写仓库名，所以 `image.yml` 里用
+    `ghcr.io/${{ github.repository_owner }}/kotonego`（写死小写），不要直接拼 `github.repository`。
+    另外 GHCR 新建的包默认私有，要么改成 public，要么在服务器 `docker login ghcr.io`。
+15. **CI 的 `deploy` job 靠 secret 存在性开关**：GitHub 不允许在 job 级 `if` 里用 `secrets`，
+    所以先写成 job 级 `env: HAS_SSH: ${{ secrets.X != '' }}`，再在 step 上 `if: env.HAS_SSH == 'true'`。
+    不要改成直接判断 secret。
 
 ---
 
@@ -348,8 +356,9 @@ cd frontend && npm run build
 4. **考试模式增强**：限时模式、错题加权抽题（`question_stats` 已有正确率数据）、只考“从未见过”的题。
 5. **题目质量反馈**（上报、处理界面已完成）：`/reports` 页面可按待处理 / 已修复筛选并标记状态；题库修订仍需手动编辑 JSON 并校验，尚无自动修正流程。
 6. **前端代码分割（已完成）**：`react-markdown` 与 `highlight.js` 已在懒加载的 `Markdown` 分块中，主包 `index` 210 kB（gzip 68 kB）不含它们。进一步缩小 Markdown 分块需绕过 `rehype-highlight`（它会强制打包 lowlight 的 common 全集），改用 lowlight 自定义插件；实测只注册所需语言并不能缩小分块（反而变大到 357 kB），收益有限，暂不做。
-7. **部署增强**：GitHub Actions 自动构建镜像（含 `linux/arm64`，便宜 ARM 小鸡可用）、
-   每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控。
+7. **部署增强**：GitHub Actions 构建镜像 + 自动部署已实现（见 `.github/workflows/`），
+   还可以加：每日 `sqlite3 .backup` 定时任务、`/api/health` 接入 uptime 监控、
+   镜像瘦身（alpine 基础镜像）。
 8. **测试**：pytest 用例已覆盖题库校验、热加载、抽题边界、判分取整、重复作答回滚，以及 `test_api.py` 中的 HTTP 接口契约（状态码、请求校验、错题本、统计）；`smoke_test.py` 仍需后端运行。
 
 ---

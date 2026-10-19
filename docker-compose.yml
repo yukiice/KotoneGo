@@ -10,7 +10,8 @@
 services:
   kotone:
     build: .
-    image: kotonego:0.0.1
+    # 镜像名：默认本地构建；设了 KOTONE_IMAGE 就用远程镜像（CI 构建好推到 GHCR）
+    image: ${KOTONE_IMAGE:-kotonego:0.0.1}
     # 容器名，可改（同一台机器跑多份时才需要改，比如 KOTONE_NAME=kotone-staging）
     container_name: "${KOTONE_NAME:-kotonego}"
     restart: unless-stopped

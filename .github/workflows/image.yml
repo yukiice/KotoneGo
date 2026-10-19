@@ -1,0 +1,103 @@
+# 构建生产镜像 → 推送到 GitHub Container Registry (GHCR)
+#
+# 为什么在 CI 构建：服务器内存小，`npm ci` + Vite 构建峰值要几百 MB，
+# 在 512MB 的机器上容易 OOM。CI 构建好之后，服务器只需 `docker compose pull`。
+#
+# 产出：
+#   ghcr.io/<owner>/kotonego:latest        每次 push 覆盖（服务器拉这个）
+#   ghcr.io/<owner>/kotonego:sha-<前7位>   每次提交一个不可变 tag（回滚用）
+#   linux/amd64 + linux/arm64（ARM 服务器也能直接拉）
+name: Build Image
+
+on:
+  push:
+    branches: [main, python/0.0.1]
+  workflow_dispatch:
+
+concurrency:
+  group: image-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # GHCR 要求名称全小写；仓库名是 KotoneGo，所以这里写死小写镜像名
+  IMAGE: ghcr.io/${{ github.repository_owner }}/kotonego
+
+jobs:
+  build:
+    name: 构建并推送镜像
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write          # 推 GHCR 需要
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 计算 tag
+        id: meta
+        run: |
+          echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "tags=${IMAGE}:latest,${IMAGE}:sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      # ARM 服务器用得上；只用 amd64 的话把 platforms 里的 arm64 删掉，构建快很多
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: 登录 GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 构建并推送
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 摘要
+        run: |
+          {
+            echo "### 镜像已推送 ✅"
+            echo '```'
+            echo "${IMAGE}:latest"
+            echo "${IMAGE}:sha-${GITHUB_SHA::7}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # 可选：镜像推送成功后自动让服务器拉取新镜像。
+  # 在 Settings → Secrets and variables → Actions 里配置三个 secret 即生效：
+  #   SSH_HOST   服务器地址
+  #   SSH_USER   登录用户名
+  #   SSH_KEY    私钥内容（对应公钥已在服务器 ~/.ssh/authorized_keys 里）
+  # 不配置则这一步自动跳过，不影响镜像构建。
+  deploy:
+    name: 部署到服务器（可选）
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      HAS_SSH: ${{ secrets.SSH_HOST != '' && secrets.SSH_USER != '' && secrets.SSH_KEY != '' }}
+    steps:
+      - name: 通过 SSH 拉取新镜像并重启
+        if: env.HAS_SSH == 'true'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            cd "$HOME/KotoneGo"          # ← 服务器上的代码目录，按实际路径改
+            git pull --ff-only            # compose 文件 / .env 模板有更新时生效
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
